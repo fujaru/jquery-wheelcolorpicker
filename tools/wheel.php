@@ -1,9 +1,11 @@
-<?
+<?php
 /**
  * Color Wheel Generator
  * 
  * This file is used only to generate color wheel image and not needed 
  * for the Wheel Color Picker plugin.
+ * 
+ * This script requires GD library.
  * 
  * Copyright © 2011 Fajar Yoseph Chandra. All rights reserved.
  * Licensed under MIT License.
@@ -81,7 +83,7 @@ imagealphablending($img, true);
 for($y = 0; $y < $h; $y++) {
 	for($x = 0; $x < $h; $x++) {
 		// Get the offset from central position
-		$offset = sqrt(pow($x-$center[x], 2) + pow($y-$center[y], 2));
+		$offset = sqrt(pow($x-$center['x'], 2) + pow($y-$center['y'], 2));
 		
 		// Skip pixel outside the circle area
 		if($offset > $r)
@@ -89,11 +91,11 @@ for($y = 0; $y < $h; $y++) {
 			
 		// Get the position degree (hue)
 		$deg = (
-			($x-$center[x] == 0 
-				? ($y < $center[x] ? 90 : 270)
-				: rad2deg(atan(($center[y]-$y)/($x-$center[x])))
+			($x-$center['x'] == 0 
+				? ($y < $center['x'] ? 90 : 270)
+				: rad2deg(atan(($center['y']-$y)/($x-$center['x'])))
 			)
-			+($x < $center[x] ? 180 : 0)
+			+($x < $center['x'] ? 180 : 0)
 			+360
 		)%360;
 		
