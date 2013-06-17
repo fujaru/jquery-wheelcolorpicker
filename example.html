@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>jQuery Wheel Color Picker Example</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 0.20" />
+	<meta name="last-modified" content="2011/08/17" />
+	<script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			$('.colorpicker').wheelColorPicker({dir: '.'});
+		});
+	</script>
+	<style type="text/css">
+		.code,
+		pre {
+			font-family: monospace;
+			background: #ddd;
+		}
+		
+		.ref-table tr {
+			background: #ccc;
+		}
+		
+		.ref-table tr:nth-child(even) {
+			background: #eee;
+		}
+		
+		.ref-table tr td {
+			font-family: monospace;
+		}
+		
+		.ref-table tr td {
+			vertical-align: top;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>jQuery Wheel Color Picker Example</h1>
+	<input type="text" class="colorpicker" /><br />
+	
+	<p>The Wheel Color Picker can be applied to <i>almost</i> any HTML 
+	elements which support jQuery .val() function. You can specify 
+	the format of the color value.</p>
+	
+	<h2>Overview</h2>
+	
+	<p>Initialize the color picker to an element by simply calling:
+	<pre>.wheelColorPicker( options );</pre></p>
+	
+	<h3>Example</h3>
+	<pre>&lt;input type="text" class="colorpicker" /&gt;
+&lt;script type="text/javascript"&gt;
+	$(function() { $('.colorpicker').wheelColorPicker({ dir: '.' }); });
+&lt;/script&gt;</pre>
+	
+	<h2>Options</h2>
+	
+	<table class="ref-table">
+		<tr>
+			<td>dir</td>
+			<td>String</td>
+			<td>Directory path containing necessary plugin images.</td>
+		</tr>
+		<tr>
+			<td>format</td>
+			<td>'hex' | 'css' | 'rgb' | 'rgba' | 'rgb%' | 'rgba%'</td>
+			<td>Format of the chosen color value.</td>
+		</tr>
+		<tr>
+			<td>preview</td>
+			<td>Boolean</td>
+			<td>Enable live color preview on the input's background.</td>
+		</tr>
+		<tr>
+			<td>userinput</td>
+			<td>Boolean</td>
+			<td>Enable picking color by typing directly</td>
+		</tr>
+		<tr>
+			<td>validate</td>
+			<td>Boolean</td>
+			<td>When userinput is enabled, always convert the input value to a specified format.</td>
+		</tr>
+		<tr>
+			<td>color</td>
+			<td>String</td>
+			<td>Initial value in any of supported color value format. <br />
+			This value takes precedence over value attribute specified 
+			directly on input tags. <br />If you want to use the tag's value 
+			attribute instead, set this to null.</td>
+		</tr>
+		<tr>
+			<td>alpha</td>
+			<td>Boolean</td>
+			<td>Force the color picker to use alpha value 
+			despite its selected color format.</td>
+		</tr>
+		<tr>
+			<td>inverseLabel</td>
+			<td>Boolean</td>
+			<td>Use inverse color for input label instead of black/white color. Default is true.</td>
+		</tr>
+	</table>
+	
+	<h2>Methods</h2>
+	
+	<table class="ref-table">
+		<tr>
+			<td>show</td>
+			<td>.wheelColorPicker("show")</td>
+			<td>Show the color picker dialog.</td>
+		</tr>
+		<tr>
+			<td>hide</td>
+			<td>.wheelColorPicker("hide")</td>
+			<td>Hide the color picker dialog.</td>
+		</tr>
+		<tr>
+			<td>destroy</td>
+			<td>.wheelColorPicker("destroy")</td>
+			<td>Destroy the assigned color picker function.</td>
+		</tr>
+		<tr>
+			<td>updateValue</td>
+			<td>.wheelColorPicker("updateValue")</td>
+			<td>Update the input value from the color picker dialog.</td>
+		</tr>
+		<tr>
+			<td>color</td>
+			<td>.wheelColorPicker("color", value)</td>
+			<td>Update the selection color on the color picker dialog.</td>
+		</tr>
+		<tr>
+			<td>updateColor</td>
+			<td>.wheelColorPicker("updateColor", value)</td>
+			<td>Update the selection color on the color picker dialog. (deprecated)</td>
+		</tr>
+		</tr>
+		<tr>
+			<td>updateSelection</td>
+			<td>.wheelColorPicker("updateSelection")</td>
+			<td>Update color dialog selection to match current selectedColor value.</td>
+		</tr>
+	</table>
+	
+	<h2>Theming</h2>
+	
+	<p>The color picker dialog can be themed using CSS by defining styles 
+	of <b>#jQWheelColorPickerDlg</b>. This is the ID used by the dialog.
+	For your note, while in general most of CSS properties can be defined, 
+	some properties such as size and positioning might not take effect.</p>
+	
+	<p>Here's the basic markup of the color picker dialog.</p>
+	
+	<pre>&lt;div id="jQWheelColorPickerDlg"&gt;
+	&lt;div id="jQWheelColorPickerDlgWheel"&gt;
+		&lt;span id="jQWheelColorPickerDlgCross"&gt;&lt;/span&gt;
+	&lt;/div&gt;
+	&lt;span id="jQWheelColorPickerDlgArrow"&gt;&lt;/span&gt;
+	&lt;span id="jQWheelColorPickerDlgSlider"&gt;
+		&lt;span class="jqwcpSliderPoint"&gt;&lt;/span&gt;
+		...
+	&lt;/span&gt;
+	&lt;span id="jQWheelColorPickerDlgArrowAlpha"&gt;&lt;/span&gt;
+	&lt;span id="jQWheelColorPickerDlgSliderAlpha"&gt;
+		&lt;span class="jqwcpSliderPoint"&gt;&lt;/span&gt;
+		...
+	&lt;/span&gt;
+&lt;/div&gt;</pre>
+	
+	<h3>Example</h3>
+	
+	<p>The example below changes the dialog background to white.</p>
+	
+	<pre>#jQWheelColorPickerDlg {
+	background-color: white;
+}</pre>
+
+	<p><hr /><small>Copyright &copy; 2011 Fajar Yoseph Chandra.</small></p>
+	
+</body>
+
+</html>
