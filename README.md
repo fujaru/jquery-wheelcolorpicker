@@ -1,6 +1,6 @@
 Notice: Old Version
 -------------------
-This branch contains the **old 1.x version** of jQuery Wheel Color Picker plugin and no longer maintained. If you're intending to use this plugin for your websites, please look for the newer 2.x version in **master** branch instead. The newer version has a cleaner code and addresses a few issues that persists in this version.
+This branch contains the **old 1.x version** of jQuery Wheel Color Picker plugin and no longer maintained. If you're intending to use this plugin for your new websites, please look for the newer 2.x version in **master** branch instead. The newer version has a cleaner code and addresses a few issues that persists in this version.
 
 The files were originally hosted at http://v6.jar2.net/projects/jquery-wheelcolorpicker which has been migrated to GitHub to maintain compatibility with newer jQuery Plugin Registry website.
 
@@ -39,7 +39,7 @@ Initialize the color picker to an element by simply calling:
 
     .wheelColorPicker( options );
 
-Example
+**Example**
 
 
     <input type="text" class="colorpicker" />
@@ -172,7 +172,7 @@ Here's the basic markup of the color picker dialog.
     	</span>
     </div>
 
-Example
+**Example**
 
 The example below changes the dialog background to white.
 
