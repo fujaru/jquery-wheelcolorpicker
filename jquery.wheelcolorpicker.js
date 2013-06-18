@@ -1,8 +1,8 @@
 /**
  * File: jquery.wheelcolorpicker.js
  * 
- * Version 1.3.2
- * 20 December 2011
+ * Version 1.3.3
+ * 18 June 2013
  * 
  * JavaScript Wheel Color Picker
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
@@ -48,7 +48,7 @@
 	 *   <init()>
 	 */
 	var settings = {
-		dir: 'http://static.jar2.net/files-public/jquery/wheelcolorpicker/',
+		dir: 'http://files.jar2.net/jquery/wheelcolorpicker/',
 		//dir: '.',
 		format: 'hex',
 		preview: true,
