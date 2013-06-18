@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>jQuery Wheel Color Picker Example</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="author" content="Fajar Chandra" />
+	<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
+	<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
+	<script type="text/javascript">
+		$(function() {
+			$('.color-inline').wheelColorPicker();
+			$('#color-block').wheelColorPicker({ layout: 'block', live: false });
+		});
+	</script>
+</head>
+
+<body>
+	<h1>jQuery Wheel Color Picker Example</h1>
+	
+	<p>
+		Pick your favorite color here: 
+		<input type="text" class="color-inline" />
+		or here:
+		<input type="text" class="color-inline" />
+	</p>
+	
+	<p>
+		Or here: <br />
+		<input type="text" id="color-block" />
+	</p>
+	
+	<h2>Get Started</h2>
+	
+	<p>
+		To use jQuery Wheel Color Picker Plugin, first you must include two 
+		files. The JS file is the plugin, and the CSS file is used to apply theming.
+<pre>	&lt;script type="text/javascript" src="jquery.wheelcolorpicker.js"&gt;&lt;/script&gt;
+	&lt;link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" /&gt;</pre>
+	</p>
+	
+	<p>
+		Say, if you have an input with id &quot;color&quot; which you want to 
+		apply the color picker to, just call this one line of code to do so:
+<pre>	&lt;script type="text/javascript"&gt;
+		$(function() {
+			$('#color').wheelColorPicker();
+		});
+	&lt;/script&gt;</pre>
+	</p>
+	
+	<p>
+		See <a href="http://www.jar2.net/projects/jquery-wheelcolorpicker">here</a> 
+		for more information regarding the plugin and documentation.
+	</p>
+</body>
+
+</html>
