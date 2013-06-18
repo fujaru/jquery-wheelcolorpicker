@@ -1,3 +1,10 @@
+Notice: Development Stage
+-------------------------
+
+The new version 2 is currently in heavy development. If you're planning to use this plugin on production server, please consider using [version 1](https://github.com/fujaru/jquery-wheelcolorpicker/tree/v1) at the moment. The newer version 2 will be backward compatible so no need to worry.
+
+------------------------------------------------------------
+
 jQuery Wheel Color Picker Plugin
 ================================
 
@@ -79,6 +86,17 @@ Initialize the color picker to an element by simply calling:
 Documentation
 -------------
 See [Documentation Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki) for a complete documentation.
+
+
+Supported Browsers
+------------------
+This plugin is supported in the following browsers:
+
+*   IE 9+
+*   Firefox 4+
+*   Opera 10+
+*   Chrome
+*   Safari 5+
 
 
 What's New
