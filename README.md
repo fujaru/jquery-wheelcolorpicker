@@ -1,3 +1,4 @@
+<!--
 Notice: Old Version
 -------------------
 This branch contains the **old 1.x version** of jQuery Wheel Color Picker plugin and no longer maintained. If you're intending to use this plugin for your new websites, please look for the newer 2.x version in **master** branch instead. The newer version has a cleaner code and addresses a few issues that persists in this version.
@@ -5,6 +6,7 @@ This branch contains the **old 1.x version** of jQuery Wheel Color Picker plugin
 The files were originally hosted at http://v6.jar2.net/projects/jquery-wheelcolorpicker which has been migrated to GitHub to maintain compatibility with newer jQuery Plugin Registry website.
 
 ------------------------------------------------------------
+-->
 
 jQuery - Wheel Color Picker Plugin
 ==================================
