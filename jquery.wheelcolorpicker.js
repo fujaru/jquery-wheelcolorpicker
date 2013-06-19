@@ -10,11 +10,11 @@
 
 (function($) {
 	
-	// Contains private methods
-	var private = {};
-	
 	// Contains public methods
 	var methods = {};
+	
+	// Contains private methods
+	var private = {};
 	
 	// Holds the color picker popup widget for use globally
 	var g_Popup = null;
@@ -404,7 +404,7 @@
 			if(this != $widget.data('jQWCP.inputElm'))
 				return;
 				
-			var w = settings.quality * 50;
+			var w = 1;
 			var h = settings.quality * 50;
 			
 			var A = 1;
@@ -540,6 +540,18 @@
 				
 			//~ console.log(color);
 			
+			// Wheel
+			var $wheel = $widget.find('.jQWCP-wWheel');
+			var $wheelCursor = $widget.find('.jQWCP-wWheelCursor');
+			var $wheelOverlay = $widget.find('.jQWCP-wWheelOverlay');
+			var wheelX = Math.cos(2 * Math.PI * color.h) * color.s;
+			var wheelY = Math.sin(2 * Math.PI * color.h) * color.s;
+			var wheelOffsetX = $wheel.width() / 2;
+			var wheelOffsetY = $wheel.height() / 2;
+			$wheelCursor.css('left', (wheelOffsetX + (wheelX * $wheel.width() / 2)) + 'px');
+			$wheelCursor.css('top', (wheelOffsetY - (wheelY * $wheel.height() / 2)) + 'px');
+			$wheelOverlay.css('opacity', 1 - (color.v < 0.2 ? 0.2 : color.v));
+			
 			// Hue
 			var $hueSlider = $widget.find('.jQWCP-wHueSlider');
 			var $hueCursor = $widget.find('.jQWCP-wHueCursor');
@@ -637,6 +649,7 @@
 			color.r = rgb.r;
 			color.g = rgb.g;
 			color.b = rgb.b;
+			//~ console.log(color);
 		});
 		
 		methods.updateSliders.call( this, "rgb" );
@@ -707,47 +720,49 @@
 				"</div>" + 
 				"<div class='jQWCP-wHSVGroup'>" +
 					"<div class='jQWCP-wHue jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wHueSlider jQWCP-slider' width='" + sCanvasSize + "' height='" + sCanvasSize + "' title='Hue'></canvas>" +
+						"<canvas class='jQWCP-wHueSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Hue'></canvas>" +
 						"<span class='jQWCP-wHueCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wSat jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wSatSlider jQWCP-slider' width='" + sCanvasSize + "' height='" + sCanvasSize + "' title='Saturation'></canvas>" +
+						"<canvas class='jQWCP-wSatSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Saturation'></canvas>" +
 						"<span class='jQWCP-wSatCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wVal jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wValSlider jQWCP-slider' width='" + sCanvasSize + "' height='" + sCanvasSize + "' title='Value'></canvas>" +
+						"<canvas class='jQWCP-wValSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Value'></canvas>" +
 						"<span class='jQWCP-wValCursor jQWCP-scursor'></span>" +
 					"</div>" +
 				"</div>" +
 				"<div class='jQWCP-wRGBGroup'>" +
 					"<div class='jQWCP-wRed jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wRedSlider jQWCP-slider' width='" + sCanvasSize + "' height='" + sCanvasSize + "' title='Red'></canvas>" +
+						"<canvas class='jQWCP-wRedSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Red'></canvas>" +
 						"<span class='jQWCP-wRedCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wGreen jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wGreenSlider jQWCP-slider' width='" + sCanvasSize + "' height='" + sCanvasSize + "' title='Green'></canvas>" +
+						"<canvas class='jQWCP-wGreenSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Green'></canvas>" +
 						"<span class='jQWCP-wGreenCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wBlue jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='" + sCanvasSize + "' height='" + sCanvasSize + "' title='Blue'></canvas>" +
+						"<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Blue'></canvas>" +
 						"<span class='jQWCP-wBlueCursor jQWCP-scursor'></span>" +
 					"</div>" +
 				"</div>" +
 				"<div class='jQWCP-wAlpha jQWCP-slider-wrapper'>" +
-					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='" + sCanvasSize + "' height='" + sCanvasSize + "' title='Alpha'></canvas>" +
+					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Alpha'></canvas>" +
 					"<span class='jQWCP-wAlphaCursor jQWCP-scursor'></span>" +
 				"</div>" +
 			"</div>"
 		);
 			
 		// Small UI fix to disable highlighting the widget
-		$widget.find('.jQWCP-slider-wrapper, .jQWCP-scursor, .jQWCP-slider')
+		$widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-scursor, .jQWCP-slider')
 			.attr('unselectable', 'on')
 			.css('-moz-user-select', 'none')
 			.css('-webkit-user-select', 'none')
 			.css('user-select', 'none');
 			
 		// Bind widget events
+		$widget.on('mousedown.wheelColorPicker', '.jQWCP-wWheel', private.onWheelMouseDown);
+		$widget.on('mousedown.wheelColorPicker', '.jQWCP-wWheelCursor', private.onWheelCursorMouseDown);
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-slider', private.onSliderMouseDown);
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-scursor', private.onSliderCursorMouseDown);
 		
@@ -784,6 +799,35 @@
 	};
 	
 	/**
+	 * Function: onWheelMouseDown
+	 * 
+	 * Begin clicking the wheel down. This will allow user to move 
+	 * the crosshair although the mouse is outside the wheel.
+	 */
+	private.onWheelMouseDown = function( e ) {
+		var $this = $(this); // Refers to wheel
+		var $widget = $this.parents('jQWCP-wWidget:eq(0)');
+		var $input = $( $widget.data('jQWCP.inputElm') );
+		
+		$('body').data('jQWCP.activeControl', $this.get(0));
+	};
+	
+	
+	/**
+	 * Function: onWheelCursorMouseDown
+	 * 
+	 * Begin clicking the wheel down. This will allow user to move 
+	 * the crosshair although the mouse is outside the wheel.
+	 */
+	private.onWheelCursorMouseDown = function( e ) {
+		var $this = $(this); // Refers to cursor
+		var $widget = $this.parents('jQWCP-wWidget:eq(0)');
+		var $input = $( $widget.data('jQWCP.inputElm') );
+		
+		$('body').data('jQWCP.activeControl', $this.parent().get(0));
+	};
+	
+	/**
 	 * Function: onSliderMouseDown
 	 * 
 	 * Begin clicking the slider down. This will allow user to move 
@@ -817,12 +861,25 @@
 	 * Clear active control reference.
 	 */
 	private.onBodyMouseUp = function( e ) {
+		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
 		
-		// Last time update active control before clearing
-		private.updateActiveControl( e );
+		if($control.length != 0) {
+			var $widget = $control.parents('.jQWCP-wWidget:eq(0)');
+			var $input = $( $widget.data('jQWCP.inputElm') );
+			var settings = $input.data('jQWCP.settings');
 		
-		// Clear active control reference
-		$('body').data('jQWCP.activeControl', null);
+			// Last time update active control before clearing
+			private.updateActiveControl( e );
+			
+			// Rebind blur event to input elm which was temporarily released when popup dialog is shown
+			if(settings.layout == 'popup') {
+				$input.on('blur.wheelColorPicker', methods.hide);
+				$input.focus();
+			}
+			
+			// Clear active control reference
+			$('body').data('jQWCP.activeControl', null);
+		}
 	};
 	
 	/**
@@ -831,7 +888,7 @@
 	 * Move the active slider (when mouse click is down).
 	 */
 	private.onBodyMouseMove = function( e ) {
-		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper
+		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
 		
 		if($control.length == 0)
 			return;
@@ -856,8 +913,39 @@
 		var $input = $( $widget.data('jQWCP.inputElm') );
 		var color = $input.data('jQWCP.color');
 		
+		/// WHEEL CONTROL ///
+		if($control.hasClass('jQWCP-wWheel')) {
+			var $cursor = $control.find('.jQWCP-wWheelCursor');
+			var $overlay = $control.find('.jQWCP-wWheelOverlay');
+			
+			var relX = (e.pageX - $control.offset().left - ($control.width() / 2)) / ($control.width() / 2);
+			var relY = - (e.pageY - $control.offset().top - ($control.height() / 2)) / ($control.height() / 2);
+			
+			//~ console.log(relX + ' ' + relY);
+			
+			// Sat value is calculated from the distance of the cursor from the central point
+			var sat = Math.sqrt(Math.pow(relX, 2) + Math.pow(relY, 2));
+			// If distance is out of bound, reset to the upper bound
+			if(sat > 1) {
+				sat = 1;
+			}
+			
+			// Hue is calculated from the angle of the cursor. 0deg is set to the right, and increase counter-clockwise.
+			var hue = Math.atan( relY / relX ) / ( 2 * Math.PI );
+			// If hue is negative, then fix the angle value (meaning angle is in either Q2 or Q4)
+			if( hue < 0 ) {
+				hue += 0.5;
+			}
+			// If y is negative, then fix the angle value (meaning angle is in either Q3 or Q4)
+			if( relY < 0 ) {
+				hue += 0.5;
+			}
+			
+			methods.setHsv.call( $input, hue, sat, color.v );
+		}
+		
 		/// SLIDER CONTROL ///
-		if($control.hasClass('jQWCP-slider-wrapper')) {
+		else if($control.hasClass('jQWCP-slider-wrapper')) {
 			var $cursor = $control.find('.jQWCP-scursor');
 			
 			var relY = (e.pageY - $control.offset().top) / $control.height();

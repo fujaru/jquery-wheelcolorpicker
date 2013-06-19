@@ -21,10 +21,7 @@ Features
 
 **SUPPORTED COLORS**
 
-This plugin supports the following color modes:
-
-*   RGB
-*   RGBA
+This plugin supports both RGB and HSV modes with additional Alpha channel.
 
 **MULTIPLE FORMAT**
 
@@ -36,36 +33,16 @@ There are numbers of formats which the color picker can display its value:
 *   **rgba** format, e.g. rgba(255, 255, 255, 1)
 *   **rgb%** format, e.g. rgb(100%, 100%, 100%)
 *   **rgba%** format, e.g. rgb(100%, 100%, 100%, 1)
+     
+**INDIVIDUAL SLIDERS**
+
+The color picker can be set to display slider for each individual color channel.
 
 **THEMING CAPABILITY**
 
 The color picker appearance can be customized using CSS. This package already contains two CSS variants which can be used as starting point to make your own theme.
 
-
-Planned Features
-----------------
-
-There are new features which are listed to be implemented in the near-future releases.
-
-**ADJUSTABLE COLOR PICKER SIZE**
-
-The color picker size can be adjusted with two options:
-
-*   **fixed** size in width x height px
-*   **stretch** the width to be the same as it's corresponding input element
-
-**RESIZEABLE COLOR PICKER**
-
-Enables user to resize color picker so they can pick the color more precisely.
-
-**COMPONENT COLOR RETRIEVAL**
-
-Get only the R, G, or B value from the selected color.
-
-
-License
--------
-jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
+See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Features) for the complete list.
 
 
 Usage
@@ -88,15 +65,9 @@ Documentation
 See [Documentation Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki) for a complete documentation.
 
 
-Supported Browsers
-------------------
-This plugin is supported in the following browsers:
-
-*   IE 9+
-*   Firefox 4+
-*   Opera 10+
-*   Chrome
-*   Safari 5+
+License
+-------
+jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
 What's New

@@ -11,8 +11,10 @@
 	<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
 	<script type="text/javascript">
 		$(function() {
-			$('.color-inline').wheelColorPicker();
-			$('#color-block').wheelColorPicker({ layout: 'block', live: false });
+			$('#color-inline1').wheelColorPicker();
+			$('#color-inline2').wheelColorPicker({ sliders: "whsv" });
+			$('#color-inline3').wheelColorPicker({ live: false, sliders: "wrgba" });
+			$('#color-block').wheelColorPicker({ layout: 'block', sliders: "whsvrgba" });
 		});
 	</script>
 </head>
@@ -21,10 +23,18 @@
 	<h1>jQuery Wheel Color Picker Example</h1>
 	
 	<p>
-		Pick your favorite color here: 
-		<input type="text" class="color-inline" />
-		or here:
-		<input type="text" class="color-inline" />
+		Pick your favorite color here: <br />
+		<input type="text" id="color-inline1" />
+	</p>
+	
+	<p>
+		Or here: <br />
+		<input type="text" id="color-inline2" />
+	</p>
+	
+	<p>
+		Or here: <br />
+		<input type="text" id="color-inline3" />
 	</p>
 	
 	<p>
