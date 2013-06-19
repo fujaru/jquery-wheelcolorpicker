@@ -1,6 +1,6 @@
 {
 	"name": "wheelcolorpicker",
-	"version": "1.3.3-r1",
+	"version": "1.3.4",
 	"title": "Wheel Color Picker",
 	"description": "A jQuery plugin to add color picker functionality to HTML form inputs in the round color wheel fashion.",
 	"keywords": [
