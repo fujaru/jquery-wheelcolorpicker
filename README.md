@@ -30,9 +30,7 @@ There are numbers of formats which the color picker can display its value:
 *   **hex** format, e.g. ffffff
 *   **CSS-style hex** format, e.g. #ffffff
 *   **rgb** format, e.g. rgb(255, 255, 255)
-*   **rgba** format, e.g. rgba(255, 255, 255, 1)
-*   **rgb%** format, e.g. rgb(100%, 100%, 100%)
-*   **rgba%** format, e.g. rgb(100%, 100%, 100%, 1)
+*   **hsv** format, e.g. hsv(1.0, 1.0, 1.0)
      
 **INDIVIDUAL SLIDERS**
 
@@ -58,6 +56,11 @@ Initialize the color picker to an element by simply calling:
     <script type="text/javascript">
       $(function() { $('.colorpicker').wheelColorPicker(); });
     </script>
+
+
+Demo
+----
+Try Wheel Color Picker plugin in action at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
 
 
 Documentation
