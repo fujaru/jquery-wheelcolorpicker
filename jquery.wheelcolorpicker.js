@@ -116,14 +116,13 @@
 		live: true, /* 2.0 */
 		userinput: true, /* DEPRECATED 1.x */
 		validate: false, /* DEPRECATED 1.x */ /* See autoConvert */
-		autoConvert: true, /* 2.0 */
+		autoConvert: true, /* 2.0 */ /* NOT IMPLEMENTED */
 		color: null, /* DEPRECATED 1.x */ /* Init-time usage only */
 		alpha: null, /* DEPRECATED 1.x */ /* See methods.alpha */
-		inverseLabel: false, /* OBSOLETE 1.x */
 		preserveWheel: false, /* 1.x */
 		cssClass: '', /* 2.0 */
-		width: null, /* 2.0 */
-		height: null, /* 2.0 */
+		width: null, /* 2.0 */ /* NOT IMPLEMENTED */
+		height: null, /* 2.0 */ /* NOT IMPLEMENTED */
 		layout: 'popup', /* 2.0 */
 		animDuration: 200, /* 2.0 */
 		quality: 1, /* 2.0 */

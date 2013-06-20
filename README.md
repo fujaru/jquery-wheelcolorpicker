@@ -48,14 +48,18 @@ Usage
 
 Initialize the color picker to an element by simply calling:
 
-    .wheelColorPicker( options );
+```js
+.wheelColorPicker( options );
+```
 
 **Example**
 
-    <input type="text" class="colorpicker" />
-    <script type="text/javascript">
-      $(function() { $('.colorpicker').wheelColorPicker(); });
-    </script>
+```html
+<input type="text" class="colorpicker" />
+<script type="text/javascript">
+  $(function() { $('.colorpicker').wheelColorPicker(); });
+</script>
+```
 
 
 Demo
