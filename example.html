@@ -12,8 +12,8 @@
 	<script type="text/javascript">
 		$(function() {
 			$('#color-inline1').wheelColorPicker();
-			$('#color-inline2').wheelColorPicker({ sliders: "whsv" });
-			$('#color-inline3').wheelColorPicker({ live: false, sliders: "wrgba" });
+			$('#color-inline2').wheelColorPicker({ sliders: "whsv", preview: true, format: "css" });
+			$('#color-inline3').wheelColorPicker({ live: false, sliders: "wrgba", format: "rgba" });
 			$('#color-block').wheelColorPicker({ layout: 'block', sliders: "whsvrgba" });
 		});
 	</script>
@@ -34,12 +34,12 @@
 	
 	<p>
 		Or here: <br />
-		<input type="text" id="color-inline3" />
+		<input type="text" id="color-inline3" value="#123456" />
 	</p>
 	
 	<p>
 		Or here: <br />
-		<input type="text" id="color-block" />
+		<input type="text" id="color-block" value="#000000" />
 	</p>
 	
 	<h2>Get Started</h2>

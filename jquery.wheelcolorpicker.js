@@ -72,14 +72,15 @@
 	 *   format    - String [hex|css|rgb|rgba|rgb%] Color naming style
 	 *   live      - Boolean Enable dynamic slider gradients.
 	 *   preview   - Boolean Enable live color preview on input field
-	 *   userinput - Boolean Enable picking color by typing directly
-	 *   validate  - Boolean When userinput is enabled, always convert 
-	 *               the input value to a specified format.
-	 *   color     - (Deprecated) String Initial value in any of supported color 
-	 *               value format. This value takes precedence over 
-	 *               value attribute specified directly on input tags. 
-	 *               If you want to use the tag's value attribute instead, 
-	 *               set this to null.
+	 *   userinput - (Deprecated) Boolean Enable picking color by typing directly
+	 *   validate  - (Deprecated) Boolean When userinput is enabled, always convert 
+	 *               the input value to a specified format. This option is 
+	 *               deprecated. use autoConvert instead.
+	 *   autoConvert     - Boolean Automatically convert inputted value to 
+	 *                     speified format.
+	 *   color     - Mixed Initial value in any of supported color 
+	 *               value format or as an object. Setting this value will 
+	 *               override the current input value.
 	 *   alpha     - (Deprecated) Boolean Force the color picker to use alpha value 
 	 *               despite its selected color format. This option is 
 	 *               deprecated. Use sliders = "a" instead.
@@ -100,34 +101,335 @@
 	 *                     and fade-out.
 	 *   quality   - Number Quality factor. The normal quality is 1.
 	 *   sliders   - String combination of sliders. If null then the color 
-	 *               picker will show default values, which is "wv" for 
-	 *               normal color or "wva" for color with alpha value. 
-	 *               Possible combinations are "whsvrgba". Note that the 
+	 *               picker will show default values, which is "wvp" for 
+	 *               normal color or "wvap" for color with alpha value. 
+	 *               Possible combinations are "whsvrgbap". Note that the 
 	 *               order of letters affects the slider positions.
+	 *   showLabels      - Boolean Show labels for each slider.
 	 */
 	$.fn.wheelColorPicker.defaults = {
-		format: 'hex',
-		preview: true,
-		live: true,
-		userinput: true,
-		validate: false,
-		color: null, /* DEPRECATED */
-		alpha: null, /* DEPRECATED */
-		inverseLabel: false, /* DEPRECATED */
-		preserveWheel: false,
-		cssClass: '',
-		width: null,
-		height: null,
-		layout: 'popup',
-		animDuration: 200,
-		quality: 1,
-		sliders: null
+		format: 'hex', /* 1.x */
+		preview: false, /* 1.x */
+		live: true, /* 2.0 */
+		userinput: true, /* DEPRECATED 1.x */
+		validate: false, /* DEPRECATED 1.x */ /* See autoConvert */
+		autoConvert: true, /* 2.0 */
+		color: null, /* DEPRECATED 1.x */ /* Init-time usage only */
+		alpha: null, /* DEPRECATED 1.x */ /* See methods.alpha */
+		inverseLabel: false, /* OBSOLETE 1.x */
+		preserveWheel: false, /* 1.x */
+		cssClass: '', /* 2.0 */
+		width: null, /* 2.0 */
+		height: null, /* 2.0 */
+		layout: 'popup', /* 2.0 */
+		animDuration: 200, /* 2.0 */
+		quality: 1, /* 2.0 */
+		sliders: null, /* 2.0 */
+		showSliderLabel: true, /* 2.0 */
+		showSliderValue: false /* 2.0 */
 	};
 	
 	$.fn.wheelColorPicker.hasInit = false;
 	
 	/**
+	 * Function: colorToStr
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Convert color object to string in specified format
+	 * 
+	 * Available formats:
+	 * - hex
+	 * - css
+	 * - rgb
+	 * - rgb%
+	 * - rgba
+	 * - rgba%
+	 * - hsv
+	 * - hsv%
+	 * - hsva
+	 * - hsva%
+	 */
+	$.fn.wheelColorPicker.colorToStr = function( color, format ) {
+		var result = "";
+		switch( format ) {
+			case 'css':
+				result = "#";
+			case 'hex': 
+				var r = Math.round(color.r * 255).toString(16);
+				if( r.length == 1) {
+					r = "0" + r;
+				}
+				var g = Math.round(color.g * 255).toString(16);
+				if( g.length == 1) {
+					g = "0" + g;
+				}
+				var b = Math.round(color.b * 255).toString(16);
+				if( b.length == 1) {
+					b = "0" + b;
+				}
+				result += r + g + b;
+				break;
+				
+			case 'rgb':
+				result = "rgb(" + 
+					Math.round(color.r * 255) + "," + 
+					Math.round(color.g * 255) + "," + 
+					Math.round(color.b * 255) + ")";
+				break;
+				
+			case 'rgb%':
+				result = "rgb(" + 
+					(color.r * 100) + "%," + 
+					(color.g * 100) + "%," + 
+					(color.b * 100) + "%)";
+				break;
+				
+			case 'rgba':
+				result = "rgba(" + 
+					Math.round(color.r * 255) + "," + 
+					Math.round(color.g * 255) + "," + 
+					Math.round(color.b * 255) + "," + 
+					color.a + ")";
+				break;
+				
+			case 'rgba%':
+				result = "rgba(" + 
+					(color.r * 100) + "%," + 
+					(color.g * 100) + "%," + 
+					(color.b * 100) + "%," + 
+					(color.a * 100) + "%)";
+				break;
+				
+			case 'hsv':
+				result = "hsv(" + 
+					color.h + "," + 
+					color.s + "," + 
+					color.v + ")";
+				break;
+				
+			case 'hsv%':
+				result = "hsv(" + 
+					(color.h * 100) + "%," + 
+					(color.s * 100) + "%," + 
+					(color.v * 100) + "%)";
+				break;
+				
+			case 'hsva':
+				result = "hsva(" + 
+					color.h + "," + 
+					color.s + "," + 
+					color.v + "," + 
+					color.a + ")";
+				break;
+				
+			case 'hsva%':
+				result = "hsva(" + 
+					(color.h * 100) + "%," + 
+					(color.s * 100) + "%," + 
+					(color.v * 100) + "%," + 
+					(color.a * 100) + "%)";
+				break;
+				
+		}
+		return result;
+	};
+	
+	/**
+	 * Function: strToColor
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Convert string to color object.
+	 * Please note that if RGB color is supplied, the returned value 
+	 * will only contain RGB.
+	 * 
+	 * If invalid string is supplied, FALSE will be returned.
+	 */
+	$.fn.wheelColorPicker.strToColor = function( val ) {
+		var color = { a: 1 };
+		var tmp;
+		var hasAlpha;
+		
+		// #ffffff
+		if(val.match(/^#[0-9a-f]{6}$/i) != null) {
+			if( isNaN( color.r = parseInt(val.substr(1, 2), 16) / 255 ) ) {
+				return false;
+			}
+			if( isNaN( color.g = parseInt(val.substr(3, 2), 16) / 255 ) ) {
+				return false;	
+			}
+			if( isNaN( color.b = parseInt(val.substr(5, 2), 16) / 255 ) ) {
+				return false;
+			}
+		}
+		
+		// ffffff
+		else if(val.match(/^[0-9a-f]{6}$/i) != null) {
+			if( isNaN( color.r = parseInt(val.substr(0, 2), 16) / 255 ) ) {
+				return false;
+			}
+			if( isNaN( color.g = parseInt(val.substr(2, 2), 16) / 255 ) ) {
+				return false;
+			}
+			if( isNaN( color.b = parseInt(val.substr(4, 2), 16) / 255 ) ) {
+				return false;
+			}
+		}
+		
+		// rgb(100%,100%,100%)
+		// rgba(100%,100%,100%,100%)
+		// rgba(255,255,255,1)
+		// rgba(100%,1, 0.5,.2)
+		else if(
+			val.match(/^rgba\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null ||
+			val.match(/^rgb\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null 
+		) {
+			if(val.match(/a/i) != null) {
+				hasAlpha = true;
+			}
+			else {
+				hasAlpha = false;
+			}
+			
+			tmp = val.substring(val.indexOf('(')+1, val.indexOf(','));
+			if( tmp.charAt( tmp.length-1 ) == '%') {
+				if( isNaN( color.r = parseFloat(tmp) / 100 ) ) {
+					return false;
+				}
+			}
+			else {
+				if( isNaN( color.r = parseInt(tmp) / 255 ) ) {
+					return false;
+				}
+			}
+			
+			tmp = val.substring(val.indexOf(',')+1, val.indexOf(',', val.indexOf(',')+1));
+			if( tmp.charAt( tmp.length-1 ) == '%') {
+				if( isNaN( color.g = parseFloat(tmp) / 100 ) ) {
+					return false;
+				}
+			}
+			else {
+				if( isNaN( color.g = parseInt(tmp) / 255 ) ) {
+					return false;
+				}
+			}
+			
+			if(hasAlpha) {
+				tmp = val.substring(val.indexOf(',', val.indexOf(',')+1)+1, val.lastIndexOf(','));
+			}
+			else {
+				tmp = val.substring(val.lastIndexOf(',')+1, val.lastIndexOf(')'));
+			}
+			if( tmp.charAt( tmp.length-1 ) == '%') {
+				if( isNaN( color.b = parseFloat(tmp) / 100 ) ) {
+					return false;
+				}
+			}
+			else {
+				if( isNaN( color.b = parseInt(tmp) / 255 ) ) {
+					return false;
+				}
+			}
+			
+			if(hasAlpha) {
+				tmp = val.substring(val.lastIndexOf(',')+1, val.lastIndexOf(')'));
+				if( tmp.charAt( tmp.length-1 ) == '%') {
+					if( isNaN( color.a = parseFloat(tmp) / 100 ) ) {
+						return false;
+					}
+				}
+				else {
+					if( isNaN( color.a = parseFloat(tmp) ) ) {
+						return false;
+					}
+				}
+			}
+		}
+		
+		// hsv(100%,100%,100%)
+		// hsva(100%,100%,100%,100%)
+		// hsva(1,1,1,1)
+		// hsva(100%,1, 0.5,.2)
+		else if(
+			val.match(/^hsva\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null ||
+			val.match(/^hsv\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null 
+		) {
+			if(val.match(/a/i) != null) {
+				hasAlpha = true;
+			}
+			else {
+				hasAlpha = false;
+			}
+			
+			tmp = val.substring(val.indexOf('(')+1, val.indexOf(','));
+			if( tmp.charAt( tmp.length-1 ) == '%') {
+				if( isNaN( color.h = parseFloat(tmp) / 100 ) ) {
+					return false;
+				}
+			}
+			else {
+				if( isNaN( color.h = parseFloat(tmp) ) ) {
+					return false;
+				}
+			}
+			
+			tmp = val.substring(val.indexOf(',')+1, val.indexOf(',', val.indexOf(',')+1));
+			if( tmp.charAt( tmp.length-1 ) == '%') {
+				if( isNaN( color.s = parseFloat(tmp) / 100 ) ) {
+					return false;
+				}
+			}
+			else {
+				if( isNaN( color.s = parseFloat(tmp) ) ) {
+					return false;
+				}
+			}
+			
+			if(hasAlpha) {
+				tmp = val.substring(val.indexOf(',', val.indexOf(',')+1)+1, val.lastIndexOf(','));
+			}
+			else {
+				tmp = val.substring(val.lastIndexOf(',')+1, val.lastIndexOf(')'));
+			}
+			if( tmp.charAt( tmp.length-1 ) == '%') {
+				if( isNaN( color.v = parseFloat(tmp) / 100 ) ) {
+					return false;
+				}
+			}
+			else {
+				if( isNaN( color.v = parseFloat(tmp) ) ) {
+					return false;
+				}
+			}
+			
+			if(hasAlpha) {
+				tmp = val.substring(val.lastIndexOf(',')+1, val.lastIndexOf(')'));
+				if( tmp.charAt( tmp.length-1 ) == '%') {
+					if( isNaN( color.a = parseFloat(tmp) / 100 ) ) {
+						return false;
+					}
+				}
+				else {
+					if( isNaN( color.a = parseFloat(tmp) ) ) {
+						return false;
+					}
+				}
+			}
+		}
+		
+		else {
+			return false;
+		}
+		
+		return color;
+	};
+	
+	/**
 	 * Function: hsvToRgb
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Perform HSV to RGB conversion
 	 */
@@ -161,6 +463,8 @@
 	
 	/**
 	 * Function: rgbToHsv
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Perform RGB to HSV conversion
 	 */
@@ -212,6 +516,8 @@
 	
 	/**
 	 * Function: staticInit
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Initialize wheel color picker globally
 	 */
@@ -301,11 +607,39 @@
 				$this.on('focus.wheelColorPicker', methods.show);
 				$this.on('blur.wheelColorPicker', methods.hide);
 			}
+			
+			// Bind input events
+			$this.on('keyup.wheelColorPicker', private.onInputKeyup);
+			$this.on('change.wheelColorPicker', private.onInputChange);
+			
+			// Set color value
+			if(settings.color == null) {
+				methods.setValue.call( $this, $this.val() );
+			}
+			else if(typeof(settings.color) == "object") {
+				methods.setColor.call( $this, settings.color );
+				settings.color = undefined;
+			}
+			else {
+				methods.setValue.call( $this, settings.color );
+				settings.color = undefined;
+			}
+			
+			// Set readonly mode
+			/* DEPRECATED */
+			if(settings.userinput) {
+				$this.removeAttr('readonly');
+			}
+			else {
+				$this.attr('readonly', true);
+			}
 		});
 	};
 	
 	/**
 	 * Function: setOptions
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Set options to the color picker
 	 */
@@ -384,6 +718,8 @@
 	/**
 	 * Function: redrawSliders
 	 * 
+	 * Introduced in 2.0
+	 * 
 	 * Redraw slider gradients.
 	 * 
 	 * Parameter:
@@ -426,6 +762,15 @@
 				V = color.v;
 			}
 			
+			/// PREVIEW ///
+			// Preview box must always be redrawn
+			var $previewBox = $widget.find('.jQWCP-wPreviewBox');
+			var previewBoxCtx = $previewBox.get(0).getContext('2d');
+			previewBoxCtx.fillStyle = "rgba(" + R + "," + G + "," + B + "," + A + ")";
+			previewBoxCtx.clearRect(0, 0, 1, 1);
+			previewBoxCtx.fillRect(0, 0, 1, 1);
+			
+			/// SLIDERS ///
 			if(!settings.live && !force)
 				return;
 			
@@ -518,11 +863,14 @@
 			valGradient.addColorStop(1, "#000");
 			valSliderCtx.fillStyle = valGradient;
 			valSliderCtx.fillRect(0, 0, w, h);
+			
 		});
 	};
 	
 	/**
 	 * Function: updateSliders
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Update slider positions.
 	 */
@@ -550,7 +898,12 @@
 			var wheelOffsetY = $wheel.height() / 2;
 			$wheelCursor.css('left', (wheelOffsetX + (wheelX * $wheel.width() / 2)) + 'px');
 			$wheelCursor.css('top', (wheelOffsetY - (wheelY * $wheel.height() / 2)) + 'px');
-			$wheelOverlay.css('opacity', 1 - (color.v < 0.2 ? 0.2 : color.v));
+			if(settings.preserveWheel) {
+				$wheelOverlay.css('opacity', 0);
+			}
+			else {
+				$wheelOverlay.css('opacity', 1 - (color.v < 0.2 ? 0.2 : color.v));
+			}
 			
 			// Hue
 			var $hueSlider = $widget.find('.jQWCP-wHueSlider');
@@ -590,7 +943,21 @@
 	};
 	
 	/**
+	 * Function: updateSelection
+	 * 
+	 * DEPRECATED in 2.0
+	 * 
+	 * Update color dialog selection to match current selectedColor value.
+	 */
+	methods.updateSelection = function() {
+		methods.redrawSliders.call( $this );
+		return methods.updateSliders.call( $this );
+	};
+	
+	/**
 	 * Function: setRgba
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Set color using RGBA combination.
 	 */
@@ -621,6 +988,8 @@
 	/**
 	 * Function: setRgb
 	 * 
+	 * Introduced in 2.0
+	 * 
 	 * Set color using RGB combination.
 	 */
 	methods.setRgb = function( r, g, b ) {
@@ -629,6 +998,8 @@
 	
 	/**
 	 * Function: setHsva
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Set color using HSVA combination.
 	 */
@@ -659,6 +1030,8 @@
 	/**
 	 * Function: setHsv
 	 * 
+	 * Introduced in 2.0
+	 * 
 	 * Set color using HSV combination.
 	 */
 	methods.setHsv = function( h, s, v ) {
@@ -668,19 +1041,71 @@
 	/**
 	 * Function: setAlpha
 	 * 
+	 * Introduced in 2.0
+	 * 
 	 * Set alpha value.
 	 */
 	methods.setAlpha = function( value ) {
-		return this.each(function() {
+		this.each(function() {
 			var $this = $(this); // Refers to input elm
 			var color = $this.data('jQWCP.color');
 			
 			color.a = value;
 		});
+		return methods.redrawSliders.call( this, "" );
+	};
+	
+	/**
+	 * Function: alpha
+	 * 
+	 * Introduced in 2.0
+	 * DEPRECATED in 2.0
+	 * 
+	 * This function is made to maintain compatibility with deprecated 
+	 * alpha option.
+	 */
+	methods.alpha = function( value ) {
+		var settings = this.data('jQWCP.settings');
+		if( value == null ) {
+			return settings.sliders.indexOf('a') == -1 ? false : true;
+		}
+		else if( value == true ) {
+			if(settings.sliders.indexOf('a') == -1)
+				return this.each(function() {
+					var $this = $(this); // Refers to input control
+					var settings = $this.data('jQWCP.settings');
+					settings.sliders += 'a';
+				});
+		}
+		else if( value == false ) {
+			return this.each(function() {
+				var $this = $(this); // Refers to input control
+				var settings = $this.data('jQWCP.settings');
+				settings.sliders.replace('a', '');
+			});
+		}
+	};
+	
+	/**
+	 * Function: color
+	 * 
+	 * DEPRECATED in 2.0
+	 * 
+	 * Gets/sets color
+	 */
+	methods.color = function( value ) {
+		if(value == null) {
+			return methods.getValue.call( this );
+		}
+		else {
+			return methods.setValue.call( this, value );
+		}
 	};
 	
 	/**
 	 * Function: getColor
+	 * 
+	 * Introduced in 2.0
 	 * 
 	 * Return color components as an object. The object consists of:
 	 * { 
@@ -694,8 +1119,57 @@
 	 * }
 	 */
 	methods.getColor = function() {
-		return $(this).data('jQWCP.color');
+		return this.data('jQWCP.color');
 	};
+	
+	/**
+	 * Function: setColor
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Set color by passing an object consisting of:
+	 * { r, g, b, a } or
+	 * { h, s, v, a }
+	 */
+	methods.setColor = function( color ) {
+		if(color.r != null) {
+			return methods.setRgba.call( this, color.r, color.g, color.b, color.a );
+		}
+		else if(color.h != null) {
+			return methods.setHsva.call( this, color.h, color.s, color.v, color.a );
+		}
+		else if(color.a != null) {
+			return methods.setAlpha.call( this, color.a );
+		}
+		return this;
+	};
+	
+	/**
+	 * Function: getValue
+	 * 
+	 * Get the color value as string.
+	 */
+	methods.getValue = function( format ) {
+		var settings = this.data('jQWCP.settings');
+		if( format == null ) {
+			format = settings.format;
+		}
+			
+		return $.fn.wheelColorPicker.colorToStr( this.data('jQWCP.color'), format );
+	};
+	
+	/**
+	 * Function: setValue
+	 * 
+	 * Set the color value as string.
+	 */
+	methods.setValue = function( value ) {
+		var color = $.fn.wheelColorPicker.strToColor( value );
+		if(!color)
+			return this;
+			
+		return methods.setColor.call( this, color );
+	}
 	
 	/**
 	 * Function: initWidget
@@ -749,6 +1223,9 @@
 				"<div class='jQWCP-wAlpha jQWCP-slider-wrapper'>" +
 					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Alpha'></canvas>" +
 					"<span class='jQWCP-wAlphaCursor jQWCP-scursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wPreview'>" +
+					"<canvas class='jQWCP-wPreviewBox' width='1' height='1' title='Selected Color'></canvas>" +
 				"</div>" +
 			"</div>"
 		);
@@ -911,6 +1388,7 @@
 		
 		var $widget = $control.parents('.jQWCP-wWidget:eq(0)');
 		var $input = $( $widget.data('jQWCP.inputElm') );
+		var settings = $input.data('jQWCP.settings');
 		var color = $input.data('jQWCP.color');
 		
 		/// WHEEL CONTROL ///
@@ -983,6 +1461,40 @@
 				methods.setAlpha.call( $input, 1-value );
 			}
 		}
+		
+		/// UPDATE INPUT ///
+		$input.val( methods.getValue.call( $input ) );
+		if( settings.preview ) {
+			$input.css('background', $.fn.wheelColorPicker.colorToStr( color, 'rgba' ));
+			if( color.v > .5 ) {
+				$input.css('color', 'black');
+			}
+			else {
+				$input.css('color', 'white');
+			}
+		}
+	};
+	
+	/**
+	 * Function: onInputChange
+	 * 
+	 * Update the color picker when input is changed.
+	 */
+	private.onInputChange = function( e ) {
+		var $this = $(this); // Refers to input elm
+		var color = $.fn.wheelColorPicker.strToColor( $this.val() );
+		if(color) {
+			methods.setColor.call( $this, color );
+		}
+	};
+	
+	/**
+	 * Function: onInputKeyup
+	 * 
+	 * Update the color picker when input is changed.
+	 */
+	private.onInputKeyup = function( e ) {
+		private.onInputChange.call( this, e );
 	};
 	
 	

@@ -14,7 +14,7 @@
 
 .jQWCP-wWidget {
 	position: absolute;
-	width: 410px;
+	width: 440px;
 	height: 200px;
 	background: #eee;
 	box-shadow: 1px 1px 4px #000;
@@ -70,13 +70,15 @@
 	left: 50%;
 }
 
-.jQWCP-slider-wrapper {
+.jQWCP-slider-wrapper,
+.jQWCP-wPreview {
 	position: absolute;
 	width: 20px;
 	height: 180px;
 }
 
-.jQWCP-slider {
+.jQWCP-slider,
+.jQWCP-wPreviewBox {
 	position: absolute;
 	width: 20px;
 	height: 180px;
@@ -138,5 +140,14 @@
 }
 
 .jQWCP-wAlphaSlider {
+	background: url('images/alpha.png');
+}
+
+.jQWCP-wPreview {
+	left: 410px;
+	top: 10px;
+}
+
+.jQWCP-wPreviewBox {
 	background: url('images/alpha.png');
 }
