@@ -1,10 +1,3 @@
-Notice: Development Stage
--------------------------
-
-The new version 2 is currently in heavy development. If you're planning to use this plugin on production server, please consider using [version 1](https://github.com/fujaru/jquery-wheelcolorpicker/tree/v1) at the moment. The newer version 2 will be backward compatible so no need to worry.
-
-------------------------------------------------------------
-
 jQuery Wheel Color Picker Plugin
 ================================
 
