@@ -4,7 +4,7 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2013.06.20
+ * Date   : 2013.07.10
  * 
  * Copyright © 2011-2013 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -72,7 +72,8 @@
 	 * 
 	 * Member properties:
 	 * 
-	 *   format    - String [hex|css|rgb|rgba|rgb%] Color naming style
+	 *   format    - String Color naming style. See colorToRgb for all 
+	 *               available formats.
 	 *   live      - Boolean Enable dynamic slider gradients.
 	 *   preview   - Boolean Enable live color preview on input field
 	 *   userinput - (Deprecated) Boolean Enable picking color by typing directly
@@ -151,6 +152,10 @@
 	 * - hsv%
 	 * - hsva
 	 * - hsva%
+	 * - hsb
+	 * - hsb%
+	 * - hsba
+	 * - hsba%
 	 */
 	$.fn.wheelColorPicker.colorToStr = function( color, format ) {
 		var result = "";
@@ -205,7 +210,7 @@
 				
 			case 'hsv':
 				result = "hsv(" + 
-					color.h + "," + 
+					(color.h * 360) + "," + 
 					color.s + "," + 
 					color.v + ")";
 				break;
@@ -219,7 +224,7 @@
 				
 			case 'hsva':
 				result = "hsva(" + 
-					color.h + "," + 
+					(color.h * 360) + "," + 
 					color.s + "," + 
 					color.v + "," + 
 					color.a + ")";
@@ -227,6 +232,37 @@
 				
 			case 'hsva%':
 				result = "hsva(" + 
+					(color.h * 100) + "%," + 
+					(color.s * 100) + "%," + 
+					(color.v * 100) + "%," + 
+					(color.a * 100) + "%)";
+				break;
+				
+				
+			case 'hsb':
+				result = "hsb(" + 
+					color.h + "," + 
+					color.s + "," + 
+					color.v + ")";
+				break;
+				
+			case 'hsb%':
+				result = "hsb(" + 
+					(color.h * 100) + "%," + 
+					(color.s * 100) + "%," + 
+					(color.v * 100) + "%)";
+				break;
+				
+			case 'hsba':
+				result = "hsba(" + 
+					color.h + "," + 
+					color.s + "," + 
+					color.v + "," + 
+					color.a + ")";
+				break;
+				
+			case 'hsba%':
+				result = "hsba(" + 
 					(color.h * 100) + "%," + 
 					(color.s * 100) + "%," + 
 					(color.v * 100) + "%," + 
@@ -352,11 +388,17 @@
 		
 		// hsv(100%,100%,100%)
 		// hsva(100%,100%,100%,100%)
-		// hsva(1,1,1,1)
-		// hsva(100%,1, 0.5,.2)
+		// hsv(360,1,1,1)
+		// hsva(360,1, 0.5,.2)
+		// hsb(100%,100%,100%)
+		// hsba(100%,100%,100%,100%)
+		// hsb(360,1,1,1)
+		// hsba(360,1, 0.5,.2)
 		else if(
 			val.match(/^hsva\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null ||
-			val.match(/^hsv\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null 
+			val.match(/^hsv\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null ||
+			val.match(/^hsba\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null ||
+			val.match(/^hsb\s*\(\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*,\s*([0-9\.]+%|[01]?\.?[0-9]*)\s*\)$/i) != null 
 		) {
 			if(val.match(/a/i) != null) {
 				hasAlpha = true;
@@ -372,7 +414,7 @@
 				}
 			}
 			else {
-				if( isNaN( color.h = parseFloat(tmp) ) ) {
+				if( isNaN( color.h = parseFloat(tmp) / 360 ) ) {
 					return false;
 				}
 			}
@@ -557,10 +599,15 @@
 			var color = { h: 0, s: 0, v: 1, r: 1, g: 1, b: 1, a: 1 };
 			$this.data('jQWCP.color', color);
 			
+			// Check sliders option
+			if(settings.sliders == null)
+				settings.sliders = 'wvp' + (settings.format.indexOf('a') >= 0 ? 'a' : '');
+			
 			/// LAYOUT & BINDINGS ///
 			// Setup block mode layout
 			if( settings.layout == 'block' ) {
 				$widget = private.initWidget.call( $this );
+				private.adjustWidget( $widget.get(0), settings );
 				$widget.addClass(settings.cssClass);
 				// Store DOM element reference
 				$this.data('jQWCP.widget', $widget.get(0));
@@ -656,6 +703,44 @@
 	};
 	
 	/**
+	 * Function: destroy
+	 * 
+	 * Destroy the color picker and return it to normal element.
+	 */
+	methods.destroy = function() {
+		return this.each(function() {
+			var $this = $(this);
+			var settings = $this.data('jQWCP.settings');
+			var $widget = null;
+			
+			// Destroy must only occur when it's initialized
+			if(!settings)
+				return;
+			
+			// Reset layout
+			if(settings.layout == 'block') {
+				$widget = $( $this.data('jQWCP.widget') );
+				$widget.before($this);
+				$widget.remove();
+				$this.show();
+			}
+			else {
+				$widget = g_Popup;
+			}
+			
+			// Unbind events
+			$this.off('focus.wheelColorPicker');
+			$this.off('blur.wheelColorPicker');
+			$this.off('keyup.wheelColorPicker');
+			$this.off('change.wheelColorPicker');
+			
+			// Remove data
+			$this.data('jQWCP.settings', null);
+			$this.data('jQWCP.widget', null);
+		});
+	};
+	
+	/**
 	 * Function: show
 	 * 
 	 * Show the color picker dialog. This function is only applicable to 
@@ -693,6 +778,9 @@
 		// Assign custom css class
 		$widget.attr( 'class', 'jQWCP-wWidget' );
 		$widget.addClass( settings.cssClass );
+		
+		// Adjust layout
+		private.adjustWidget( $widget.get(0), settings );
 		
 		// Redraw sliders
 		methods.redrawSliders.call( $this, null, true );
@@ -1246,6 +1334,64 @@
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-scursor', private.onSliderCursorMouseDown);
 		
 		return $widget;
+	};
+	
+	/**
+	 * Function: adjustWidget
+	 * 
+	 * Update widget to match current settings.
+	 */
+	private.adjustWidget = function( widget, settings ) {
+		var $widget = $(widget);
+		var sliders = settings.sliders;
+		
+		if(sliders.indexOf('w') < 0)
+			$widget.find('.jQWCP-wHue').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wHue').show().removeClass('hidden');
+			
+		if(sliders.indexOf('s') < 0)
+			$widget.find('.jQWCP-wSat').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wSat').show().removeClass('hidden');
+			
+		if(sliders.indexOf('v') < 0)
+			$widget.find('.jQWCP-wVal').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wVal').show().removeClass('hidden');
+			
+		if(sliders.indexOf('r') < 0)
+			$widget.find('.jQWCP-wRed').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wRed').show().removeClass('hidden');
+			
+		if(sliders.indexOf('g') < 0)
+			$widget.find('.jQWCP-wGreen').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wGreen').show().removeClass('hidden');
+			
+		if(sliders.indexOf('b') < 0)
+			$widget.find('.jQWCP-wBlue').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wBlue').show().removeClass('hidden');
+			
+		if(sliders.indexOf('a') < 0)
+			$widget.find('.jQWCP-wAlpha').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wAlpha').show().removeClass('hidden');
+			
+		if(sliders.indexOf('p') < 0)
+			$widget.find('.jQWCP-wPreview').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wPreview').show().removeClass('hidden');
+		
+		// Adjust container width
+		var $visElms = $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
+		var width = 0
+		$visElms.each(function(index, item) {
+			width += parseFloat($(item).css('margin-left').replace('px')) + $(item).outerWidth();
+		});
+		$widget.css({ width: width + 'px' });
 	};
 	
 	/**

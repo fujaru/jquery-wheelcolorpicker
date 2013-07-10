@@ -14,12 +14,13 @@
 
 .jQWCP-wWidget {
 	position: absolute;
-	width: 440px;
-	height: 200px;
+	width: 420px;
+	height: 180px;
 	background: #eee;
 	box-shadow: 1px 1px 4px #000;
 	border-radius: 4px;
 	border: solid 1px #aaa;
+	padding: 10px;
 }
 
 .jQWCP-wWidget.jQWCP-block {
@@ -34,14 +35,13 @@
 .jQWCP-wWheel {
 	background: url('images/wheel.500.jpg') no-repeat center center;
 	background-size: contain;
-	position: absolute;
+	position: relative;
+	float: left;
 	width: 180px;
 	height: 180px;
-	top: 10px;
-	left: 10px;
 	border-radius: 50%;
 	border: solid 1px #aaa;
-	margin: -1px 0 0 -1px;
+	margin: -1px;
 	transition: border .15s;
 }
 
@@ -72,9 +72,11 @@
 
 .jQWCP-slider-wrapper,
 .jQWCP-wPreview {
-	position: absolute;
+	position: relative;
 	width: 20px;
 	height: 180px;
+	float: left;
+	margin-left: 10px;
 }
 
 .jQWCP-slider,
@@ -85,7 +87,7 @@
 	left: 0;
 	top: 0;
 	border: solid 1px #aaa;
-	margin: -1px 0 0 -1px;
+	margin: -1px;
 	border-radius: 4px;
 	transition: border .15s;
 }
@@ -104,48 +106,8 @@
 	margin: -9px 0 0 -3px;
 }
 
-.jQWCP-wHue {
-	left: 200px;
-	top: 10px;
-}
-
-.jQWCP-wSat {
-	left: 230px;
-	top: 10px;
-}
-
-.jQWCP-wVal {
-	left: 260px;
-	top: 10px;
-}
-
-.jQWCP-wRed {
-	left: 290px;
-	top: 10px;
-}
-
-.jQWCP-wGreen {
-	left: 320px;
-	top: 10px;
-}
-
-.jQWCP-wBlue {
-	left: 350px;
-	top: 10px;
-}
-
-.jQWCP-wAlpha {
-	left: 380px;
-	top: 10px;
-}
-
 .jQWCP-wAlphaSlider {
 	background: url('images/alpha.png');
-}
-
-.jQWCP-wPreview {
-	left: 410px;
-	top: 10px;
 }
 
 .jQWCP-wPreviewBox {
