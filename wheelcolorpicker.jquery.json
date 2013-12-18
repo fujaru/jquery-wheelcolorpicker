@@ -1,7 +1,7 @@
 {
 	"name": "wheelcolorpicker",
-	"version": "2.0.3",
-	"download": "http://files.jar2.net/jquery/wheelcolorpicker/jquery.wheelcolorpicker-2.0.3.zip",
+	"version": "2.1.1",
+	"download": "http://files.jar2.net/jquery/wheelcolorpicker/jquery.wheelcolorpicker-2.1.1.zip",
 	"title": "Wheel Color Picker",
 	"description": "A jQuery plugin to add color picker functionality to HTML form inputs in the round color wheel fashion.",
 	"keywords": [
