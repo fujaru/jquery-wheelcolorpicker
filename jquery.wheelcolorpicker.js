@@ -4,7 +4,7 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2013.07.10
+ * Date   : 2013.12.18
  * 
  * Copyright © 2011-2013 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -109,7 +109,8 @@
 	 *               normal color or "wvap" for color with alpha value. 
 	 *               Possible combinations are "whsvrgbap". Note that the 
 	 *               order of letters affects the slider positions.
-	 *   showLabels      - Boolean Show labels for each slider.
+	 *   showSliderLabel - Boolean Show labels for each slider.
+	 *   showSliderValue - Boolean Show numeric value of each slider.
 	 */
 	$.fn.wheelColorPicker.defaults = {
 		format: 'hex', /* 1.x */
@@ -654,7 +655,8 @@
 				
 				// Bind input element events
 				$this.on('focus.wheelColorPicker', methods.show);
-				$this.on('blur.wheelColorPicker', methods.hide);
+				//$this.on('blur.wheelColorPicker', methods.hide);
+				$this.on('blur.wheelColorPicker', private.onInputBlur);
 			}
 			
 			// Bind input events
@@ -785,6 +787,9 @@
 		// Redraw sliders
 		methods.redrawSliders.call( $this, null, true );
 		methods.updateSliders.call( $this );
+		
+		// Store last textfield value
+		settings.lastValue = $this.val();
 		
 		$widget.fadeIn( settings.animDuration );
 	};
@@ -1403,8 +1408,9 @@
 		var $this = $(this); // Refers to wWidget
 		var $input = $( $this.data('jQWCP.inputElm') );
 		
-		// Temporarily unbind blur event until mouse is released
+		// Temporarily unbind blur and focus event until mouse is released
 		$input.off('blur.wheelColorPicker');
+		$input.off('focus.wheelColorPicker');
 	};
 	
 	/**
@@ -1416,11 +1422,15 @@
 		var $this = $(this); // Refers to wWidget
 		var $input = $( $this.data('jQWCP.inputElm') );
 		
-		// Rebind blur event
-		$input.on('blur.wheelColorPicker', methods.hide);
-		
 		// Input elm must always be focused
 		$input.focus();
+		
+		// Rebind blur & focusevent
+		//$input.on('blur.wheelColorPicker', methods.hide);
+		//$input.on('focus.wheelColorPicker', methods.show);
+		//$input.on('blur.wheelColorPicker', private.onInputBlur);
+		// ^ already executed by onBodyMouseUp (event bubbling)
+		// Enabling this will cause double binding
 	};
 	
 	/**
@@ -1496,10 +1506,14 @@
 			// Last time update active control before clearing
 			private.updateActiveControl( e );
 			
-			// Rebind blur event to input elm which was temporarily released when popup dialog is shown
+			// Rebind blur and focus event to input elm which was 
+			// temporarily released when popup dialog is shown
 			if(settings.layout == 'popup') {
-				$input.on('blur.wheelColorPicker', methods.hide);
+				// Focus first before binding event so it wont get fired
 				$input.focus();
+				//$input.on('blur.wheelColorPicker', methods.hide);
+				$input.on('blur.wheelColorPicker', private.onInputBlur);
+				$input.on('focus.wheelColorPicker', methods.show);
 			}
 			
 			// Clear active control reference
@@ -1645,5 +1659,27 @@
 		private.onInputChange.call( this, e );
 	};
 	
+	/**
+	 * Function: onInputBlur
+	 * 
+	 * Try to trigger onChange event if value has been changed.
+	 */
+	private.onInputBlur = function( e ) {
+		var $this = $(this); // Refers to input elm
+		var settings = $this.data('jQWCP.settings');
+		var lastValue = settings.lastValue;
+		var currentValue = $this.val();
+		
+		// Trigger 'change' event only when it was modified by widget
+		// because user typing on the textfield will automatically
+		// trigger 'change' event on blur.
+		if(lastValue != currentValue) {
+			$this.trigger('change');
+		}
+		
+		// Hide widget (if using popup)
+		if(settings.layout == 'popup')
+			methods.hide.call($this);
+	};
 	
 }) (jQuery);
