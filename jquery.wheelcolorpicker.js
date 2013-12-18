@@ -627,10 +627,21 @@
 				$widget.append($this);
 				$this.hide();
 				
+				// Add tabindex attribute to make the widget focusable
+				if($this.attr('tabindex') != undefined) {
+					$widget.attr('tabindex', $this.attr('tabindex'));
+				}
+				else {
+					$widget.attr('tabindex', 0);
+				}
+				
 				// Draw shading
 				methods.redrawSliders.call( $this, null, true );
 				methods.updateSliders.call( $this );
 				
+				// Bind widget element events
+				$widget.on('focus.wheelColorPicker', private.onWidgetFocus);
+				$widget.on('blur.wheelColorPicker', private.onWidgetBlur);
 			}
 			// Setup popup mode layout
 			else {
@@ -1411,6 +1422,7 @@
 		// Temporarily unbind blur and focus event until mouse is released
 		$input.off('blur.wheelColorPicker');
 		$input.off('focus.wheelColorPicker');
+		
 	};
 	
 	/**
@@ -1423,7 +1435,7 @@
 		var $input = $( $this.data('jQWCP.inputElm') );
 		
 		// Input elm must always be focused
-		$input.focus();
+		$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS');
 		
 		// Rebind blur & focusevent
 		//$input.on('blur.wheelColorPicker', methods.hide);
@@ -1431,6 +1443,7 @@
 		//$input.on('blur.wheelColorPicker', private.onInputBlur);
 		// ^ already executed by onBodyMouseUp (event bubbling)
 		// Enabling this will cause double binding
+		
 	};
 	
 	/**
@@ -1441,10 +1454,13 @@
 	 */
 	private.onWheelMouseDown = function( e ) {
 		var $this = $(this); // Refers to wheel
-		var $widget = $this.parents('jQWCP-wWidget:eq(0)');
+		var $widget = $this.parents('.jQWCP-wWidget:eq(0)');
 		var $input = $( $widget.data('jQWCP.inputElm') );
 		
 		$('body').data('jQWCP.activeControl', $this.get(0));
+		
+		// Trigger sliderdown event
+		$input.trigger('sliderdown');
 	};
 	
 	
@@ -1456,7 +1472,7 @@
 	 */
 	private.onWheelCursorMouseDown = function( e ) {
 		var $this = $(this); // Refers to cursor
-		var $widget = $this.parents('jQWCP-wWidget:eq(0)');
+		var $widget = $this.parents('.jQWCP-wWidget:eq(0)');
 		var $input = $( $widget.data('jQWCP.inputElm') );
 		
 		$('body').data('jQWCP.activeControl', $this.parent().get(0));
@@ -1470,10 +1486,13 @@
 	 */
 	private.onSliderMouseDown = function( e ) {
 		var $this = $(this); // Refers to slider
-		var $widget = $this.parents('jQWCP-wWidget:eq(0)');
+		var $widget = $this.parents('.jQWCP-wWidget:eq(0)');
 		var $input = $( $widget.data('jQWCP.inputElm') );
 		
 		$('body').data('jQWCP.activeControl', $this.parent().get(0));
+		
+		// Trigger sliderdown event
+		$input.trigger('sliderdown');
 	};
 	
 	/**
@@ -1484,7 +1503,7 @@
 	 */
 	private.onSliderCursorMouseDown = function( e ) {
 		var $this = $(this); // Refers to slider cursor
-		var $widget = $this.parents('jQWCP-wWidget:eq(0)');
+		var $widget = $this.parents('.jQWCP-wWidget:eq(0)');
 		var $input = $( $widget.data('jQWCP.inputElm') );
 		
 		$('body').data('jQWCP.activeControl', $this.parent().get(0));
@@ -1510,7 +1529,7 @@
 			// temporarily released when popup dialog is shown
 			if(settings.layout == 'popup') {
 				// Focus first before binding event so it wont get fired
-				$input.focus();
+				$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS');
 				//$input.on('blur.wheelColorPicker', methods.hide);
 				$input.on('blur.wheelColorPicker', private.onInputBlur);
 				$input.on('focus.wheelColorPicker', methods.show);
@@ -1518,6 +1537,9 @@
 			
 			// Clear active control reference
 			$('body').data('jQWCP.activeControl', null);
+			
+			// Trigger sliderup event
+			$input.trigger('sliderup');
 		}
 	};
 	
@@ -1529,10 +1551,17 @@
 	private.onBodyMouseMove = function( e ) {
 		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
 		
+		// Do stuffs when popup is open
 		if($control.length == 0)
 			return;
 		
+		var $widget = $control.parents('.jQWCP-wWidget:eq(0)');
+		var $input = $( $widget.data('jQWCP.inputElm') );
+		
 		private.updateActiveControl( e );
+		
+		// Trigger slidermove event
+		$input.trigger('slidermove');
 		
 		return false;
 	};
@@ -1680,6 +1709,39 @@
 		// Hide widget (if using popup)
 		if(settings.layout == 'popup')
 			methods.hide.call($this);
+	};
+	
+	/**
+	 * Function: onWidgetFocus
+	 * 
+	 * Prepare runtime widget data
+	 */
+	private.onWidgetFocus = function( e ) {
+		var $input = $( $(this).data('jQWCP.inputElm') );
+		var $widget = $(this);
+		var settings = $input.data('jQWCP.settings');
+		
+		// Store last textfield value
+		settings.lastValue = $input.val();
+		
+		// Trigger focus event
+		$input.triggerHandler('focus');
+	};
+	
+	/**
+	 * Function: onWidgetBlur
+	 * 
+	 * Try to trigger onChange event if value has been changed.
+	 */
+	private.onWidgetBlur = function( e ) {
+		var $input = $( $(this).data('jQWCP.inputElm') );
+		var $widget = $(this);
+		
+		// Basically the same as private.onInputBlur
+		private.onInputBlur.call($input);
+		
+		// Trigger blur event
+		$input.triggerHandler('blur');
 	};
 	
 }) (jQuery);
