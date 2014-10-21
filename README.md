@@ -57,7 +57,7 @@ Initialize the color picker to an element by simply calling:
 
 Demo
 ----
-Try Wheel Color Picker plugin in action at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
+Try Wheel Color Picker plugin in action at our [demo page](http://www.jar2.net/projects/jquery-wheelcolorpicker).
 
 
 Documentation
