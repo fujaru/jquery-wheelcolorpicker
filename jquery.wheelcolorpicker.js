@@ -144,9 +144,9 @@
 		sliders: null, /* 2.0 */
 		showSliderLabel: true, /* 2.0 */
 		showSliderValue: false, /* 2.0 */
-		rounding: 2, /* 3.0 */
+		rounding: 2, /* 2.3 */
 		mobileAutoScroll: true, /* 3.0 */ /* NOT IMPLEMENTED */
-		htmlOptions: true /* 3.0 */
+		htmlOptions: true /* 2.3 */
 	};
 	
 	$.fn.wheelColorPicker.hasInit = false;
