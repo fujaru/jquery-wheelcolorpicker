@@ -60,7 +60,7 @@ Initialize the color picker to an element by simply calling:
 
 Demo
 ----
-See example.html for samples or try it online at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
+See example.html for more usage examples or try it online at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
 
 
 Documentation

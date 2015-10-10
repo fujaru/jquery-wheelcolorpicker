@@ -559,6 +559,20 @@
 		return { h: h, s: s, v: v };
 	};
 	
+	/*
+	 * DEVELOPER's NOTE
+	 * 
+	 * While the way to retrieve references differs, the following 
+	 * local variable names are reused to reference the same object 
+	 * across methods.
+	 * 
+	 * input - input DOM element
+	 * $input - input element wrapped in jquery
+	 * widget - color picker DOM element (div.jQWCP-wWidget)
+	 * $widget - color picker widget wrapped in jquery (div.jQWCP-wWidget)
+	 * settings - reference to settings object
+	 */
+	
 	/**
 	 * Function: staticInit
 	 * 
