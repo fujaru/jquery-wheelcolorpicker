@@ -6,7 +6,7 @@
  * Author : Fajar Chandra
  * Date   : 2013.12.18
  * 
- * Copyright © 2011-2013 Fajar Chandra. All rights reserved.
+ * Copyright © 2011-2015 Fajar Chandra. All rights reserved.
  * Released under MIT License.
  * http://www.opensource.org/licenses/mit-license.php
  */

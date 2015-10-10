@@ -1,7 +1,10 @@
 jQuery Wheel Color Picker Plugin
 ================================
 
-The Wheel Color Picker plugin adds color picker functionality to HTML form inputs in the round color wheel fashion. The Wheel Color Picker dialog appears as users focus the input. It currently supports these HTML elements:
+DRAFT NOTICE: This branch is a work in progress. Many things may change or break.
+Please download 2.2.0 instead.
+
+The Wheel Color Picker plugin adds color picker functionality to HTML form inputs with round color wheel style. The Wheel Color Picker can be displayed as a popup dialog as users focus the input, or embedded inline. It currently supports these HTML elements:
 
 *   input (works on buttons too!)
 *   textarea
@@ -57,7 +60,7 @@ Initialize the color picker to an element by simply calling:
 
 Demo
 ----
-Try Wheel Color Picker plugin in action at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
+See example.html for samples or try it online at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
 
 
 Documentation
@@ -70,14 +73,22 @@ License
 jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
-What's New
-----------
-The new 2.x version is a complete rewrite from version 1.x. It has cleaner code and adds more features.
+What's New Since 2.x
+--------------------
+TODO
 
 
 Backward Compatibility
 ----------------------
-To allow smooth transition from version 1.x to 2.x, this version includes most of options and methods from version 1.x which are now declared as *deprecated*. You should not depend on these deprecated functions as they can be removed at anytime. 
+
+**Version 2.x**
+
+The new version 3.x is fully compatible with 2.x.
+
+**Version 1.x**
+
+To allow smooth transition from version 1.x to 3.x, this version includes most of options and methods from version 1.x which are now declared as *deprecated*. You should not depend on these deprecated functions as they can be removed at anytime. 
 Feature like CSS theming is not backward compatible though. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
 
+- - - - -
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fujaru/jquery-wheelcolorpicker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
