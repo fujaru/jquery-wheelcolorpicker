@@ -1366,6 +1366,11 @@
 		else
 			$widget.find('.jQWCP-wHue').show().removeClass('hidden');
 			
+		if(sliders.indexOf('h') < 0)
+			$widget.find('.jQWCP-wHue').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wHue').show().removeClass('hidden');
+			
 		if(sliders.indexOf('s') < 0)
 			$widget.find('.jQWCP-wSat').hide().addClass('hidden');
 		else
