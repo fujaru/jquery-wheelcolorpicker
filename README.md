@@ -2,14 +2,15 @@ jQuery Wheel Color Picker Plugin
 ================================
 
 DRAFT NOTICE: This branch is a work in progress. Many things may change or break.
-Please download 2.2.0 instead.
+Please download 2.2.2 instead.
 
-The Wheel Color Picker plugin adds color picker functionality to HTML form inputs with round color wheel style. The Wheel Color Picker can be displayed as a popup dialog as users focus the input, or embedded inline. It currently supports these HTML elements:
+The Wheel Color Picker plugin adds color picker functionality to HTML form inputs in round color wheel style. The Wheel Color Picker can be displayed as a popup dialog as users focus the input, or embedded inline. It currently supports these HTML elements:
 
 *   input (works on buttons too!)
 *   textarea
 
 Note: It should also works on other HTML elements which support jQuery .val() function.
+
 
 
 Features
@@ -39,10 +40,19 @@ The color picker appearance can be customized using CSS. This package already co
 See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Features) for the complete list.
 
 
+
 Usage
 -----
 
-Initialize the color picker to an element by simply calling:
+Since version 3.0, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
+
+```html
+<input type="text" data-wheelcolorpicker />
+```
+
+**JAVASCRIPT WAY**
+
+Or you can also initialize the color picker to an element by calling:
 
 ```js
 .wheelColorPicker( options );
@@ -63,9 +73,11 @@ Demo
 See example.html for more usage examples or try it online at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
 
 
+
 Documentation
 -------------
 See [Documentation Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki) for a complete documentation.
+
 
 
 License
@@ -73,9 +85,12 @@ License
 jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
+
 What's New Since 2.x
 --------------------
-TODO
+
+* Introduced a new way to initialize color picker using HTML attribute without having to write JS codes.
+
 
 
 Backward Compatibility
