@@ -44,7 +44,7 @@ See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Featu
 Usage
 -----
 
-Since version 3.0, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
+Since version 2.3, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
 
 ```html
 <input type="text" data-wheelcolorpicker />
@@ -86,10 +86,11 @@ jQuery Wheel Color Picker plugin is released under [MIT License](http://opensour
 
 
 
-What's New Since 2.x
---------------------
+What's New in 2.3
+-----------------
 
 * Introduced a new way to initialize color picker using HTML attribute without having to write JS codes.
+* The new 2.0 version is a complete rewrite of version 1.3.4. It has cleaner code and adds more features.
 
 
 
