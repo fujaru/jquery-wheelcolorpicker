@@ -98,7 +98,8 @@ Backward Compatibility
 
 **Version 2.x**
 
-The new version 3.x is fully compatible with 2.x.
+The new version 3.x is compatible with 2.x.
+If you use a custom CSS which makes significant changes to positioning and/or sizes, the new mobile layout might be broken. In this case, you might want to switch back to default CSS or turning off mobile layout by setting `mobile` option to `false`.
 
 **Version 1.x**
 

@@ -120,6 +120,9 @@
 	 *   showSliderValue - Boolean Show numeric value of each slider.
 	 *   rounding  - Round the alpha value to N decimal digits. Default is 2.
 	 *               Set -1 to disable rounding.
+	 *   mobile    - Enable support for mobile/touch browsers.
+	 *   mobileAutoScroll    - Automatically scroll the page if focused input element 
+	 *                         gets obstructed by color picker dialog.
 	 *   htmlOptions     - Load options from HTML attributes. 
 	 *                     To set options using HTML attributes, 
 	 *                     prefix these options with 'data-wcp-' as attribute names.
@@ -145,6 +148,7 @@
 		showSliderLabel: true, /* 2.0 */
 		showSliderValue: false, /* 2.0 */
 		rounding: 2, /* 2.3 */
+		mobile: true, /* 3.0 */ /* NOT IMPLEMENTED */
 		mobileAutoScroll: true, /* 3.0 */ /* NOT IMPLEMENTED */
 		htmlOptions: true /* 2.3 */
 	};
