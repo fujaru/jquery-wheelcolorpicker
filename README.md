@@ -2,7 +2,7 @@ jQuery Wheel Color Picker Plugin
 ================================
 
 DRAFT NOTICE: This branch is a work in progress. Many things may change or break.
-Please download 2.2.2 instead.
+Please download 2.3.0 instead.
 
 The Wheel Color Picker plugin adds color picker functionality to HTML form inputs in round color wheel style. The Wheel Color Picker can be displayed as a popup dialog as users focus the input, or embedded inline. It currently supports these HTML elements:
 
@@ -86,11 +86,10 @@ jQuery Wheel Color Picker plugin is released under [MIT License](http://opensour
 
 
 
-What's New in 2.3
+What's New in 3.0
 -----------------
 
-* Introduced a new way to initialize color picker using HTML attribute without having to write JS codes.
-* The new 2.0 version is a complete rewrite of version 1.3.4. It has cleaner code and adds more features.
+*Work in progress*
 
 
 
@@ -103,8 +102,7 @@ The new version 3.x is fully compatible with 2.x.
 
 **Version 1.x**
 
-To allow smooth transition from version 1.x to 3.x, this version includes most of options and methods from version 1.x which are now declared as *deprecated*. You should not depend on these deprecated functions as they can be removed at anytime. 
-Feature like CSS theming is not backward compatible though. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
+Options and methods marked as *deprecated* in version 2.x are still available which makes this backward compatible to 1.x. However, please refrain on using any deprecated options and methods since they are planned to be removed in future release. CSS is not backward compatible. Switching back to base theme is recommended. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
 
 - - - - -
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fujaru/jquery-wheelcolorpicker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
