@@ -17,7 +17,7 @@
 	width: 420px;
 	height: 180px;
 	background: #eee;
-	box-shadow: 1px 1px 4px #000;
+	box-shadow: 1px 1px 4px rgba(0,0,0,.5);
 	border-radius: 4px;
 	border: solid 1px #aaa;
 	padding: 10px;
@@ -25,11 +25,8 @@
 
 .jQWCP-wWidget.jQWCP-block {
 	position: relative;
-	border-top-color: #aaa;
-	border-left-color: #aaa;
-	border-right-color: #ddd;
-	border-bottom-color: #ddd;
-	box-shadow: -1px -1px 1px #666;
+	border-color: #aaa;
+	box-shadow: inset 1px 1px 1px #ccc;
 }
 
 .jQWCP-wWheel {

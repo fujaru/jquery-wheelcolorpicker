@@ -6,7 +6,7 @@
  * Author : Fajar Chandra
  * Date   : 2015.10.10
  * 
- * Copyright © 2011-2013 Fajar Chandra. All rights reserved.
+ * Copyright © 2011-2015 Fajar Chandra. All rights reserved.
  * Released under MIT License.
  * http://www.opensource.org/licenses/mit-license.php
  */
@@ -81,7 +81,7 @@
 	 *               the input value to a specified format. This option is 
 	 *               deprecated. use autoConvert instead.
 	 *   autoConvert     - Boolean Automatically convert inputted value to 
-	 *                     speified format.
+	 *                     specified format.
 	 *   color     - Mixed Initial value in any of supported color 
 	 *               value format or as an object. Setting this value will 
 	 *               override the current input value.
@@ -94,6 +94,11 @@
 	 *                     position changes. If set to true, changing 
 	 *                     color wheel from black will reset selectedColor.val 
 	 *                     (shade) to 1.
+	 *   interactive     - Boolean enable interactive sliders where slider bar
+	 *                     gradients change dynamically as user drag a slider 
+	 *                     handle. Set to false if this affect performance.
+	 *                     See also 'quality' option if you wish to keep 
+	 *                     interactive slider but with reduced quality.
 	 *   cssClass  - Object CSS Classes to be added to the color picker.
 	 *   width     - Mixed Color picker width, either in px or 'stretch' to 
 	 *               fit the input width. If null then the default CSS size 
@@ -103,7 +108,9 @@
 	 *   layout    - String [block|popup] Layout mode.
 	 *   animDuration    - Number Duration for transitions such as fade-in 
 	 *                     and fade-out.
-	 *   quality   - Number Quality factor. The normal quality is 1.
+	 *   quality   - Rendering details quality. The normal quality is 1. 
+	 *               Setting less than 0.1 may make the sliders ugly, 
+	 *               while setting the value too high might affect performance.
 	 *   sliders   - String combination of sliders. If null then the color 
 	 *               picker will show default values, which is "wvp" for 
 	 *               normal color or "wvap" for color with alpha value. 
@@ -111,6 +118,11 @@
 	 *               order of letters affects the slider positions.
 	 *   showSliderLabel - Boolean Show labels for each slider.
 	 *   showSliderValue - Boolean Show numeric value of each slider.
+	 *   rounding  - Round the alpha value to N decimal digits. Default is 2.
+	 *               Set -1 to disable rounding.
+	 *   htmlOptions     - Load options from HTML attributes. 
+	 *                     To set options using HTML attributes, 
+	 *                     prefix these options with 'data-wcp-' as attribute names.
 	 */
 	$.fn.wheelColorPicker.defaults = {
 		format: 'hex', /* 1.x */
@@ -121,7 +133,8 @@
 		autoConvert: true, /* 2.0 */ /* NOT IMPLEMENTED */
 		color: null, /* DEPRECATED 1.x */ /* Init-time usage only */
 		alpha: null, /* DEPRECATED 1.x */ /* See methods.alpha */
-		preserveWheel: false, /* 1.x */
+		preserveWheel: false, /* DEPRECATED 1.x */ /* Use interactive */
+		interactive: true, /* 3.0 */ /* NOT IMPLEMENTED */
 		cssClass: '', /* 2.0 */
 		width: null, /* 2.0 */ /* NOT IMPLEMENTED */
 		height: null, /* 2.0 */ /* NOT IMPLEMENTED */
@@ -130,7 +143,10 @@
 		quality: 1, /* 2.0 */
 		sliders: null, /* 2.0 */
 		showSliderLabel: true, /* 2.0 */
-		showSliderValue: false /* 2.0 */
+		showSliderValue: false, /* 2.0 */
+		rounding: 2, /* 2.3 */
+		mobileAutoScroll: true, /* 3.0 */ /* NOT IMPLEMENTED */
+		htmlOptions: true /* 2.3 */
 	};
 	
 	$.fn.wheelColorPicker.hasInit = false;
@@ -559,6 +575,20 @@
 		return { h: h, s: s, v: v };
 	};
 	
+	/*
+	 * DEVELOPER's NOTE
+	 * 
+	 * While the way to retrieve references differs, the following 
+	 * local variable names are reused to reference the same object 
+	 * across methods.
+	 * 
+	 * input - input DOM element
+	 * $input - input element wrapped in jquery
+	 * widget - color picker DOM element (div.jQWCP-wWidget)
+	 * $widget - color picker widget wrapped in jquery (div.jQWCP-wWidget)
+	 * settings - reference to settings object
+	 */
+	
 	/**
 	 * Function: staticInit
 	 * 
@@ -706,8 +736,26 @@
 	 * Set options to the color picker
 	 */
 	methods.setOptions = function( options ) {
+		var optionsParam = options;
 		this.each(function() {
 			var $this = $(this); // Refers to input elm
+			var input = this;
+			options = $.extend({}, optionsParam); // Reset options for each iteration
+			
+			// Load options from HTML attributes
+			if(typeof options.htmlOptions == 'undefined') {
+				// Since defaults is not yet loaded, specifically lookup 
+				// from defaults.htmlOptions if not htmlOptions is not specified.
+				options.htmlOptions = $.fn.wheelColorPicker.defaults.htmlOptions;
+			}
+			if(options.htmlOptions) {
+				$.each($.fn.wheelColorPicker.defaults, function(key, val) {
+					if(input.hasAttribute('data-wcp-'+key)) {
+						options[key] = $this.attr('data-wcp-'+key);
+					}
+				});
+			}
+			// Override options
 			var settings = $.extend( true, {}, $.fn.wheelColorPicker.defaults, options );
 			$this.data('jQWCP.settings', settings);
 		});
@@ -1257,11 +1305,16 @@
 	 */
 	methods.getValue = function( format ) {
 		var settings = this.data('jQWCP.settings');
+		var color = this.data('jQWCP.color');
 		if( format == null ) {
 			format = settings.format;
 		}
 			
-		return $.fn.wheelColorPicker.colorToStr( this.data('jQWCP.color'), format );
+		// If settings.rounding is TRUE, round alpha value to N decimal digits
+		if(settings.rounding >= 0) {
+			color.a = Math.round(color.a * Math.pow(10, settings.rounding)) / Math.pow(10, settings.rounding);
+		}
+		return $.fn.wheelColorPicker.colorToStr( color, format );
 	};
 	
 	/**
@@ -1362,6 +1415,11 @@
 		var sliders = settings.sliders;
 		
 		if(sliders.indexOf('w') < 0)
+			$widget.find('.jQWCP-wWheel').hide().addClass('hidden');
+		else
+			$widget.find('.jQWCP-wWheel').show().removeClass('hidden');
+			
+		if(sliders.indexOf('h') < 0)
 			$widget.find('.jQWCP-wHue').hide().addClass('hidden');
 		else
 			$widget.find('.jQWCP-wHue').show().removeClass('hidden');
@@ -1748,5 +1806,28 @@
 		// Trigger blur event
 		$input.triggerHandler('blur');
 	};
+	
+	////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Automatically initialize color picker on page load
+	 * for elements with data-wheelcolorpicker attribute.
+	 */
+	$('document').ready(function() {
+		$('[data-wheelcolorpicker]').wheelColorPicker({ htmlOptions: true });
+	});
+	
+	////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Browser specific workarounds
+	 */
+	(function() {
+		// Mozilla //
+		if($.browser.mozilla) {
+			// Force low resolution slider canvases to improve performance
+			$.fn.wheelColorPicker.defaults.quality = 0.2;
+		}
+	})();
 	
 }) (jQuery);
