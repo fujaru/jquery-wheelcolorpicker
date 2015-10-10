@@ -41,18 +41,22 @@ See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Featu
 Usage
 -----
 
+**HTML WAY**
+
 Since version 2.3, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
 
 ```html
 <input type="text" data-wheelcolorpicker />
 ```
 
+And you're done!
+
 **JAVASCRIPT WAY**
 
 Or you can also initialize the color picker to an element by calling:
 
 ```js
-.wheelColorPicker( options );
+$(element).wheelColorPicker( options );
 ```
 
 **Example**
