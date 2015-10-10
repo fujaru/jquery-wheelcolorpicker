@@ -105,5 +105,3 @@ If you use a custom CSS which makes significant changes to positioning and/or si
 
 Options and methods marked as *deprecated* in version 2.x are still available which makes this backward compatible to 1.x. However, please refrain on using any deprecated options and methods since they are planned to be removed in future release. CSS is not backward compatible. Switching back to base theme is recommended. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
 
-- - - - -
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fujaru/jquery-wheelcolorpicker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
