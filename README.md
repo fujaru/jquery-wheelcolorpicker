@@ -1,9 +1,6 @@
 jQuery Wheel Color Picker Plugin
 ================================
 
-DRAFT NOTICE: This branch is a work in progress. Many things may change or break.
-Please download 2.2.2 instead.
-
 The Wheel Color Picker plugin adds color picker functionality to HTML form inputs in round color wheel style. The Wheel Color Picker can be displayed as a popup dialog as users focus the input, or embedded inline. It currently supports these HTML elements:
 
 *   input (works on buttons too!)
@@ -97,13 +94,9 @@ What's New in 2.3
 Backward Compatibility
 ----------------------
 
-**Version 2.x**
-
-The new version 3.x is fully compatible with 2.x.
-
 **Version 1.x**
 
-To allow smooth transition from version 1.x to 3.x, this version includes most of options and methods from version 1.x which are now declared as *deprecated*. You should not depend on these deprecated functions as they can be removed at anytime. 
+To allow smooth transition from version 1.x to 2.x, this version includes most of options and methods from version 1.x which are now declared as *deprecated*. You should not depend on these deprecated functions as they can be removed at anytime. 
 Feature like CSS theming is not backward compatible though. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
 
 - - - - -
