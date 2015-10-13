@@ -47,6 +47,10 @@ Usage
 Since version 2.3, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
 
 ```html
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
+<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
+
 <input type="text" data-wheelcolorpicker />
 ```
 
@@ -63,7 +67,12 @@ $(element).wheelColorPicker( options );
 **Example**
 
 ```html
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
+<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
+
 <input type="text" class="colorpicker" />
+
 <script type="text/javascript">
   $(function() { $('.colorpicker').wheelColorPicker(); });
 </script>
