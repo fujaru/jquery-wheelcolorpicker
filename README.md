@@ -97,9 +97,10 @@ jQuery Wheel Color Picker plugin is released under [MIT License](http://opensour
 
 
 
-What's New in 2.3
+What's New in 2.4
 -----------------
 
+* Added touch support.
 * Introduced a new way to initialize color picker using HTML attribute without having to write JS codes.
 * The new 2.0 version is a complete rewrite of version 1.3.4. It has cleaner code and adds more features.
 
