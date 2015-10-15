@@ -4,7 +4,7 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2015.10.10
+ * Date   : 2015.10.15
  * 
  * Copyright © 2011-2015 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -601,7 +601,9 @@
 			return;
 		
 		$('body').on('mouseup.wheelColorPicker', private.onBodyMouseUp);
+		$('body').on('touchend.wheelColorPicker', private.onBodyMouseUp);
 		$('body').on('mousemove.wheelColorPicker', private.onBodyMouseMove);
+		$('body').on('touchmove.wheelColorPicker', private.onBodyMouseMove);
 	};
 	
 	/**
@@ -1390,17 +1392,27 @@
 		);
 			
 		// Small UI fix to disable highlighting the widget
+		// Also UI fix to disable touch context menu 
 		$widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-scursor, .jQWCP-slider')
 			.attr('unselectable', 'on')
 			.css('-moz-user-select', 'none')
 			.css('-webkit-user-select', 'none')
-			.css('user-select', 'none');
+			.css('user-select', 'none')
+			.css('-webkit-touch-callout', 'none');
+			
+		// Disable context menu on sliders
+		// Workaround for touch browsers
+		$widget.on('contextmenu.wheelColorPicker', function() { return false; });
 			
 		// Bind widget events
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-wWheel', private.onWheelMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-wWheel', private.onWheelMouseDown);
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-wWheelCursor', private.onWheelCursorMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-wWheelCursor', private.onWheelCursorMouseDown);
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-slider', private.onSliderMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-slider', private.onSliderMouseDown);
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-scursor', private.onSliderCursorMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-scursor', private.onSliderCursorMouseDown);
 		
 		return $widget;
 	};
@@ -1576,6 +1588,8 @@
 	 * Function: onBodyMouseUp
 	 * 
 	 * Clear active control reference.
+	 * 
+	 * Note: This event handler is also applied to touchend
 	 */
 	private.onBodyMouseUp = function( e ) {
 		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
@@ -1584,9 +1598,13 @@
 			var $widget = $control.parents('.jQWCP-wWidget:eq(0)');
 			var $input = $( $widget.data('jQWCP.inputElm') );
 			var settings = $input.data('jQWCP.settings');
-		
+			
 			// Last time update active control before clearing
-			private.updateActiveControl( e );
+			// Only call this function if mouse position is known
+			// On touch action, touch point is not available
+			if(e.pageX != undefined) {
+				private.updateActiveControl( e );
+			}
 			
 			// Rebind blur and focus event to input elm which was 
 			// temporarily released when popup dialog is shown
@@ -1617,6 +1635,9 @@
 		// Do stuffs when popup is open
 		if($control.length == 0)
 			return;
+			
+		// If active, prevent default
+		e.preventDefault();
 		
 		var $widget = $control.parents('.jQWCP-wWidget:eq(0)');
 		var $input = $( $widget.data('jQWCP.inputElm') );
@@ -1644,6 +1665,12 @@
 		var $input = $( $widget.data('jQWCP.inputElm') );
 		var settings = $input.data('jQWCP.settings');
 		var color = $input.data('jQWCP.color');
+		
+		// pageX and pageY wrapper for touches
+		if(e.pageX == undefined && e.originalEvent.touches.length > 0) {
+			e.pageX = e.originalEvent.touches[0].pageX;
+			e.pageY = e.originalEvent.touches[0].pageY;
+		}
 		
 		/// WHEEL CONTROL ///
 		if($control.hasClass('jQWCP-wWheel')) {
