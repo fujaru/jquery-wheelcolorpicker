@@ -44,24 +44,37 @@ See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Featu
 Usage
 -----
 
+**HTML WAY**
+
 Since version 2.3, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
 
 ```html
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
+<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
+
 <input type="text" data-wheelcolorpicker />
 ```
+
+And you're done!
 
 **JAVASCRIPT WAY**
 
 Or you can also initialize the color picker to an element by calling:
 
 ```js
-.wheelColorPicker( options );
+$(element).wheelColorPicker( options );
 ```
 
 **Example**
 
 ```html
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
+<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
+
 <input type="text" class="colorpicker" />
+
 <script type="text/javascript">
   $(function() { $('.colorpicker').wheelColorPicker(); });
 </script>
@@ -85,7 +98,6 @@ License
 jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
-
 What's New in 3.0
 -----------------
 
@@ -104,4 +116,4 @@ If you use a custom CSS which makes significant changes to positioning and/or si
 **Version 1.x**
 
 Options and methods marked as *deprecated* in version 2.x are still available which makes this backward compatible to 1.x. However, please refrain on using any deprecated options and methods since they are planned to be removed in future release. CSS is not backward compatible. Switching back to base theme is recommended. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
-p
+
