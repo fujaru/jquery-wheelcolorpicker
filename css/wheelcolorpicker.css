@@ -21,6 +21,7 @@
 	border-radius: 4px;
 	border: solid 1px #aaa;
 	padding: 10px;
+	z-index: 1001;
 }
 
 .jQWCP-wWidget.jQWCP-block {
@@ -40,6 +41,7 @@
 	border: solid 1px #aaa;
 	margin: -1px;
 	transition: border .15s;
+	cursor: crosshair;
 }
 
 .jQWCP-wWheel:hover {
@@ -89,6 +91,10 @@
 	transition: border .15s;
 }
 
+.jQWCP-slider {
+	cursor: crosshair;
+}
+
 .jQWCP-slider-wrapper:hover .jQWCP-slider {
 	border-color: #666;
 }
@@ -101,6 +107,7 @@
 	width: 26px;
 	height: 19px;
 	margin: -9px 0 0 -3px;
+	cursor: crosshair;
 }
 
 .jQWCP-wAlphaSlider {
@@ -109,4 +116,13 @@
 
 .jQWCP-wPreviewBox {
 	background: url('images/alpha.png');
+}
+
+#jQWCP-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 1000;
 }

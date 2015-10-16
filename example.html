@@ -323,6 +323,9 @@
 				$('#color-input').on('blur', function() {
 					$('#event-input').val('Blurred');
 				});
+				$('#color-input').on('change', function() {
+					$('#event-input').val('Changed');
+				});
 				$('#color-input').on('slidermove', function() {
 					$('#event-color').val($(this).wheelColorPicker('getValue', 'rgb'));
 				});

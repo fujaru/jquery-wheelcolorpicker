@@ -22,6 +22,9 @@
 	// Holds the color picker popup widget for use globally
 	var g_Popup = null;
 	
+	// Holds the overlay element wrapped in jQuery
+	var g_Overlay = null;
+	
 	// Coordinate of the top left page (mobile chrome workaround)
 	var g_Origin = { left: 0, top: 0 };
 	
@@ -124,10 +127,11 @@
 	 *               order of letters affects the slider positions.
 	 *   showSliderLabel - Boolean Show labels for each slider.
 	 *   showSliderValue - Boolean Show numeric value of each slider.
-	 *   hideKeyboard    - Boolean Hide on screen keyboard.
+	 *   hideKeyboard    - Boolean Keep input blurred to avoid on screen keyboard appearing. 
+	 *                     If this is set to true, avoid assigning handler to blur event.
 	 *   rounding  - Round the alpha value to N decimal digits. Default is 2.
 	 *               Set -1 to disable rounding.
-	 *   mobile    - Enable support for mobile/touch browsers.
+	 *   mobile    - Display mobile-friendly layout when opened in mobile device.
 	 *   mobileAutoScroll    - Automatically scroll the page if focused input element 
 	 *                         gets obstructed by color picker dialog.
 	 *   htmlOptions     - Load options from HTML attributes. 
@@ -146,8 +150,6 @@
 		preserveWheel: false, /* DEPRECATED 1.x */ /* Use interactive */
 		interactive: true, /* 3.0 */ /* NOT IMPLEMENTED */
 		cssClass: '', /* 2.0 */
-		width: null, /* 2.0 */ /* NOT IMPLEMENTED */
-		height: null, /* 2.0 */ /* NOT IMPLEMENTED */
 		layout: 'popup', /* 2.0 */
 		animDuration: 200, /* 2.0 */
 		quality: 1, /* 2.0 */
@@ -156,8 +158,7 @@
 		showSliderValue: false, /* 2.0 */
 		rounding: 2, /* 2.3 */
 		mobile: true, /* 3.0 */ /* NOT IMPLEMENTED */
-		hideKeyboard: true, /* 2.4 */
-		mobileAutoScroll: true, /* 3.0 */ /* NOT IMPLEMENTED */
+		hideKeyboard: false, /* 2.4 */
 		htmlOptions: true /* 2.3 */
 	};
 	
@@ -611,7 +612,17 @@
 	methods.staticInit = function() {
 		if($.fn.wheelColorPicker.hasInit)
 			return;
+			
+		// This must only occur once
+		$.fn.wheelColorPicker.hasInit = true;
+			
+		// Insert overlay element to handle popup closing
+		// when hideKeyboard is true, hence input is always blurred
+		g_Overlay = $('<div id="jQWCP-overlay" style="display: none;"></div>');
+		$('body').append(g_Overlay);
+		g_Overlay.on('click', private.onOverlayClick);
 		
+		// Attach events
 		$('body').on('mouseup.wheelColorPicker', private.onBodyMouseUp);
 		$('body').on('touchend.wheelColorPicker', private.onBodyMouseUp);
 		$('body').on('mousemove.wheelColorPicker', private.onBodyMouseMove);
@@ -874,6 +885,12 @@
 		settings.lastValue = $this.val();
 		
 		$widget.fadeIn( settings.animDuration );
+		
+		// If hideKeyboard is true, force to hide soft keyboard
+		if(settings.hideKeyboard) {
+			$this.blur();
+			g_Overlay.show();
+		}
 	};
 	
 	/**
@@ -1519,6 +1536,20 @@
 		$input.off('blur.wheelColorPicker');
 		$input.off('focus.wheelColorPicker');
 		
+		// Temporarily unbind all blur events until mouse is released
+		var blurEvents = $input.data('events').blur;
+		var suspendedEvents = { blur: [] };
+		//suspendedEvents.blur = blurEvents;
+		//$input.off('blur');
+		if(blurEvents != undefined) {
+			for(var i = 0; i < blurEvents.length; i++) {
+				suspendedEvents.blur.push(blurEvents[i]);
+				//suspendedEvents.blur['blur' + (blurEvents[i].namespace != '' ? blurEvents[i].namespace : '')] = blurEvents[i].handler;
+			}
+		}
+		$input.data('jQWCP.suspendedEvents', suspendedEvents);
+		//console.log(blurEvents);
+		//console.log($input.data('jQWCP.suspendedEvents'));
 	};
 	
 	/**
@@ -1529,9 +1560,12 @@
 	private.onPopupDlgMouseUp = function( e ) {
 		var $this = $(this); // Refers to wWidget
 		var $input = $( $this.data('jQWCP.inputElm') );
+		var settings = $input.data('jQWCP.settings');
 		
-		// Input elm must always be focused
-		$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS');
+		// Input elm must always be focused, unless hideKeyboard is set to true
+		if(!settings.hideKeyboard) {
+			$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS');
+		}
 		
 		// Rebind blur & focusevent
 		//$input.on('blur.wheelColorPicker', methods.hide);
@@ -1631,10 +1665,19 @@
 			// temporarily released when popup dialog is shown
 			if(settings.layout == 'popup') {
 				// Focus first before binding event so it wont get fired
-				$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS');
-				//$input.on('blur.wheelColorPicker', methods.hide);
+				// Input elm must always be focused, unless hideKeyboard is set to true
+				if(!settings.hideKeyboard) {
+					$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS');
+				}
+				
 				$input.on('blur.wheelColorPicker', private.onInputBlur);
 				$input.on('focus.wheelColorPicker', methods.show);
+				
+				var suspendedEvents = $input.data('jQWCP.suspendedEvents');
+				var blurEvents = suspendedEvents.blur;
+				for(var i = 0; i < blurEvents.length; i++) {
+					$input.on('blur' + (blurEvents[i].namespace == '' ? '' : '.' + blurEvents[i].namespace), blurEvents[i].handler);
+				}
 			}
 			
 			// Clear active control reference
@@ -1823,6 +1866,10 @@
 		var lastValue = settings.lastValue;
 		var currentValue = $this.val();
 		
+		if(settings.hideKeyboard) {
+			return;
+		}
+		
 		// Trigger 'change' event only when it was modified by widget
 		// because user typing on the textfield will automatically
 		// trigger 'change' event on blur.
@@ -1831,8 +1878,9 @@
 		}
 		
 		// Hide widget (if using popup)
-		if(settings.layout == 'popup')
+		if(settings.layout == 'popup') {
 			methods.hide.call($this);
+		}
 	};
 	
 	/**
@@ -1866,6 +1914,34 @@
 		
 		// Trigger blur event
 		$input.triggerHandler('blur');
+	};
+	
+	/**
+	 * Function: onOverlayClick
+	 * 
+	 * Hide colorpicker popup dialog if overlay is clicked.
+	 * This has the same effect as blurring input element if hideKeyboard = false.
+	 */
+	private.onOverlayClick = function( e ) {		
+		var $widget = g_Popup; // Refers to slider wrapper or wheel
+		var input = g_Popup.data('jQWCP.inputElm');
+		
+		if(g_Popup != null && g_Popup.data('jQWCP.inputElm') != null) {
+			var $input = $(input);
+			var settings = $input.data('jQWCP.settings');
+			var lastValue = settings.lastValue;
+			var currentValue = $input.val();
+			
+			// Trigger 'change' event only when it was modified by widget
+			// because user typing on the textfield will automatically
+			// trigger 'change' event on blur.
+			if(lastValue != currentValue) {
+				$input.trigger('change');
+			}
+			
+			methods.hide.call($input);
+		}
+		$(this).hide();
 	};
 	
 	////////////////////////////////////////////////////////////////////
