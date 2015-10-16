@@ -96,20 +96,15 @@ License
 jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
-What's New in 3.0
+What's New in 2.4
 -----------------
 
-*Work in progress*
+* Added touch support.
 
 
 
 Backward Compatibility
 ----------------------
-
-**Version 2.x**
-
-The new version 3.x is compatible with 2.x.
-If you use a custom CSS which makes significant changes to positioning and/or sizes, the new mobile layout might be broken. In this case, you might want to switch back to default CSS or turning off mobile layout by setting `mobile` option to `false`.
 
 **Version 1.x**
 
