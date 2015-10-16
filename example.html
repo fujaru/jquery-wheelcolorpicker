@@ -38,6 +38,7 @@
 			margin: 20px auto;
 			padding: 0 20px;
 			max-width: 920px;
+			min-width: 920px;
 			color: #000;
 			background: #fff;
 		}
@@ -103,7 +104,7 @@
 			width: 100%;
 			box-sizing: border-box;
 		}
-		
+		/*
 		@media (max-width: 640px) {
 			.col-4 {
 				width: 50%;
@@ -115,7 +116,7 @@
 				width: 100%;
 			}
 		}
-		
+		*/
 		.snippet-output {
 			margin: 15px 0;
 			border: solid 1px #aaa;
@@ -209,7 +210,7 @@
 			<!-- Initialization using JavaScript -->
 			<div class="col-4">
 				in HSV format: <br />
-				<input type="text" id="color-hsv" />
+				<div style="position: relative;"><input type="text" id="color-hsv" /></div>
 			</div>
 			
 			<script type="text/javascript">

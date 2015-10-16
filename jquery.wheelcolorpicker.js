@@ -4,7 +4,7 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2015.10.15
+ * Date   : 2015.10.16
  * 
  * Copyright © 2011-2015 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -21,6 +21,12 @@
 	
 	// Holds the color picker popup widget for use globally
 	var g_Popup = null;
+	
+	// Coordinate of the top left page (mobile chrome workaround)
+	var g_Origin = { left: 0, top: 0 };
+	
+	// Various workaround flags
+	var BUG_RELATIVE_PAGE_ORIGIN = false; // top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
 	
 	/**
 	 * Function: wheelColorPicker
@@ -118,6 +124,7 @@
 	 *               order of letters affects the slider positions.
 	 *   showSliderLabel - Boolean Show labels for each slider.
 	 *   showSliderValue - Boolean Show numeric value of each slider.
+	 *   hideKeyboard    - Boolean Hide on screen keyboard.
 	 *   rounding  - Round the alpha value to N decimal digits. Default is 2.
 	 *               Set -1 to disable rounding.
 	 *   htmlOptions     - Load options from HTML attributes. 
@@ -145,6 +152,7 @@
 		showSliderLabel: true, /* 2.0 */
 		showSliderValue: false, /* 2.0 */
 		rounding: 2, /* 2.3 */
+		hideKeyboard: true, /* 2.4 */
 		mobileAutoScroll: true, /* 3.0 */ /* NOT IMPLEMENTED */
 		htmlOptions: true /* 2.3 */
 	};
@@ -640,7 +648,7 @@
 			// Setup block mode layout
 			if( settings.layout == 'block' ) {
 				$widget = private.initWidget.call( $this );
-				private.adjustWidget( $widget.get(0), settings );
+				//private.adjustWidget( $widget.get(0), settings );
 				$widget.addClass(settings.cssClass);
 				// Store DOM element reference
 				$this.data('jQWCP.widget', $widget.get(0));
@@ -657,6 +665,7 @@
 					$widget.css('display', $this.css('display'));
 				}
 				$widget.append($this);
+				private.adjustWidget( $widget.get(0), settings );
 				$this.hide();
 				
 				// Add tabindex attribute to make the widget focusable
@@ -834,6 +843,14 @@
 			top: ($this.offset().top + $this.outerHeight()) + 'px',
 			left: $this.offset().left + 'px'
 		});
+		
+		// BUG_RELATIVE_PAGE_ORIGIN workaround
+		if(BUG_RELATIVE_PAGE_ORIGIN) {
+			$widget.css({
+				top: ($this.get(0).getBoundingClientRect().top - g_Origin.top + $this.outerHeight()) + 'px',
+				left: ($this.get(0).getBoundingClientRect().left - g_Origin.left) + 'px'
+			});
+		}
 		
 		// Set the input element the popup is attached to
 		$widget.data('jQWCP.inputElm', this);
@@ -1480,7 +1497,7 @@
 		var $visElms = $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
 		var width = 0
 		$visElms.each(function(index, item) {
-			width += parseFloat($(item).css('margin-left').replace('px')) + $(item).outerWidth();
+			width += parseFloat($(item).css('margin-left').replace('px', '')) + $(item).outerWidth();
 		});
 		$widget.css({ width: width + 'px' });
 	};
@@ -1671,6 +1688,7 @@
 			e.pageX = e.originalEvent.touches[0].pageX;
 			e.pageY = e.originalEvent.touches[0].pageY;
 		}
+		$('#log').html(e.pageX + '/' + e.pageY);
 		
 		/// WHEEL CONTROL ///
 		if($control.hasClass('jQWCP-wWheel')) {
@@ -1679,6 +1697,12 @@
 			
 			var relX = (e.pageX - $control.offset().left - ($control.width() / 2)) / ($control.width() / 2);
 			var relY = - (e.pageY - $control.offset().top - ($control.height() / 2)) / ($control.height() / 2);
+			
+			// BUG_RELATIVE_PAGE_ORIGIN workaround
+			if(BUG_RELATIVE_PAGE_ORIGIN) {
+				var relX = (e.pageX - ($control.get(0).getBoundingClientRect().left - g_Origin.left) - ($control.width() / 2)) / ($control.width() / 2);
+				var relY = - (e.pageY - ($control.get(0).getBoundingClientRect().top - g_Origin.top) - ($control.height() / 2)) / ($control.height() / 2);
+			}
 			
 			//~ console.log(relX + ' ' + relY);
 			
@@ -1708,6 +1732,12 @@
 			var $cursor = $control.find('.jQWCP-scursor');
 			
 			var relY = (e.pageY - $control.offset().top) / $control.height();
+			
+			// BUG_RELATIVE_PAGE_ORIGIN workaround
+			if(BUG_RELATIVE_PAGE_ORIGIN) {
+				var relY = (e.pageY - ($control.get(0).getBoundingClientRect().top - g_Origin.top)) / $control.height();
+			}
+			
 			var value = relY < 0 ? 0 : relY > 1 ? 1 : relY;
 			
 			$cursor.css('top', (value * $control.height()) + 'px');
@@ -1840,7 +1870,7 @@
 	 * Automatically initialize color picker on page load
 	 * for elements with data-wheelcolorpicker attribute.
 	 */
-	$('document').ready(function() {
+	$(document).ready(function() {
 		$('[data-wheelcolorpicker]').wheelColorPicker({ htmlOptions: true });
 	});
 	
@@ -1850,11 +1880,34 @@
 	 * Browser specific workarounds
 	 */
 	(function() {
-		// Mozilla //
-		if($.browser.mozilla) {
-			// Force low resolution slider canvases to improve performance
+		// MOZILLA //
+		
+		// Force low resolution slider canvases to improve performance
+		// Note: Do not rely on $.browser since it's obsolete by jQuery 2.x
+		if($.browser != undefined && $.browser.mozilla) {
 			$.fn.wheelColorPicker.defaults.quality = 0.2;
 		}
+		
+		// MOBILE CHROME //
+		
+		// BUG_RELATIVE_PAGE_ORIGIN
+		// Calibrate the coordinate of top left point of the page
+		// On mobile chrome, the top left of the page is not always set at (0,0)
+		// making window.scrollX/Y and $.offset() useless
+		$(document).ready(function() {
+			$('body').append(
+				'<div id="jQWCP-PageOrigin" style="position: absolute; top: 0; left: 0; height: 0; width: 0;"></div>'
+			);
+		
+			$(window).on('scroll.jQWCP_RelativePageOriginBugFix', function() {
+				var origin = document.getElementById('jQWCP-PageOrigin').getBoundingClientRect();
+				g_Origin = origin;
+				if(origin.left != 0 || origin.top != 0) {
+					BUG_RELATIVE_PAGE_ORIGIN = true;
+				}
+			});
+		});
+		
 	})();
 	
 }) (jQuery);
