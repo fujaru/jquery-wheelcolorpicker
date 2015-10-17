@@ -38,7 +38,6 @@
 			margin: 20px auto;
 			padding: 0 20px;
 			max-width: 920px;
-			min-width: 920px;
 			color: #000;
 			background: #fff;
 		}
@@ -100,23 +99,48 @@
 			box-sizing: border-box;
 		}
 		
-		.col-4 input {
+		.col-4 input,
+		.col-4 textarea {
 			width: 100%;
 			box-sizing: border-box;
 		}
-		/*
+		
+		.col-2 {
+			float: left;
+			width: 50%;
+			padding: 0 10px;
+			box-sizing: border-box;
+		}
+		
+		.col-2 input,
+		.col-2 textarea {
+			width: 100%;
+			box-sizing: border-box;
+		}
+		
+		/* MD */
+		@media (max-width: 960px) {
+		}
+		
+		/* SM */
 		@media (max-width: 640px) {
 			.col-4 {
 				width: 50%;
 			}
+			
+			.col-sm-1 {
+				width: 100%;
+			}
 		}
 		
+		/* XS */
 		@media (max-width: 320px) {
+			.col-2,
 			.col-4 {
 				width: 100%;
 			}
 		}
-		*/
+		
 		.snippet-output {
 			margin: 15px 0;
 			border: solid 1px #aaa;
@@ -235,7 +259,7 @@
 	
 	<div class="snippet-output" data-id="snippet-basic"></div>
 	
-	<h2>Slider customizations</h2>
+	<h2>Slider Customizations</h2>
 	
 	<p>
 		Besides the default sliders, you may also 
@@ -269,16 +293,27 @@
 	
 	<div class="snippet-output" data-id="snippet-slider"></div>
 	
-	<h2>Embedded Color Picker</h2>
+	<h2>Color Picker Appearances</h2>
 	
 	<p>
-		Color picker can also be embedded in place of the input element. 
+		Color picker can also be attached to a button or embedded inline. 
 	</p>
 	
 	<div id="snippet-block" class="snippet">
-		<p>
-			<input type="text" data-wheelcolorpicker data-wcp-layout="block" />	
-		</p>
+		<div class="row">
+			<div class="col-2 col-sm-1">
+				Embedded inline: <br />
+				<input type="text" data-wheelcolorpicker data-wcp-layout="block" />	
+			</div>
+			<div class="col-4 col-sm-1">
+				Attached to button: <br />
+				<input type="button" data-wheelcolorpicker />	
+			</div>
+			<div class="col-4 col-sm-1">
+				Attached to textarea: <br />
+				<textarea data-wheelcolorpicker rows="5"></textarea>
+			</div>
+		</div>
 	</div>
 	
 	<div class="snippet-output" data-id="snippet-block"></div>
