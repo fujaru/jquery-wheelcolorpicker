@@ -1,25 +1,25 @@
 {
-	"name": "jquery-wheelcolorpicker",
-	"version": "2.4.5-npm1",
-	"description": "A jQuery plugin to add color picker functionality to HTML input element in round color wheel style.",
-	"author": "Fajar Chandra (http://www.jar2.net)",
-	"homepage": "http://www.jar2.net/projects/jquery-wheelcolorpicker",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/fujaru/jquery-wheelcolorpicker"
-	},
-	"bugs": "https://github.com/fujaru/jquery-wheelcolorpicker/issues",
-	"keywords": [
-		"ui",
-		"jquery",
-		"form",
-		"input",
-		"color",
-		"picker",
-		"colorpicker"
-	],
-	"dependencies": {
-		"jquery": ">=1.7"
-	}
+  "name": "jquery-wheelcolorpicker",
+  "version": "2.4.5",
+  "description": "A jQuery plugin to add color picker functionality to HTML input element in round color wheel style.",
+  "author": "Fajar Chandra (http://www.jar2.net)",
+  "homepage": "http://www.jar2.net/projects/jquery-wheelcolorpicker",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fujaru/jquery-wheelcolorpicker"
+  },
+  "bugs": "https://github.com/fujaru/jquery-wheelcolorpicker/issues",
+  "keywords": [
+    "ui",
+    "jquery",
+    "form",
+    "input",
+    "color",
+    "picker",
+    "colorpicker"
+  ],
+  "dependencies": {
+    "jquery": ">=1.7"
+  }
 }
