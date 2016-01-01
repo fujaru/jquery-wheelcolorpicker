@@ -113,4 +113,4 @@ Options and methods marked as *deprecated* in version 2.x are still available wh
 
 - - - - -
 
-
+<a href="https://pledgie.com/campaigns/30344" target="_blank"><img class="alignnone" style="margin-top: 0;" src="https://pledgie.com/campaigns/30344.png?skin_name=chrome" alt="Click here to lend your support to: jQuery Wheel Color Picker Plugin and make a donation at pledgie.com !" height="37" border="0" width="149"></a>
