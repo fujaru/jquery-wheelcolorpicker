@@ -96,10 +96,11 @@ License
 jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
-What's New in 2.4
+What's New in 2.5
 -----------------
 
-* Added touch support.
+* Fixed regressions with jQuery 1.8+
+* Fixed #ffffff bug.
 
 
 
@@ -109,4 +110,7 @@ Backward Compatibility
 **Version 1.x**
 
 Options and methods marked as *deprecated* in version 2.x are still available which makes this backward compatible to 1.x. However, please refrain on using any deprecated options and methods since they are planned to be removed in future release. CSS is not backward compatible. Switching back to base theme is recommended. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
+
+- - - - -
+
 

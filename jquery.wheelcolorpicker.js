@@ -4,9 +4,9 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2015.10.16
+ * Date   : 2016.01.01
  * 
- * Copyright © 2011-2015 Fajar Chandra. All rights reserved.
+ * Copyright © 2011-2016 Fajar Chandra. All rights reserved.
  * Released under MIT License.
  * http://www.opensource.org/licenses/mit-license.php
  */
