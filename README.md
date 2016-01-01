@@ -42,7 +42,7 @@ See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Featu
 Usage
 -----
 
-First, include these javascript and CSS files in the HTML head section:
+First, include these javascript and CSS files on the HTML head section:
 
 ```html
 <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
@@ -71,10 +71,6 @@ $(element).wheelColorPicker( options );
 **Example**
 
 ```html
-<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
-<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
-
 <input type="text" class="colorpicker" />
 
 <script type="text/javascript">
