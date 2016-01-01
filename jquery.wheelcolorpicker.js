@@ -1537,7 +1537,13 @@
 		$input.off('focus.wheelColorPicker');
 		
 		// Temporarily unbind all blur events until mouse is released
-		var blurEvents = $input.data('events').blur;
+        // data('events') is deprecated since jquery 1.8
+        if($input.data('events') != undefined) {
+            var blurEvents = $input.data('events').blur;
+        }
+        else {
+            var blurEvents = undefined;
+        }
 		var suspendedEvents = { blur: [] };
 		//suspendedEvents.blur = blurEvents;
 		//$input.off('blur');
@@ -1761,7 +1767,7 @@
 			}
 			
 			// Hue is calculated from the angle of the cursor. 0deg is set to the right, and increase counter-clockwise.
-			var hue = Math.atan( relY / relX ) / ( 2 * Math.PI );
+            var hue = (relX == 0 && relY == 0) ? 0 : Math.atan( relY / relX ) / ( 2 * Math.PI );
 			// If hue is negative, then fix the angle value (meaning angle is in either Q2 or Q4)
 			if( hue < 0 ) {
 				hue += 0.5;
