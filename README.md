@@ -96,12 +96,10 @@ License
 jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
-What's New in 2.4
+What's New in 2.5
 -----------------
 
-* Fixed regressions with jQuery 1.8+
-* Fixed #ffffff bug.
-* Added touch support
+* Added slider snap option.
 
 
 Backward Compatibility

@@ -4,7 +4,7 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2016.01.01
+ * Date   : 2016.01.02
  * 
  * Copyright © 2011-2016 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -137,6 +137,9 @@
 	 *   htmlOptions     - Load options from HTML attributes. 
 	 *                     To set options using HTML attributes, 
 	 *                     prefix these options with 'data-wcp-' as attribute names.
+     *   snap            - Snap color wheel and slider on 0, 0.5, and 1.0
+     *   snapTolerance   - Snap if slider position falls within defined 
+     *                     tolerance value.
 	 */
 	$.fn.wheelColorPicker.defaults = {
 		format: 'hex', /* 1.x */
@@ -159,7 +162,9 @@
 		rounding: 2, /* 2.3 */
 		mobile: true, /* 3.0 */ /* NOT IMPLEMENTED */
 		hideKeyboard: false, /* 2.4 */
-		htmlOptions: true /* 2.3 */
+		htmlOptions: true, /* 2.3 */
+        snap: false, /* 2.5 */
+        snapTolerance: 0.05 /* 2.5 */
 	};
 	
 	$.fn.wheelColorPicker.hasInit = false;
@@ -1757,7 +1762,7 @@
 				var relY = - (e.pageY - ($control.get(0).getBoundingClientRect().top - g_Origin.top) - ($control.height() / 2)) / ($control.height() / 2);
 			}
 			
-			//~ console.log(relX + ' ' + relY);
+			//console.log(relX + ' ' + relY);
 			
 			// Sat value is calculated from the distance of the cursor from the central point
 			var sat = Math.sqrt(Math.pow(relX, 2) + Math.pow(relY, 2));
@@ -1765,6 +1770,11 @@
 			if(sat > 1) {
 				sat = 1;
 			}
+            
+            // Snap to 0,0
+            if(settings.snap && sat < settings.snapTolerance) {
+                sat = 0;
+            }
 			
 			// Hue is calculated from the angle of the cursor. 0deg is set to the right, and increase counter-clockwise.
             var hue = (relX == 0 && relY == 0) ? 0 : Math.atan( relY / relX ) / ( 2 * Math.PI );
@@ -1792,6 +1802,18 @@
 			}
 			
 			var value = relY < 0 ? 0 : relY > 1 ? 1 : relY;
+            
+            // Snap to 0.0, 0.5, and 1.0
+            //console.log(value);
+            if(settings.snap && value < settings.snapTolerance) {
+                value = 0;
+            }
+            else if(settings.snap && value > 1-settings.snapTolerance) {
+                value = 1;
+            }
+            if(settings.snap && value > 0.5-settings.snapTolerance && value < 0.5+settings.snapTolerance) {
+                value = 0.5;
+            }
 			
 			$cursor.css('top', (value * $control.height()) + 'px');
 			
