@@ -728,7 +728,7 @@
         // 2. input.value
         // 3. default
         this.color = { h: 0, s: 0, v: 1, r: 1, g: 1, b: 1, a: 1 };
-        this.setValue(input.value);
+        this.setValue(this.input.value);
         
         // Set options
         this.options = $.extend(true, {}, WCP.defaults);
@@ -1035,15 +1035,13 @@
         $input.on('change.wheelColorPicker', private.onInputChange);
         
         // Set color value
-        if(this.options.color == null) {
-            methods.setValue.call( $input, $input.val() );
-        }
-        else if(typeof(this.options.color) == "object") {
-            methods.setColor.call( $input, this.options.color );
+        // DEPRECATED by 3.0
+        if(typeof this.options.color == "object") {
+            this.setColor(this.options.color);
             this.options.color = undefined;
         }
-        else {
-            methods.setValue.call( $input, this.options.color );
+        else if(typeof this.options.color == "string") {
+            this.setValue(this.options.color);
             this.options.color = undefined;
         }
         
@@ -1139,6 +1137,11 @@
 	 *   force   - Boolean force redraw all sliders.
 	 */
 	WCP.ColorPicker.prototype.redrawSliders = function( force ) {
+        
+        // Skip if widget not yet initialized
+        if(this.widget == null) 
+            return this;
+        
         var $widget = $(this.widget);
         
         // DEPRECATED 3.0
@@ -1150,7 +1153,7 @@
         // No need to redraw sliders on global popup widget if not 
         // attached to the input elm in current iteration
         if(this != $widget.data('jQWCP.instance'))
-            return;
+            return this;
             
         var w = 1;
         var h = this.options.quality * 50;
@@ -1186,7 +1189,7 @@
         
         /// SLIDERS ///
         if(!this.options.live && !force)
-            return;
+            return this;
         
         /// ALPHA ///
         // The top color is (R, G, B, 1)
@@ -1305,13 +1308,18 @@
      * Only displayed sliders are updated.
 	 */
 	WCP.ColorPicker.prototype.updateSliders = function() {
+        
+        // Skip if not yet initialized
+        if(this.widget == null)
+            return this;
+            
         var $widget = $(this.widget);
         var color = this.color;
         
         // No need to redraw sliders on global popup widget if not 
         // attached to the input elm in current iteration
         if(this != $widget.data('jQWCP.instance'))
-            return;
+            return this;
             
         // Wheel
         var $wheel = $widget.find('.jQWCP-wWheel');
@@ -1385,6 +1393,140 @@
         return this; // Allows method chaining
 	};
 	
+    
+	/**
+	 * Function: setValue
+	 * 
+	 * Set the color value as string.
+	 */
+	WCP.ColorPicker.prototype.setValue = function( value ) {
+		var color = WCP.strToColor(value);
+		if(!color)
+			return this;
+			
+		return this.setColor(color);
+	}
+	
+    
+	/**
+	 * Function: setColor
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Set color by passing an object consisting of:
+	 * { r, g, b, a } or
+	 * { h, s, v, a }
+	 */
+	WCP.ColorPicker.prototype.setColor = function( color ) {
+		if(color.r != null) {
+			return this.setRgba(color.r, color.g, color.b, color.a);
+		}
+		else if(color.h != null) {
+			return this.setHsva(color.h, color.s, color.v, color.a);
+		}
+		else if(color.a != null) {
+			return this.setAlpha(color.a);
+		}
+		return this;
+	};
+	
+    
+	/**
+	 * Function: setRgba
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Set color using RGBA combination.
+	 */
+	WCP.ColorPicker.prototype.setRgba = function( r, g, b, a ) {
+        this.color.r = r;
+        this.color.g = g;
+        this.color.b = b;
+        
+        if(a != null) {
+            this.color.a = a;
+        }
+        
+        var hsv = WCP.rgbToHsv(r, g, b);
+        this.color.h = hsv.h;
+        this.color.s = hsv.s;
+        this.color.v = hsv.v;
+        //~ console.log(color);
+
+		this.updateSliders();
+		this.redrawSliders();
+        return this;
+	};
+	
+    
+	/**
+	 * Function: setRgb
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Set color using RGB combination.
+	 */
+	WCP.ColorPicker.prototype.setRgb = function( r, g, b ) {
+		return this.setRgba(r, g, b, null);
+	};
+	
+	
+	/**
+	 * Function: setHsva
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Set color using HSVA combination.
+	 */
+	WCP.ColorPicker.prototype.setHsva = function( h, s, v, a ) {
+        this.color.h = h;
+        this.color.s = s;
+        this.color.v = v;
+        
+        if(a != null) {
+            this.color.a = a;
+        }
+        
+        var rgb = WCP.hsvToRgb(h, s, v);
+        this.color.r = rgb.r;
+        this.color.g = rgb.g;
+        this.color.b = rgb.b;
+        //~ console.log(color);
+		
+		this.updateSliders();
+		this.redrawSliders();
+        return this;
+	};
+	
+    
+	/**
+	 * Function: setHsv
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Set color using HSV combination.
+	 */
+	WCP.ColorPicker.prototype.setHsv = function( h, s, v ) {
+		return this.setHsva(h, s, v, null);
+	};
+	
+    
+	/**
+	 * Function: setAlpha
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Set alpha value.
+	 */
+	WCP.ColorPicker.prototype.setAlpha = function( value ) {
+        var $this = $(this); // Refers to input elm
+        var color = $this.data('jQWCP.color');
+        
+        color.a = value;
+
+		this.redrawSliders();
+        return this;
+	};
 	
     
 	
@@ -1935,6 +2077,8 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using RGBA combination.
+     * 
+     * MIGRATED
 	 */
 	methods.setRgba = function( r, g, b, a ) {
 		this.each(function() {
@@ -1966,6 +2110,8 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using RGB combination.
+     * 
+     * MIGRATED
 	 */
 	methods.setRgb = function( r, g, b ) {
 		return methods.setRgba.call( this, r, g, b, null );
@@ -1977,6 +2123,8 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using HSVA combination.
+     * 
+     * MIGRATED
 	 */
 	methods.setHsva = function( h, s, v, a ) {
 		this.each(function() {
@@ -2008,6 +2156,8 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using HSV combination.
+     * 
+     * MIGRATED
 	 */
 	methods.setHsv = function( h, s, v ) {
 		return methods.setHsva.call( this, h, s, v, null );
@@ -2019,6 +2169,8 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set alpha value.
+     * 
+     * MIGRATED
 	 */
 	methods.setAlpha = function( value ) {
 		this.each(function() {
@@ -2105,6 +2257,8 @@
 	 * Set color by passing an object consisting of:
 	 * { r, g, b, a } or
 	 * { h, s, v, a }
+     * 
+     * MIGRATED
 	 */
 	methods.setColor = function( color ) {
 		if(color.r != null) {

@@ -1,6 +1,8 @@
 jQuery Wheel Color Picker Plugin
 ================================
 
+**NOTE:** This is a work in progress.
+
 The Wheel Color Picker plugin adds color picker functionality to HTML form inputs in round color wheel style. The Wheel Color Picker can be displayed as a popup dialog as users focus the input, or embedded inline. It currently supports these HTML elements:
 
 *   input (works on buttons too!)
