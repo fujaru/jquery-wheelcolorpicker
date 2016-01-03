@@ -76,7 +76,7 @@
 	};
     
     $.fn.wheelColorPicker3 = function() {
-        var returnValue = this; // Allows chaining
+        var returnValue = this; // Allows method chaining
         
         // Separate first argument and the rest..
         // First argument is used to determine function/option name
@@ -85,13 +85,12 @@
             var shift = [].shift;
             var firstArg = shift.apply(arguments);
             var firstArgUc = (typeof firstArg === "string") ? firstArg.charAt(0).toUpperCase() + firstArg.slice(1) : firstArg;
-            var args = arguments;
         }
         else {
             var firstArg = undefined;
             var firstArgUc = undefined;
-            var args = arguments;
         }
+        var args = arguments;
         
         this.each(function() {
             
@@ -113,6 +112,7 @@
             /// What to do? ///
             
             // Call a method
+            // wheelColorPicker('show')
             if(typeof instance[firstArg] === "function") {
                 var ret = instance[firstArg].apply(instance, args);
                 
@@ -124,7 +124,8 @@
             }
             
             // Try option setter
-            else if(typeof instance['set'+firstArgUc] === "function") {
+            // wheelColorPicker('color', '#ff00aa')
+            else if(typeof instance['set'+firstArgUc] === "function" && args.length > 0) {
                 var ret = instance['set'+firstArgUc](this, args);
                 
                 // If instance is not returned, no method chaining
@@ -135,6 +136,7 @@
             }
             
             // Try option getter
+            // wheelColorPicker('color')
             else if(typeof instance['get'+firstArgUc] === "function") {
                 var ret = instance['get'+firstArgUc](this, args);
                 
@@ -146,11 +148,13 @@
             }
             
             // Set option value
+            // wheelColorPicker('format', 'hex')
             else if(instance.options[firstArg] !== undefined && args.length > 0) {
                 instance.options[firstArg] = arguments[0];
             }
             
             // Get option value
+            // wheelColorPicker('format')
             else if(instance.options[firstArg] !== undefined) {
                 returnValue = instance.options[firstArg];
                 return false;
@@ -222,8 +226,8 @@
 	 *                   normal color or "wvap" for color with alpha value. 
 	 *                   Possible combinations are "whsvrgbap". Note that the 
 	 *                   order of letters affects the slider positions.
-	 *   showSliderLabel - Boolean Show labels for each slider.
-	 *   showSliderValue - Boolean Show numeric value of each slider.
+	 *   sliderLabel   - Boolean Show labels for each slider.
+	 *   sliderValue   - Boolean Show numeric value of each slider.
 	 *   hideKeyboard  - Boolean Keep input blurred to avoid on screen keyboard appearing. 
 	 *                   If this is set to true, avoid assigning handler to blur event.
 	 *   rounding      - Round the alpha value to N decimal digits. Default is 2.
@@ -254,8 +258,8 @@
 		animDuration: 200, /* 2.0 */
 		quality: 1, /* 2.0 */
 		sliders: null, /* 2.0 */
-		showSliderLabel: true, /* 2.0 */
-		showSliderValue: false, /* 2.0 */
+		sliderLabel: true, /* 2.0 */
+		sliderValue: false, /* 2.0 */
 		rounding: 2, /* 2.3 */
 		mobile: true, /* 3.0 */ /* NOT IMPLEMENTED */
 		hideKeyboard: false, /* 2.4 */
@@ -303,7 +307,7 @@
     /******************************************************************/
     
     //////////////////////
-    // STATIC FUNCTIONS //
+    // HELPER FUNCTIONS //
     //////////////////////
     
 	/**
@@ -747,10 +751,28 @@
      * Since 3.0
      */
     WCP.ColorPicker = function ( elm, options ) {
+        console.log(elm);
+        // Assign reference to input DOM element
         this.input = elm;
+        
+        // Setup selected color container
+        this.color = { h: 0, s: 0, v: 1, r: 1, g: 1, b: 1, a: 1 };
+        
+        // Set options
         this.options = $.extend(true, {}, WCP.defaults);
         this.setOptions(options);
+        
+        // Check sliders option, if not defined, set default sliders
+        if(this.options.sliders == null)
+            this.options.sliders = 'wvp' + (this.options.format.indexOf('a') >= 0 ? 'a' : '');
+        
+        this.init();
     };
+    
+    
+    ////////////////////
+    // Static members //
+    ////////////////////
     
     
     /**
@@ -759,6 +781,90 @@
      * Reference to global color picker widget (popup)
      */
     WCP.ColorPicker.widget = null;
+    
+    
+	/**
+	 * Function: createWidget
+     * 
+     * Since 3.0
+     * 2.5 was private.initWidget
+	 * 
+	 * Create color picker widget.
+	 */
+	WCP.ColorPicker.createWidget = function() {
+		/// WIDGET ///
+		// Notice: We won't use canvas to draw the color wheel since 
+		// it may takes time and cause performance issue.
+		var $widget = $(
+			"<div class='jQWCP-wWidget'>" + 
+                "<div class='jQWCP-wWheel'>" + 
+                    "<div class='jQWCP-wWheelOverlay'></div>" +
+                    "<span class='jQWCP-wWheelCursor'></span>" +
+                "</div>" +
+                "<div class='jQWCP-wHue jQWCP-slider-wrapper'>" +
+                    "<canvas class='jQWCP-wHueSlider jQWCP-slider' width='1' height='50' title='Hue'></canvas>" +
+                    "<span class='jQWCP-wHueCursor jQWCP-scursor'></span>" +
+                "</div>" +
+                "<div class='jQWCP-wSat jQWCP-slider-wrapper'>" +
+                    "<canvas class='jQWCP-wSatSlider jQWCP-slider' width='1' height='50' title='Saturation'></canvas>" +
+                    "<span class='jQWCP-wSatCursor jQWCP-scursor'></span>" +
+                "</div>" +
+                "<div class='jQWCP-wVal jQWCP-slider-wrapper'>" +
+                    "<canvas class='jQWCP-wValSlider jQWCP-slider' width='1' height='50' title='Value'></canvas>" +
+                    "<span class='jQWCP-wValCursor jQWCP-scursor'></span>" +
+                "</div>" +
+                "<div class='jQWCP-wRed jQWCP-slider-wrapper'>" +
+                    "<canvas class='jQWCP-wRedSlider jQWCP-slider' width='1' height='50' title='Red'></canvas>" +
+                    "<span class='jQWCP-wRedCursor jQWCP-scursor'></span>" +
+                "</div>" +
+                "<div class='jQWCP-wGreen jQWCP-slider-wrapper'>" +
+                    "<canvas class='jQWCP-wGreenSlider jQWCP-slider' width='1' height='50' title='Green'></canvas>" +
+                    "<span class='jQWCP-wGreenCursor jQWCP-scursor'></span>" +
+                "</div>" +
+                "<div class='jQWCP-wBlue jQWCP-slider-wrapper'>" +
+                    "<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='1' height='50' title='Blue'></canvas>" +
+                    "<span class='jQWCP-wBlueCursor jQWCP-scursor'></span>" +
+                "</div>" +
+				"<div class='jQWCP-wAlpha jQWCP-slider-wrapper'>" +
+					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='1' height='50' title='Alpha'></canvas>" +
+					"<span class='jQWCP-wAlphaCursor jQWCP-scursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wPreview'>" +
+					"<canvas class='jQWCP-wPreviewBox' width='1' height='1' title='Selected Color'></canvas>" +
+				"</div>" +
+			"</div>"
+		);
+			
+		// Small UI fix to disable highlighting the widget
+		// Also UI fix to disable touch context menu 
+		$widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-scursor, .jQWCP-slider')
+			.attr('unselectable', 'on')
+			.css('-moz-user-select', 'none')
+			.css('-webkit-user-select', 'none')
+			.css('user-select', 'none')
+			.css('-webkit-touch-callout', 'none');
+			
+		// Disable context menu on sliders
+		// Workaround for touch browsers
+		$widget.on('contextmenu.wheelColorPicker', function() { return false; });
+			
+		// Bind widget events
+		$widget.on('mousedown.wheelColorPicker', '.jQWCP-wWheel', private.onWheelMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-wWheel', private.onWheelMouseDown);
+		$widget.on('mousedown.wheelColorPicker', '.jQWCP-wWheelCursor', private.onWheelCursorMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-wWheelCursor', private.onWheelCursorMouseDown);
+		$widget.on('mousedown.wheelColorPicker', '.jQWCP-slider', private.onSliderMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-slider', private.onSliderMouseDown);
+		$widget.on('mousedown.wheelColorPicker', '.jQWCP-scursor', private.onSliderCursorMouseDown);
+		$widget.on('touchstart.wheelColorPicker', '.jQWCP-scursor', private.onSliderCursorMouseDown);
+        
+		return $widget.get(0);
+	};
+    
+    
+    /////////////
+    // Members //
+    /////////////
     
     
     /**
@@ -805,19 +911,36 @@
 	 */
 	WCP.ColorPicker.prototype.setOptions = function( options ) {
         
+        // options should be a separate object (passed by value)
+        // Make a copy of options
+        options = $.extend(true, {}, options);
+        
         // Load options from HTML attributes
         if(this.options.htmlOptions) {
             for(var key in WCP.defaults) {
-                if(this.input.hasAttribute('data-wcp-'+key)) {
-                    this.options[key] = input.getAttribute('data-wcp-'+key);
+                // Only if option key is valid and not set via function argument
+                if(this.input.hasAttribute('data-wcp-'+key) && options[key] === undefined) {
+                    options[key] = this.input.getAttribute('data-wcp-'+key);
                 }
             }
         }
         
-        // Override options
+        // Set options
         for(var key in options) {
-            console.log(key);
-            this.options[key] = options[key];
+            // Skip undefined option key
+            if(this.options[key] === undefined)
+                continue;
+            
+            var keyUc = key.charAt(0).toUpperCase() + key.slice(1);
+            
+            // If setter is available, try setting it via setter
+            if(typeof this['set'+keyUc] === "function") {
+                this['set'+keyUc](options[key]);
+            }
+            // Otherwise directly update options
+            else {
+                this.options[key] = options[key];
+            }
         }
         
         return this; // Allow chaining
@@ -827,7 +950,7 @@
 	/**
 	 * Function: ColorPicker.init
 	 * 
-	 * Initialize wheel color picker
+	 * Initialize wheel color picker widget
 	 */
 	WCP.ColorPicker.prototype.init = function() {
 		WCP.init();
@@ -837,48 +960,46 @@
             return;
         this.hasInit = true;
         
-        // Setup selected color container
-        this.color = { h: 0, s: 0, v: 1, r: 1, g: 1, b: 1, a: 1 };
-        
-        // Check sliders option
-        if(this.options.sliders == null)
-            this.options.sliders = 'wvp' + (this.options.format.indexOf('a') >= 0 ? 'a' : '');
+        var $input = $(this.input);
+        var $widget = null;
         
         /// LAYOUT & BINDINGS ///
         // Setup block mode layout
-        if( settings.layout == 'block' ) {
-            $widget = private.initWidget.call( $this );
-            //private.adjustWidget( $widget.get(0), settings );
-            $widget.addClass(settings.cssClass);
-            // Store DOM element reference
-            $this.data('jQWCP.widget', $widget.get(0));
-            $widget.data('jQWCP.inputElm', this);
+        if( this.options.layout == 'block' ) {
+            this.widget = WCP.ColorPicker.createWidget();
+            $widget = $(this.widget);
+            $widget.addClass(this.options.cssClass);
+            
+            // Store object instance reference
+            $widget.data('jQWCP.instance', this);
             
             // Wrap widget around the input elm and put the input 
             // elm inside widget
             $widget.addClass('jQWCP-block');
-            $this.after($widget);
-            if($this.css('display') == "inline") {
+            $widget.insertAfter(this.input);
+            // Retain display CSS property
+            if($input.css('display') == "inline") {
                 $widget.css('display', "inline-block");
             }
             else {
-                $widget.css('display', $this.css('display'));
+                $widget.css('display', $input.css('display'));
             }
-            $widget.append($this);
-            private.adjustWidget( $widget.get(0), settings );
-            $this.hide();
+            $widget.append(this.input);
+            $input.hide();
             
             // Add tabindex attribute to make the widget focusable
-            if($this.attr('tabindex') != undefined) {
-                $widget.attr('tabindex', $this.attr('tabindex'));
+            if($input.attr('tabindex') != undefined) {
+                $widget.attr('tabindex', $input.attr('tabindex'));
             }
             else {
                 $widget.attr('tabindex', 0);
             }
             
+            this.refreshWidget();
+            
             // Draw shading
-            methods.redrawSliders.call( $this, null, true );
-            methods.updateSliders.call( $this );
+            methods.redrawSliders.call( $input, null, true );
+            methods.updateSliders.call( $input );
             
             // Bind widget element events
             $widget.on('focus.wheelColorPicker', private.onWidgetFocus);
@@ -886,14 +1007,12 @@
         }
         // Setup popup mode layout
         else {
-            if(g_Popup == null) {
-                $widget = private.initWidget.call( $this );
-                // Store DOM element reference
-                $this.data('jQWCP.widget', $widget.get(0));
+            if(WCP.ColorPicker.widget == null) {
+                WCP.ColorPicker.widget = WCP.ColorPicker.createWidget();
+                $widget = $(WCP.ColorPicker.widget);
                 
                 // Assign widget to global
-                g_Popup = $widget;
-                g_Popup.hide();
+                $widget.hide();
                 $('body').append($widget);
                 
                 // Bind popup events
@@ -901,42 +1020,101 @@
                 $widget.on('mouseup.wheelColorPicker', private.onPopupDlgMouseUp);
                 
             }
-            else {
-                $this.data('jQWCP.widget', g_Popup);
-            }
+            this.widget = WCP.ColorPicker.widget;
             
             // Bind input element events
-            $this.on('focus.wheelColorPicker', methods.show);
+            $input.on('focus.wheelColorPicker', methods.show);
             //$this.on('blur.wheelColorPicker', methods.hide);
-            $this.on('blur.wheelColorPicker', private.onInputBlur);
+            $input.on('blur.wheelColorPicker', private.onInputBlur);
         }
         
         // Bind input events
-        $this.on('keyup.wheelColorPicker', private.onInputKeyup);
-        $this.on('change.wheelColorPicker', private.onInputChange);
+        $input.on('keyup.wheelColorPicker', private.onInputKeyup);
+        $input.on('change.wheelColorPicker', private.onInputChange);
         
         // Set color value
-        if(settings.color == null) {
-            methods.setValue.call( $this, $this.val() );
+        if(this.options.color == null) {
+            methods.setValue.call( $input, $input.val() );
         }
-        else if(typeof(settings.color) == "object") {
-            methods.setColor.call( $this, settings.color );
-            settings.color = undefined;
+        else if(typeof(this.options.color) == "object") {
+            methods.setColor.call( $input, this.options.color );
+            this.options.color = undefined;
         }
         else {
-            methods.setValue.call( $this, settings.color );
-            settings.color = undefined;
+            methods.setValue.call( $input, this.options.color );
+            this.options.color = undefined;
         }
         
         // Set readonly mode
         /* DEPRECATED */
-        if(settings.userinput) {
-            $this.removeAttr('readonly');
+        if(this.options.userinput) {
+            $input.removeAttr('readonly');
         }
         else {
-            $this.attr('readonly', true);
+            $input.attr('readonly', true);
         }
 	};
+    
+	
+    
+	/**
+	 * Function: refreshWidget
+     * 
+     * Since 3.0
+     * 2.5 was private.adjustWidget
+	 * 
+	 * Update widget to match current option values.
+	 */
+	WCP.ColorPicker.prototype.refreshWidget = function() {
+		var $widget = $(this.widget);
+		
+        // Rearrange sliders
+        $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview')
+            .hide()
+            .addClass('hidden');
+            
+        for(var i in this.options.sliders) {
+            var $slider = null;
+            switch(this.options.sliders[i]) {
+                case 'w':
+                    $slider = $widget.find('.jQWCP-wWheel'); break;
+                case 'h':
+                    $slider = $widget.find('.jQWCP-wHue'); break;
+                case 's':
+                    $slider = $widget.find('.jQWCP-wSat'); break;
+                case 'v':
+                    $slider = $widget.find('.jQWCP-wVal'); break;
+                case 'r':
+                    $slider = $widget.find('.jQWCP-wRed'); break;
+                case 'g':
+                    $slider = $widget.find('.jQWCP-wGreen'); break;
+                case 'b':
+                    $slider = $widget.find('.jQWCP-wBlue'); break;
+                case 'a':
+                    $slider = $widget.find('.jQWCP-wAlpha'); break;
+                case 'p':
+                    $slider = $widget.find('.jQWCP-wPreview'); break;
+            }
+            
+            if($slider != null) {
+                $slider.appendTo(this.widget);
+                $slider.show().removeClass('hidden');
+            }
+        }
+        
+        // Adjust sliders height based on quality
+		var sliderHeight = this.options.quality * 50;
+        $widget.find('.jQWCP-slider').attr('height', sliderHeight);
+        
+		// Adjust container width
+		var $visElms = $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
+		var width = 0
+		$visElms.each(function(index, item) {
+			width += parseFloat($(item).css('margin-right').replace('px', '')) + $(item).outerWidth();
+		});
+		$widget.css({ width: width + 'px' });
+	};
+	
 	
     
 	
@@ -1712,13 +1890,13 @@
 		// it may takes time and cause performance issue.
 		var $widget = $(
 			"<div class='jQWCP-wWidget'>" + 
-				"<div class='jQWCP-wWheelGroup'>" +
+				//"<div class='jQWCP-wWheelGroup'>" +
 					"<div class='jQWCP-wWheel'>" + 
 						"<div class='jQWCP-wWheelOverlay'></div>" +
 						"<span class='jQWCP-wWheelCursor'></span>" +
 					"</div>" +
-				"</div>" + 
-				"<div class='jQWCP-wHSVGroup'>" +
+				//"</div>" + 
+				//"<div class='jQWCP-wHSVGroup'>" +
 					"<div class='jQWCP-wHue jQWCP-slider-wrapper'>" +
 						"<canvas class='jQWCP-wHueSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Hue'></canvas>" +
 						"<span class='jQWCP-wHueCursor jQWCP-scursor'></span>" +
@@ -1731,8 +1909,8 @@
 						"<canvas class='jQWCP-wValSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Value'></canvas>" +
 						"<span class='jQWCP-wValCursor jQWCP-scursor'></span>" +
 					"</div>" +
-				"</div>" +
-				"<div class='jQWCP-wRGBGroup'>" +
+				//"</div>" +
+				//"<div class='jQWCP-wRGBGroup'>" +
 					"<div class='jQWCP-wRed jQWCP-slider-wrapper'>" +
 						"<canvas class='jQWCP-wRedSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Red'></canvas>" +
 						"<span class='jQWCP-wRedCursor jQWCP-scursor'></span>" +
@@ -1745,7 +1923,7 @@
 						"<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Blue'></canvas>" +
 						"<span class='jQWCP-wBlueCursor jQWCP-scursor'></span>" +
 					"</div>" +
-				"</div>" +
+				//"</div>" +
 				"<div class='jQWCP-wAlpha jQWCP-slider-wrapper'>" +
 					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Alpha'></canvas>" +
 					"<span class='jQWCP-wAlphaCursor jQWCP-scursor'></span>" +
@@ -1845,7 +2023,7 @@
 		var $visElms = $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
 		var width = 0
 		$visElms.each(function(index, item) {
-			width += parseFloat($(item).css('margin-left').replace('px', '')) + $(item).outerWidth();
+			width += parseFloat($(item).css('margin-right').replace('px', '')) + $(item).outerWidth();
 		});
 		$widget.css({ width: width + 'px' });
 	};
@@ -2302,6 +2480,7 @@
 	 */
 	$(document).ready(function() {
 		$('[data-wheelcolorpicker]').wheelColorPicker({ htmlOptions: true });
+		$('[data-wheelcolorpicker3]').wheelColorPicker3({ htmlOptions: true });
 	});
 	
 	////////////////////////////////////////////////////////////////////

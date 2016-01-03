@@ -4,12 +4,12 @@
  * 
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
- * Copyright © 2011 Fajar Chandra. All rights reserved.
+ * Copyright © 2011-2016 Fajar Chandra. All rights reserved.
  * Released under MIT License.
  * http://www.opensource.org/licenses/mit-license.php
  * 
  * Note: Width, height, left, and top properties are handled by the 
- * plugin. Please do not change these values.
+ * plugin. These values might change on the fly.
  */
 
 .jQWCP-wWidget {
@@ -40,6 +40,7 @@
 	border-radius: 50%;
 	border: solid 1px #aaa;
 	margin: -1px;
+	margin-right: 10px;
 	transition: border .15s;
 	cursor: crosshair;
 }
@@ -75,7 +76,13 @@
 	width: 20px;
 	height: 180px;
 	float: left;
-	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.jQWCP-wWheel:last-child,
+.jQWCP-slider-wrapper:last-child,
+.jQWCP-wPreview:last-child {
+    margin-right: 0;
 }
 
 .jQWCP-slider,
