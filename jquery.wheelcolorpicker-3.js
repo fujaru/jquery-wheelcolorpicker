@@ -92,6 +92,7 @@
         }
         var args = arguments;
         
+        
         this.each(function() {
             
             // Grab ColorPicker object instance
@@ -111,9 +112,15 @@
             
             /// What to do? ///
             
+            // No arguments provided, do nothing
+            // wheelColorPicker()
+            if(firstArg === undefined || typeof firstArg === "object") {
+            }
+            
             // Call a method
             // wheelColorPicker('show')
-            if(typeof instance[firstArg] === "function") {
+            else if(typeof instance[firstArg] === "function") {
+                console.log('method');
                 var ret = instance[firstArg].apply(instance, args);
                 
                 // If instance is not returned, no method chaining
@@ -126,7 +133,9 @@
             // Try option setter
             // wheelColorPicker('color', '#ff00aa')
             else if(typeof instance['set'+firstArgUc] === "function" && args.length > 0) {
-                var ret = instance['set'+firstArgUc](this, args);
+                console.log('setter');
+                console.log(args);
+                var ret = instance['set'+firstArgUc].apply(instance, args);
                 
                 // If instance is not returned, no method chaining
                 if(ret !== instance) {
@@ -138,7 +147,8 @@
             // Try option getter
             // wheelColorPicker('color')
             else if(typeof instance['get'+firstArgUc] === "function") {
-                var ret = instance['get'+firstArgUc](this, args);
+                console.log('getter');
+                var ret = instance['get'+firstArgUc].apply(instance, args);
                 
                 // If instance is not returned, no method chaining
                 if(ret !== instance) {
@@ -150,14 +160,21 @@
             // Set option value
             // wheelColorPicker('format', 'hex')
             else if(instance.options[firstArg] !== undefined && args.length > 0) {
+                console.log('set option');
                 instance.options[firstArg] = arguments[0];
             }
             
             // Get option value
             // wheelColorPicker('format')
             else if(instance.options[firstArg] !== undefined) {
+                console.log('get option');
                 returnValue = instance.options[firstArg];
                 return false;
+            }
+            
+            // Nothing matches, throw error
+            else {
+                $.error( 'Method/option named ' +  arguments[0] + ' does not exist on jQuery.wheelColorPicker' );
             }
             
         });
@@ -219,8 +236,8 @@
 	 *   sliders       - String combination of sliders. If null then the color 
 	 *                   picker will show default values, which is "wvp" for 
 	 *                   normal color or "wvap" for color with alpha value. 
-	 *                   Possible combinations are "whsvrgbap". Note that the 
-	 *                   order of letters affects the slider positions.
+	 *                   Possible combinations are "whsvrgbap". 
+     *                   Order of letters will affect slider positions.
 	 *   sliderLabel   - Boolean Show labels for each slider.
 	 *   sliderValue   - Boolean Show numeric value of each slider.
 	 *   hideKeyboard  - Boolean Keep input blurred to avoid on screen keyboard appearing. 
@@ -245,7 +262,7 @@
 		validate: false, /* DEPRECATED 1.x */ /* See autoConvert */
 		autoConvert: true, /* 2.0 */ /* NOT IMPLEMENTED */
 		//color: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* Init-time only */
-		alpha: null, /* DEPRECATED 1.x */ /* See methods.alpha */
+		//alpha: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* See methods.alpha */
 		preserveWheel: null, /* DEPRECATED 1.x */ /* Use live */
 		cssClass: '', /* 2.0 */
 		layout: 'popup', /* 2.0 */ /* Init-time only */
@@ -1395,6 +1412,59 @@
 	
     
 	/**
+	 * Function: updateSelection
+	 * 
+	 * DEPRECATED by 2.0
+	 * 
+	 * Update color dialog selection to match current selectedColor value.
+	 */
+	WCP.ColorPicker.prototype.updateSelection = function() {
+		this.redrawSliders();
+		this.updateSliders();
+        return this;
+	};
+	
+    
+	/**
+	 * Function: getColor
+	 * 
+	 * Introduced in 2.0
+	 * 
+	 * Return color components as an object. The object consists of:
+	 * { 
+	 *   r: red
+	 *   g: green
+	 *   b: blue
+	 *   h: hue
+	 *   s: saturation
+	 *   v: value
+	 *   a: alpha
+	 * }
+	 */
+	WCP.ColorPicker.prototype.getColor = function() {
+		return this.color;
+	};
+	
+    
+	/**
+	 * Function: getValue
+	 * 
+	 * Get the color value as string.
+	 */
+	WCP.ColorPicker.prototype.getValue = function( format ) {
+		if( format == null ) {
+			format = this.options.format;
+		}
+			
+		// If settings.rounding is TRUE, round alpha value to N decimal digits
+		if(this.options.rounding >= 0) {
+			this.color.a = Math.round(this.color.a * Math.pow(10, this.options.rounding)) / Math.pow(10, this.options.rounding);
+		}
+		return WCP.colorToStr( this.color, format );
+	};
+	
+    
+	/**
 	 * Function: setValue
 	 * 
 	 * Set the color value as string.
@@ -1416,9 +1486,15 @@
 	 * Set color by passing an object consisting of:
 	 * { r, g, b, a } or
 	 * { h, s, v, a }
+     * 
+     * For consistency with options.color value, this function also 
+     * accepts string value.
 	 */
 	WCP.ColorPicker.prototype.setColor = function( color ) {
-		if(color.r != null) {
+        if(typeof color === "string") {
+            return this.setValue(color);
+        }
+		else if(color.r != null) {
 			return this.setRgba(color.r, color.g, color.b, color.a);
 		}
 		else if(color.h != null) {
@@ -1519,11 +1595,9 @@
 	 * Set alpha value.
 	 */
 	WCP.ColorPicker.prototype.setAlpha = function( value ) {
-        var $this = $(this); // Refers to input elm
-        var color = $this.data('jQWCP.color');
+        this.color.a = value;
         
-        color.a = value;
-
+		this.updateSliders();
 		this.redrawSliders();
         return this;
 	};
@@ -1679,6 +1753,8 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set options to the color picker
+     * 
+     * MIGRATED
 	 */
 	methods.setOptions = function( options ) {
 		var optionsParam = options;
@@ -2065,6 +2141,8 @@
 	 * DEPRECATED in 2.0
 	 * 
 	 * Update color dialog selection to match current selectedColor value.
+     * 
+     * MIGRATED
 	 */
 	methods.updateSelection = function() {
 		methods.redrawSliders.call( $this );
@@ -2190,6 +2268,8 @@
 	 * 
 	 * This function is made to maintain compatibility with deprecated 
 	 * alpha option.
+     * 
+     * OBSOLETE by 3.0
 	 */
 	methods.alpha = function( value ) {
 		var settings = this.data('jQWCP.settings');
@@ -2219,6 +2299,8 @@
 	 * DEPRECATED in 2.0
 	 * 
 	 * Gets/sets color
+     * 
+     * OBSOLETE by 3.0
 	 */
 	methods.color = function( value ) {
 		if(value == null) {
@@ -2244,6 +2326,8 @@
 	 *   v: value
 	 *   a: alpha
 	 * }
+     * 
+     * MIGRATED
 	 */
 	methods.getColor = function() {
 		return this.data('jQWCP.color');
@@ -2277,6 +2361,8 @@
 	 * Function: getValue
 	 * 
 	 * Get the color value as string.
+     * 
+     * MIGRATED
 	 */
 	methods.getValue = function( format ) {
 		var settings = this.data('jQWCP.settings');
@@ -2296,6 +2382,8 @@
 	 * Function: setValue
 	 * 
 	 * Set the color value as string.
+     * 
+     * MIGRATED
 	 */
 	methods.setValue = function( value ) {
 		var color = $.fn.wheelColorPicker.strToColor( value );
