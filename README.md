@@ -100,6 +100,7 @@ What's New in 2.5
 -----------------
 
 * Added slider snap option.
+* Added support for Firefox 3.6.
 
 
 Backward Compatibility
