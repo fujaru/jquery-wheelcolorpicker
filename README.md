@@ -42,15 +42,19 @@ See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Featu
 Usage
 -----
 
-**HTML WAY**
-
-Since version 2.3, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
+First, include these javascript and CSS files on the HTML head section:
 
 ```html
 <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
 <link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
+```
 
+**HTML WAY**
+
+Since version 2.3, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
+
+```html
 <input type="text" data-wheelcolorpicker />
 ```
 
@@ -67,10 +71,6 @@ $(element).wheelColorPicker( options );
 **Example**
 
 ```html
-<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
-<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
-
 <input type="text" class="colorpicker" />
 
 <script type="text/javascript">
@@ -96,11 +96,10 @@ License
 jQuery Wheel Color Picker plugin is released under [MIT License](http://opensource.org/licenses/MIT).
 
 
-What's New in 2.4
+What's New in 2.5
 -----------------
 
-* Added touch support.
-
+* Added slider snap option.
 
 
 Backward Compatibility
@@ -110,3 +109,6 @@ Backward Compatibility
 
 Options and methods marked as *deprecated* in version 2.x are still available which makes this backward compatible to 1.x. However, please refrain on using any deprecated options and methods since they are planned to be removed in future release. CSS is not backward compatible. Switching back to base theme is recommended. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
 
+- - - - -
+
+<a href="https://pledgie.com/campaigns/30344" target="_blank"><img class="alignnone" style="margin-top: 0;" src="https://pledgie.com/campaigns/30344.png?skin_name=chrome" alt="Click here to lend your support to: jQuery Wheel Color Picker Plugin and make a donation at pledgie.com !" height="37" border="0" width="149"></a>
