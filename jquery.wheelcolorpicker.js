@@ -153,6 +153,7 @@
 		layout: 'popup', /* 2.0 */
 		animDuration: 200, /* 2.0 */
 		quality: 1, /* 2.0 */
+		sliderWidth: 1, /* 2.4 */
 		sliders: null, /* 2.0 */
 		showSliderLabel: true, /* 2.0 */
 		showSliderValue: false, /* 2.0 */
@@ -934,7 +935,7 @@
 			if(this != $widget.data('jQWCP.inputElm'))
 				return;
 				
-			var w = 1;
+			var w = settings.sliderWidth;
 			var h = settings.quality * 50;
 			
 			var A = 1;
@@ -961,8 +962,8 @@
 			var $previewBox = $widget.find('.jQWCP-wPreviewBox');
 			var previewBoxCtx = $previewBox.get(0).getContext('2d');
 			previewBoxCtx.fillStyle = "rgba(" + R + "," + G + "," + B + "," + A + ")";
-			previewBoxCtx.clearRect(0, 0, 1, 1);
-			previewBoxCtx.fillRect(0, 0, 1, 1);
+			previewBoxCtx.clearRect(0, 0, w, h);
+			previewBoxCtx.fillRect(0, 0, w, h);
 			
 			/// SLIDERS ///
 			if(!settings.live && !force)
@@ -1378,6 +1379,7 @@
 	private.initWidget = function( widget ) {
 		var settings = this.data('jQWCP.settings');
 		
+		var sliderWidth = settings.sliderWidth;
 		var sCanvasSize = settings.quality * 50;
 
 		/// WIDGET ///
@@ -1393,38 +1395,38 @@
 				"</div>" + 
 				"<div class='jQWCP-wHSVGroup'>" +
 					"<div class='jQWCP-wHue jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wHueSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Hue'></canvas>" +
+						"<canvas class='jQWCP-wHueSlider jQWCP-slider' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Hue'></canvas>" +
 						"<span class='jQWCP-wHueCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wSat jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wSatSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Saturation'></canvas>" +
+						"<canvas class='jQWCP-wSatSlider jQWCP-slider' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Saturation'></canvas>" +
 						"<span class='jQWCP-wSatCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wVal jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wValSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Value'></canvas>" +
+						"<canvas class='jQWCP-wValSlider jQWCP-slider' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Value'></canvas>" +
 						"<span class='jQWCP-wValCursor jQWCP-scursor'></span>" +
 					"</div>" +
 				"</div>" +
 				"<div class='jQWCP-wRGBGroup'>" +
 					"<div class='jQWCP-wRed jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wRedSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Red'></canvas>" +
+						"<canvas class='jQWCP-wRedSlider jQWCP-slider' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Red'></canvas>" +
 						"<span class='jQWCP-wRedCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wGreen jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wGreenSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Green'></canvas>" +
+						"<canvas class='jQWCP-wGreenSlider jQWCP-slider' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Green'></canvas>" +
 						"<span class='jQWCP-wGreenCursor jQWCP-scursor'></span>" +
 					"</div>" +
 					"<div class='jQWCP-wBlue jQWCP-slider-wrapper'>" +
-						"<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Blue'></canvas>" +
+						"<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Blue'></canvas>" +
 						"<span class='jQWCP-wBlueCursor jQWCP-scursor'></span>" +
 					"</div>" +
 				"</div>" +
 				"<div class='jQWCP-wAlpha jQWCP-slider-wrapper'>" +
-					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='1' height='" + sCanvasSize + "' title='Alpha'></canvas>" +
+					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Alpha'></canvas>" +
 					"<span class='jQWCP-wAlphaCursor jQWCP-scursor'></span>" +
 				"</div>" +
 				"<div class='jQWCP-wPreview'>" +
-					"<canvas class='jQWCP-wPreviewBox' width='1' height='1' title='Selected Color'></canvas>" +
+					"<canvas class='jQWCP-wPreviewBox' width='" + sliderWidth + "' height='" + sCanvasSize + "' title='Selected Color'></canvas>" +
 				"</div>" +
 			"</div>"
 		);
@@ -1966,6 +1968,13 @@
 		// Note: Do not rely on $.browser since it's obsolete by jQuery 2.x
 		if($.browser != undefined && $.browser.mozilla) {
 			$.fn.wheelColorPicker.defaults.quality = 0.2;
+		}
+		
+		// MOZILLA 3.6 //
+		
+		// 1x1 solid color canvas doesn't get upscaled correctly
+		if(navigator.userAgent.indexOf('Firefox/3.6') >= 0) {
+			$.fn.wheelColorPicker.defaults.sliderWidth = 50;
 		}
 		
 		// MOBILE CHROME //
