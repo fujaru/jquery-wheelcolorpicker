@@ -1442,6 +1442,34 @@
 	
 	
 	/**
+	 * Function: updateInput
+	 * 
+	 * Since 3.0
+	 * 
+	 * Update input value and background color (if preview is on)
+	 */
+	WCP.ColorPicker.prototype.updateInput = function() {
+        // Skip if not yet initialized
+        if(this.widget == null)
+            return this;
+            
+		var $input = $(this.input);
+		
+		this.input.value = this.getValue();
+		
+		if( this.options.preview ) {
+			$input.css('background', WCP.colorToStr( this.color, 'rgba' ));
+			if( this.color.v > .5 ) {
+				$input.css('color', 'black');
+			}
+			else {
+				$input.css('color', 'white');
+			}
+		}
+	};
+	
+	
+	/**
 	 * Function: updateActiveControl
 	 * 
 	 * Move the active control.
@@ -1560,18 +1588,6 @@
 				this.setAlpha(1-value);
 			}
 		}
-		
-		/// UPDATE INPUT ///
-		$input.val( this.getValue() );
-		if( this.options.preview ) {
-			$input.css('background', WCP.colorToStr( this.color, 'rgba' ));
-			if( this.color.v > .5 ) {
-				$input.css('color', 'black');
-			}
-			else {
-				$input.css('color', 'white');
-			}
-		}
 	};
 	
     
@@ -1681,6 +1697,7 @@
 
 		this.updateSliders();
 		this.redrawSliders();
+		this.updateInput();
         return this;
 	};
 	
@@ -1721,6 +1738,7 @@
 		
 		this.updateSliders();
 		this.redrawSliders();
+		this.updateInput();
         return this;
 	};
 	
@@ -1749,6 +1767,7 @@
         
 		this.updateSliders();
 		this.redrawSliders();
+		this.updateInput();
         return this;
 	};
 	
