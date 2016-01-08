@@ -27,7 +27,7 @@
 	var g_Overlay = null;
 	
 	// Coordinate of the top left page (mobile chrome workaround)
-	var g_Origin = { left: 0, top: 0 };
+	//var g_Origin = { left: 0, top: 0 };
 	
 	// Various workaround flags
 	//var BUG_RELATIVE_PAGE_ORIGIN = false; // top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
@@ -120,7 +120,7 @@
             // Call a method
             // wheelColorPicker('show')
             else if(typeof instance[firstArg] === "function") {
-                console.log('method');
+                //console.log('method');
                 var ret = instance[firstArg].apply(instance, args);
                 
                 // If instance is not returned, no method chaining
@@ -133,8 +133,7 @@
             // Try option setter
             // wheelColorPicker('color', '#ff00aa')
             else if(typeof instance['set'+firstArgUc] === "function" && args.length > 0) {
-                console.log('setter');
-                console.log(args);
+                //console.log('setter');
                 var ret = instance['set'+firstArgUc].apply(instance, args);
                 
                 // If instance is not returned, no method chaining
@@ -147,7 +146,7 @@
             // Try option getter
             // wheelColorPicker('color')
             else if(typeof instance['get'+firstArgUc] === "function") {
-                console.log('getter');
+                //console.log('getter');
                 var ret = instance['get'+firstArgUc].apply(instance, args);
                 
                 // If instance is not returned, no method chaining
@@ -160,21 +159,21 @@
             // Set option value
             // wheelColorPicker('format', 'hex')
             else if(instance.options[firstArg] !== undefined && args.length > 0) {
-                console.log('set option');
-                instance.options[firstArg] = arguments[0];
+                //console.log('set option');
+                instance.options[firstArg] = args[0];
             }
             
             // Get option value
             // wheelColorPicker('format')
             else if(instance.options[firstArg] !== undefined) {
-                console.log('get option');
+                //console.log('get option');
                 returnValue = instance.options[firstArg];
                 return false;
             }
             
             // Nothing matches, throw error
             else {
-                $.error( 'Method/option named ' +  arguments[0] + ' does not exist on jQuery.wheelColorPicker' );
+                $.error( 'Method/option named ' +  firstArg + ' does not exist on jQuery.wheelColorPicker' );
             }
             
         });
@@ -287,8 +286,19 @@
     // STATIC OBJECTS AND FLAGS //
     //////////////////////////////
     
-    /// top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
+    /* 
+     * Note: To determine input position (top and left), use the following:
+     * WCP.ORIGIN.top + this.input.getBoundingClientRect().top
+     * instead of using $(this.input).offset().top because on mobile browsers 
+     * (chrome) jQuery's offset() function returns wrong value.
+     */
+    
+    /// Top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
+    /// See WCP.ORIGIN
     WCP.BUG_RELATIVE_PAGE_ORIGIN = false;
+    
+	/// Coordinate of the top left page (mobile chrome workaround)
+    WCP.ORIGIN = { left: 0, top: 0 };
     
 	
     /******************************************************************/
@@ -774,6 +784,14 @@
     WCP.ColorPicker.widget = null;
     
     
+    /**
+     * Property: ColorPicker.overlay
+     * 
+     * Reference to overlay DOM element (overlay for global popup)
+     */
+	WCP.ColorPicker.overlay = null;
+    
+    
 	/**
 	 * Function: init
 	 * 
@@ -790,15 +808,16 @@
 			
 		// Insert overlay element to handle popup closing
 		// when hideKeyboard is true, hence input is always blurred
-		g_Overlay = $('<div id="jQWCP-overlay" style="display: none;"></div>');
-		$('body').append(g_Overlay);
-		g_Overlay.on('click', private.onOverlayClick);
+		var $overlay = $('<div class="jQWCP-overlay" style="display: none;"></div>');
+		$overlay.on('click', WCP.Handler.overlay_click);
+		WCP.ColorPicker.overlay = $overlay.get(0);
+		$('body').append($overlay);
 		
 		// Attach events
-		$('body').on('mouseup.wheelColorPicker', private.onBodyMouseUp);
-		$('body').on('touchend.wheelColorPicker', private.onBodyMouseUp);
-		$('body').on('mousemove.wheelColorPicker', private.onBodyMouseMove);
-		$('body').on('touchmove.wheelColorPicker', private.onBodyMouseMove);
+		$('html').on('mouseup.wheelColorPicker', WCP.Handler.html_mouseup);
+		$('html').on('touchend.wheelColorPicker', WCP.Handler.html_mouseup);
+		$('html').on('mousemove.wheelColorPicker', WCP.Handler.html_mousemove);
+		$('html').on('touchmove.wheelColorPicker', WCP.Handler.html_mousemove);
 	};
     
     
@@ -918,6 +937,14 @@
     WCP.ColorPicker.prototype.color = null;
     
     
+    /**
+     * Property: ColorPicker.lastValue
+     * 
+     * Store last input value
+     */
+    WCP.ColorPicker.prototype.lastValue = null;
+    
+    
 	/**
 	 * Function: ColorPicker.setOptions
 	 * 
@@ -979,6 +1006,7 @@
             return;
         this.hasInit = true;
         
+        var instance = this;
         var $input = $(this.input);
         var $widget = null;
         
@@ -1021,8 +1049,8 @@
             this.updateSliders();
             
             // Bind widget element events
-            $widget.on('focus.wheelColorPicker', private.onWidgetFocus);
-            $widget.on('blur.wheelColorPicker', private.onWidgetBlur);
+            $widget.on('focus.wheelColorPicker', WCP.Handler.widget_focus_block);
+            $widget.on('blur.wheelColorPicker', WCP.Handler.widget_blur_block);
         }
         
         // Setup popup mode layout
@@ -1037,21 +1065,20 @@
                 $('body').append($widget);
                 
                 // Bind popup events
-                $widget.on('mousedown.wheelColorPicker', private.onPopupDlgMouseDown);
-                $widget.on('mouseup.wheelColorPicker', private.onPopupDlgMouseUp);
+                $widget.on('mousedown.wheelColorPicker', WCP.Handler.widget_mousedown_popup);
+                //$widget.on('mouseup.wheelColorPicker', WCP.Handler.widget_mouseup_popup);
                 
             }
             this.widget = WCP.ColorPicker.widget;
             
             // Bind input element events
-            $input.on('focus.wheelColorPicker', methods.show);
-            //$this.on('blur.wheelColorPicker', methods.hide);
-            $input.on('blur.wheelColorPicker', private.onInputBlur);
+            $input.on('focus.wheelColorPicker', WCP.Handler.input_focus_popup);
+            $input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
         }
         
         // Bind input events
-        $input.on('keyup.wheelColorPicker', private.onInputKeyup);
-        $input.on('change.wheelColorPicker', private.onInputChange);
+        $input.on('keyup.wheelColorPicker', WCP.Handler.input_change);
+        //$input.on('change.wheelColorPicker', WCP.Handler.input_change);
         
         // Set color value
         // DEPRECATED by 3.0
@@ -1074,6 +1101,36 @@
         }
 	};
     
+    
+	/**
+	 * Function: destroy
+	 * 
+	 * Destroy the color picker and return it to normal element.
+	 */
+	WCP.ColorPicker.prototype.destroy = function() {
+		var $widget = $(this.widget);
+		var $input = $(this.input);
+		
+		// Reset layout
+		// No need to delete global popup
+		if(this.options.layout == 'block') {
+			$widget.before(this.input);
+			$widget.remove();
+			$input.show();
+		}
+		
+		// Unbind events
+		$input.off('focus.wheelColorPicker');
+		$input.off('blur.wheelColorPicker');
+		$input.off('keyup.wheelColorPicker');
+		$input.off('change.wheelColorPicker');
+		
+		// Remove data
+		$input.data('jQWCP.instance', null);
+		
+		// remove self
+		delete this;
+	};
 	
     
 	/**
@@ -1426,6 +1483,140 @@
         return this;
 	};
 	
+	
+	/**
+	 * Function: updateActiveControl
+	 * 
+	 * Move the active control.
+	 */
+	WCP.ColorPicker.prototype.updateActiveControl = function( e ) {
+		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper
+		
+		if($control.length == 0)
+			return;
+		
+		var $input = $(this.input);
+		
+		// pageX and pageY wrapper for touches
+		if(e.pageX == undefined && e.originalEvent.touches.length > 0) {
+			e.pageX = e.originalEvent.touches[0].pageX;
+			e.pageY = e.originalEvent.touches[0].pageY;
+		}
+		//$('#log').html(e.pageX + '/' + e.pageY);
+		
+		/// WHEEL CONTROL ///
+		if($control.hasClass('jQWCP-wWheel')) {
+			var $cursor = $control.find('.jQWCP-wWheelCursor');
+			var $overlay = $control.find('.jQWCP-wWheelOverlay');
+			
+			var relX = (e.pageX - $control.offset().left - ($control.width() / 2)) / ($control.width() / 2);
+			var relY = - (e.pageY - $control.offset().top - ($control.height() / 2)) / ($control.height() / 2);
+			
+			// BUG_RELATIVE_PAGE_ORIGIN workaround
+			if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
+				var relX = (e.pageX - ($control.get(0).getBoundingClientRect().left - WCP.ORIGIN.left) - ($control.width() / 2)) / ($control.width() / 2);
+				var relY = - (e.pageY - ($control.get(0).getBoundingClientRect().top - WCP.ORIGIN.top) - ($control.height() / 2)) / ($control.height() / 2);
+			}
+			
+			//console.log(relX + ' ' + relY);
+			
+			// Sat value is calculated from the distance of the cursor from the central point
+			var sat = Math.sqrt(Math.pow(relX, 2) + Math.pow(relY, 2));
+			// If distance is out of bound, reset to the upper bound
+			if(sat > 1) {
+				sat = 1;
+			}
+            
+            // Snap to 0,0
+            if(this.options.snap && sat < this.options.snapTolerance) {
+                sat = 0;
+            }
+			
+			// Hue is calculated from the angle of the cursor. 0deg is set to the right, and increase counter-clockwise.
+            var hue = (relX == 0 && relY == 0) ? 0 : Math.atan( relY / relX ) / ( 2 * Math.PI );
+			// If hue is negative, then fix the angle value (meaning angle is in either Q2 or Q4)
+			if( hue < 0 ) {
+				hue += 0.5;
+			}
+			// If y is negative, then fix the angle value (meaning angle is in either Q3 or Q4)
+			if( relY < 0 ) {
+				hue += 0.5;
+			}
+			
+			this.setHsv(hue, sat, this.color.v);
+		}
+		
+		/// SLIDER CONTROL ///
+		else if($control.hasClass('jQWCP-slider-wrapper')) {
+			var $cursor = $control.find('.jQWCP-scursor');
+			
+			var relY = (e.pageY - $control.offset().top) / $control.height();
+			
+			// BUG_RELATIVE_PAGE_ORIGIN workaround
+			if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
+				var relY = (e.pageY - ($control.get(0).getBoundingClientRect().top - WCP.ORIGIN.top)) / $control.height();
+			}
+			
+			var value = relY < 0 ? 0 : relY > 1 ? 1 : relY;
+            
+            // Snap to 0.0, 0.5, and 1.0
+            //console.log(value);
+            if(this.options.snap && value < this.options.snapTolerance) {
+                value = 0;
+            }
+            else if(this.options.snap && value > 1-this.options.snapTolerance) {
+                value = 1;
+            }
+            if(this.options.snap && value > 0.5-this.options.snapTolerance && value < 0.5+this.options.snapTolerance) {
+                value = 0.5;
+            }
+			
+			$cursor.css('top', (value * $control.height()) + 'px');
+			
+			/// Update color value ///
+			// Red
+			if($control.hasClass('jQWCP-wRed')) {
+				this.setRgb(1-value, this.color.g, this.color.b);
+			}
+			// Green
+			if($control.hasClass('jQWCP-wGreen')) {
+				this.setRgb(this.color.r, 1-value, this.color.b);
+			}
+			// Blue
+			if($control.hasClass('jQWCP-wBlue')) {
+				this.setRgb(this.color.r, this.color.g, 1-value);
+			}
+			// Hue
+			if($control.hasClass('jQWCP-wHue')) {
+				this.setHsv(value, this.color.s, this.color.v);
+			}
+			// Saturation
+			if($control.hasClass('jQWCP-wSat')) {
+				this.setHsv(this.color.h, 1-value, this.color.v);
+			}
+			// Value
+			if($control.hasClass('jQWCP-wVal')) {
+				this.setHsv(this.color.h, this.color.s, 1-value);
+			}
+			// Alpha
+			if($control.hasClass('jQWCP-wAlpha')) {
+				this.setAlpha(1-value);
+			}
+		}
+		
+		/// UPDATE INPUT ///
+		$input.val( this.getValue() );
+		if( this.options.preview ) {
+			$input.css('background', WCP.colorToStr( this.color, 'rgba' ));
+			if( this.color.v > .5 ) {
+				$input.css('color', 'black');
+			}
+			else {
+				$input.css('color', 'white');
+			}
+		}
+	};
+	
     
 	/**
 	 * Function: getColor
@@ -1604,102 +1795,74 @@
         return this;
 	};
 	
-    
-	/**
-	 * Function: destroy
-	 * 
-	 * Destroy the color picker and return it to normal element.
-	 */
-	WCP.ColorPicker.prototype.destroy = function() {
-		var $widget = $(this.widget);
-		var $input = $(this.input);
-		
-		// Reset layout
-		// No need to delete global popup
-		if(this.options.layout == 'block') {
-			$widget.before(this.input);
-			$widget.remove();
-			$input.show();
-		}
-		
-		// Unbind events
-		//$this.off('focus.wheelColorPicker');
-		//$this.off('blur.wheelColorPicker');
-		//$this.off('keyup.wheelColorPicker');
-		//$this.off('change.wheelColorPicker');
-		
-		// Remove data
-		$input.data('jQWCP.instance', null);
-		
-		// remove self
-		delete this;
-	};
-	
-	
 	
 	/**
 	 * Function: show
 	 * 
 	 * Show the color picker dialog. This function is only applicable to 
 	 * popup mode color picker layout.
-	 * 
-	 * Parameter:
-	 *   e - Event object
 	 */
-	WCP.ColorPicker.prototype.show = function( e ) {
+	WCP.ColorPicker.prototype.show = function() {
 		var $input = $(this.input); // Refers to input elm
 		var $widget = $(this.widget);
 		
 		// Don't do anything if not using popup layout
-		if( this.options.layout == "block" )
+		if( this.options.layout != "popup" )
 			return;
 			
 		// Don't do anything if the popup is already shown and attached 
 		// to the correct input elm
-		if( this == $widget.data('jQWCP.instance') )
-			return;
+		//if( this == $widget.data('jQWCP.instance') )
+			//return;
 			
+		// Attach instance to widget (because popup widget is global)
+		$widget.data('jQWCP.instance', this);
+		
 		// Terminate ongoing transitions
 		$widget.stop( true, true );
 		
 		// Reposition the popup window
 		$widget.css({
-			top: ($input.offset().top + $input.outerHeight()) + 'px',
-			left: $input.offset().left + 'px'
+			top: (this.input.getBoundingClientRect().top - WCP.ORIGIN.top + $input.outerHeight()) + 'px',
+			left: (this.input.getBoundingClientRect().left - WCP.ORIGIN.left) + 'px'
 		});
 		
-		// BUG_RELATIVE_PAGE_ORIGIN workaround
-		if(BUG_RELATIVE_PAGE_ORIGIN) {
-			$widget.css({
-				top: ($this.get(0).getBoundingClientRect().top - g_Origin.top + $this.outerHeight()) + 'px',
-				left: ($this.get(0).getBoundingClientRect().left - g_Origin.left) + 'px'
-			});
-		}
-		
-		// Set the input element the popup is attached to
-		$widget.data('jQWCP.inputElm', this);
-		
-		// Assign custom css class
-		$widget.attr( 'class', 'jQWCP-wWidget' );
-		$widget.addClass( settings.cssClass );
-		
-		// Adjust layout
-		private.adjustWidget( $widget.get(0), settings );
+		// Refresh widget with this instance's options
+		this.refreshWidget();
 		
 		// Redraw sliders
-		methods.redrawSliders.call( $this, null, true );
-		methods.updateSliders.call( $this );
+		this.redrawSliders();
+		this.updateSliders();
 		
-		// Store last textfield value
-		settings.lastValue = $this.val();
+		// Store last textfield value (to determine whether to trigger onchange event later)
+		this.lastValue = this.input.value;
 		
-		$widget.fadeIn( settings.animDuration );
+		$widget.fadeIn( this.options.animDuration );
 		
 		// If hideKeyboard is true, force to hide soft keyboard
-		if(settings.hideKeyboard) {
-			$this.blur();
-			g_Overlay.show();
+		if(this.options.hideKeyboard) {
+			$input.blur();
+			$(WCP.ColorPicker.overlay).show();
 		}
+	};
+	
+	
+	
+	/**
+	 * Function: hide
+	 * 
+	 * Hide the color picker dialog. This function is only applicable to 
+	 * popup mode color picker layout.
+	 */
+	WCP.ColorPicker.prototype.hide = function() {
+		var $widget = $(this.widget);
+		
+		// Only hide if popup belongs to this instance
+		if(this != $widget.data('jQWCP.instance'))
+			return;
+		
+		$widget.fadeOut( this.options.animDuration );
+		$(WCP.ColorPicker.overlay).hide();
 	};
 	
 	
@@ -1708,8 +1871,347 @@
     // Event Handlers //
     ////////////////////
     
+    WCP.Handler = {};
+    
+    /**
+     * input.onFocus.popup
+     */
+    WCP.Handler.input_focus_popup = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		instance.show();
+	};
+	
+	
+	/**
+	 * input.onBlur.popup
+	 * 
+	 * onBlur event handler for popup layout.
+	 */
+	WCP.Handler.input_blur_popup = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		
+		// If keyboard is hidden, input is always blurred so 
+		// no point in hiding
+		if(instance.options.hideKeyboard)
+			return;
+			
+		instance.hide();
+		
+		// Trigger 'change' event only when it was modified by widget
+		// because user typing on the textfield will automatically
+		// trigger 'change' event on blur.
+		if(instance.lastValue != this.value) {
+			$(this).trigger('change');
+		}
+	};
+	
+	
+	/**
+	 * input.onChange
+	 * 
+	 * Update the color picker when input is changed.
+	 */
+	WCP.Handler.input_change = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		var color = WCP.strToColor(this.value);
+		if(color) {
+			instance.setColor(color);
+		}
+	};
+	
+	
+	/**
+	 * widget.onFocus.block
+	 * 
+	 * Prepare runtime widget data
+	 */
+	WCP.Handler.widget_focus_block = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		// Store last textfield value
+		instance.lastValue = instance.input.value;
+		
+		// Trigger focus event
+		$input.triggerHandler('focus');
+	};
+	
+	
+	/**
+	 * widget.onMouseDown.popup
+	 * 
+	 * Prevent loss focus of the input causing the dialog to be hidden
+	 * because of input blur event.
+	 */
+	WCP.Handler.widget_mousedown_popup = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		// Temporarily unbind blur and focus event until mouse is released
+		$input.off('focus.wheelColorPicker');
+		$input.off('blur.wheelColorPicker');
+		
+		// Temporarily unbind all blur events until mouse is released
+        // data('events') is deprecated since jquery 1.8
+        if($input.data('events') != undefined) {
+            var blurEvents = $input.data('events').blur;
+        }
+        else {
+            var blurEvents = undefined;
+        }
+		var suspendedEvents = { blur: [] };
+		//suspendedEvents.blur = blurEvents;
+		//$input.off('blur');
+		if(blurEvents != undefined) {
+			for(var i = 0; i < blurEvents.length; i++) {
+				suspendedEvents.blur.push(blurEvents[i]);
+				//suspendedEvents.blur['blur' + (blurEvents[i].namespace != '' ? blurEvents[i].namespace : '')] = blurEvents[i].handler;
+			}
+		}
+		$input.data('jQWCP.suspendedEvents', suspendedEvents);
+		//console.log(blurEvents);
+		//console.log($input.data('jQWCP.suspendedEvents'));
+	};
+	
+	/**
+	 * widget.onMouseUp
+	 * 
+	 * Re-bind events that was unbound by widget_mousedown_popup.
+	 */
+	/*WCP.Handler.widget_mouseup_popup = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		 //Input elm must always be focused, unless hideKeyboard is set to true
+		if(!instance.options.hideKeyboard) {
+			$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS'); // This allow input to be focused without triggering events
+		}
+		
+		 //Rebind blur & focusevent
+		$input.on('focus.wheelColorPicker', WCP.Handler.input_focus_popup);
+		$input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
+		
+	};*/
+	
+	
+	
+	/**
+	 * widget.onBlur
+	 * 
+	 * Try to trigger onChange event if value has been changed.
+	 */
+	WCP.Handler.widget_blur_block = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		// Trigger 'change' event only when it was modified by widget
+		// because user typing on the textfield will automatically
+		// trigger 'change' event on blur.
+		if(instance.lastValue != instance.input.value) {
+			$input.trigger('change');
+		}
+		
+		// Trigger blur event
+		$input.triggerHandler('blur');
+	};
+	
+	
+	/**
+	 * wheelCursor.onMouseDown
+	 * 
+	 * Begin clicking the wheel down. This will allow user to move 
+	 * the crosshair although the mouse is outside the wheel.
+	 */
+	WCP.Handler.wheelCursor_mousedown = function( e ) {
+		var $this = $(this); // Refers to cursor
+		var $widget = $this.closest('.jQWCP-wWidget');
+		var instance = $widget.data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		$('body').data('jQWCP.activeControl', $this.parent().get(0));
+		
+		// Trigger sliderdown event
+		$input.trigger('sliderdown');
+	};
+	
+	
+	/**
+	 * wheel.onMouseDown
+	 * 
+	 * Begin clicking the wheel down. This will allow user to move 
+	 * the crosshair although the mouse is outside the wheel.
+	 * 
+	 * Basically this is the same as wheelCursor_mousedown handler
+	 */
+	WCP.Handler.wheel_mousedown = function( e ) {
+		var $this = $(this); // Refers to wheel
+		var $widget = $this.closest('.jQWCP-wWidget');
+		var instance = $widget.data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		$('body').data('jQWCP.activeControl', $this.get(0));
+		
+		// Trigger sliderdown event
+		$input.trigger('sliderdown');
+	};
+	
+	
+	/**
+	 * slider.onMouseDown
+	 * 
+	 * Begin clicking the slider down. This will allow user to move 
+	 * the slider although the mouse is outside the slider.
+	 */
+	WCP.Handler.slider_mousedown = function( e ) {
+		var $this = $(this); // Refers to slider
+		var $widget = $this.closest('.jQWCP-wWidget');
+		var instance = $widget.data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		$('body').data('jQWCP.activeControl', $this.parent().get(0));
+		
+		// Trigger sliderdown event
+		$input.trigger('sliderdown');
+	};
+	
+	/**
+	 * sliderCursor.onMouseDown
+	 * 
+	 * Begin clicking the slider down. This will allow user to move 
+	 * the slider although the mouse is outside the slider.
+	 */
+	WCP.Handler.sliderCursor_mousedown = function( e ) {
+		var $this = $(this); // Refers to slider cursor
+		var $widget = $this.closest('.jQWCP-wWidget');
+		var instance = $widget.data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		$('body').data('jQWCP.activeControl', $this.parent().get(0));
+		
+		// Trigger sliderdown event
+		$input.trigger('sliderdown');
+	};
+	
+	
+	
+	/**
+	 * html.onMouseUp
+	 * 
+	 * Clear active control reference.
+	 * Also do cleanups after widget.onMouseDown.popup
+	 * 
+	 * Note: This event handler is also applied to touchend
+	 */
+	WCP.Handler.html_mouseup = function( e ) {
+		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
+		
+		// Do stuffs when there's active control
+		if($control.length == 0)
+			return;
+			
+		var $widget = $control.closest('.jQWCP-wWidget');
+		var instance = $widget.data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		
+		// Rebind blur and focus event to input elm which was 
+		// temporarily released when popup dialog is shown
+		if(instance.options.layout == 'popup') {
+			// Focus first before binding event so it wont get fired
+			// Input elm must always be focused, unless hideKeyboard is set to true
+			if(!instance.options.hideKeyboard) {
+				$input.trigger('focus.jQWCP_DONT_TRIGGER_EVENTS'); // This allow input to be focused without triggering events
+			}
+			
+			// Rebind blur & focusevent
+			$input.on('focus.wheelColorPicker', WCP.Handler.input_focus_popup);
+			$input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
+			
+			// Rebind suspended events
+			var suspendedEvents = $input.data('jQWCP.suspendedEvents');
+			var blurEvents = suspendedEvents.blur;
+			for(var i = 0; i < blurEvents.length; i++) {
+				$input.on('blur' + (blurEvents[i].namespace == '' ? '' : '.' + blurEvents[i].namespace), blurEvents[i].handler);
+			}
+		}
+		
+		
+		// Update active control
+		if($control.length != 0) {
+			// Last time update active control before clearing
+			// Only call this function if mouse position is known
+			// On touch action, touch point is not available
+			if(e.pageX != undefined) {
+				instance.updateActiveControl( e );
+			}
+			
+			// Clear active control reference
+			$('body').data('jQWCP.activeControl', null);
+			
+			// Trigger sliderup event
+			$input.trigger('sliderup');
+		}
+	};
+	
+	
+	/**
+	 * html.onMouseMove
+	 * 
+	 * Move the active slider (when mouse click is down).
+	 * 
+	 * Note: This event handler is also applied to touchmove
+	 */
+	WCP.Handler.html_mousemove = function( e ) {
+		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
+		
+		// Do stuffs when there's active control
+		if($control.length == 0)
+			return;
+			
+		// If active, prevent default
+		e.preventDefault();
+		
+		var $widget = $control.closest('.jQWCP-wWidget');
+		var instance = $widget.data('jQWCP.instance');
+		var $input = $(instance.input);
+		
+		instance.updateActiveControl( e );
+		
+		// Trigger slidermove event
+		$input.trigger('slidermove');
+		
+		return false;
+	};
+	
     
     
+	/**
+	 * overlay.onClick
+	 * 
+	 * Hide colorpicker popup dialog if overlay is clicked.
+	 * This has the same effect as blurring input element if hideKeyboard = false.
+	 */
+	WCP.Handler.overlay_click = function( e ) {
+		if(WCP.ColorPicker.widget == null)
+			return;
+		
+		var $widget = $(WCP.ColorPicker.widget);
+		var instance = $widget.data('jQWCP.instance');
+		
+		// If no instance set, do nothing
+		if(instance != null) {
+			var $input = $(instance.input);
+			
+			// Trigger 'change' event only when it was modified by widget
+			// because user typing on the textfield will automatically
+			// trigger 'change' event on blur.
+			if(instance.lastValue != instance.input.value) {
+				$input.trigger('change');
+			}
+			
+			instance.hide();
+		}
+	};
     
     /******************************************************************/
 	
@@ -1895,6 +2397,8 @@
 	 * Function: destroy
 	 * 
 	 * Destroy the color picker and return it to normal element.
+	 * 
+	 * MIGRATED
 	 */
 	methods.destroy = function() {
 		return this.each(function() {
@@ -1937,6 +2441,8 @@
 	 * 
 	 * Parameter:
 	 *   e - Event object
+	 * 
+	 * MIGRATED
 	 */
 	methods.show = function( e ) {
 		var $this = $(this); // Refers to input elm
@@ -1964,8 +2470,8 @@
 		// BUG_RELATIVE_PAGE_ORIGIN workaround
 		if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
 			$widget.css({
-				top: ($this.get(0).getBoundingClientRect().top - g_Origin.top + $this.outerHeight()) + 'px',
-				left: ($this.get(0).getBoundingClientRect().left - g_Origin.left) + 'px'
+				top: ($this.get(0).getBoundingClientRect().top - WCP.ORIGIN.top + $this.outerHeight()) + 'px',
+				left: ($this.get(0).getBoundingClientRect().left - WCP.ORIGIN.left) + 'px'
 			});
 		}
 		
@@ -2673,6 +3179,8 @@
 	 * Function: onPopupDlgMouseDown
 	 * 
 	 * Prevent loss focus of the input causing the dialog to be hidden.
+	 * 
+	 * MIGRATED
 	 */
 	private.onPopupDlgMouseDown = function( e ) {
 		var $this = $(this); // Refers to wWidget
@@ -2708,6 +3216,8 @@
 	 * Function: onPopupDlgMouseUp
 	 * 
 	 * Re-bind events that was unbound by onPopupDlgMouseDown.
+	 * 
+	 * MIGRATED
 	 */
 	private.onPopupDlgMouseUp = function( e ) {
 		var $this = $(this); // Refers to wWidget
@@ -2733,6 +3243,8 @@
 	 * 
 	 * Begin clicking the wheel down. This will allow user to move 
 	 * the crosshair although the mouse is outside the wheel.
+	 * 
+	 * MIGRATED
 	 */
 	private.onWheelMouseDown = function( e ) {
 		var $this = $(this); // Refers to wheel
@@ -2751,6 +3263,8 @@
 	 * 
 	 * Begin clicking the wheel down. This will allow user to move 
 	 * the crosshair although the mouse is outside the wheel.
+	 * 
+	 * MIGRATED
 	 */
 	private.onWheelCursorMouseDown = function( e ) {
 		var $this = $(this); // Refers to cursor
@@ -2765,6 +3279,8 @@
 	 * 
 	 * Begin clicking the slider down. This will allow user to move 
 	 * the slider although the mouse is outside the slider.
+	 * 
+	 * MIGRATED
 	 */
 	private.onSliderMouseDown = function( e ) {
 		var $this = $(this); // Refers to slider
@@ -2782,6 +3298,8 @@
 	 * 
 	 * Begin clicking the slider down. This will allow user to move 
 	 * the slider although the mouse is outside the slider.
+	 * 
+	 * MIGRATED
 	 */
 	private.onSliderCursorMouseDown = function( e ) {
 		var $this = $(this); // Refers to slider cursor
@@ -2797,6 +3315,8 @@
 	 * Clear active control reference.
 	 * 
 	 * Note: This event handler is also applied to touchend
+	 * 
+	 * MIGRATED
 	 */
 	private.onBodyMouseUp = function( e ) {
 		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
@@ -2844,6 +3364,8 @@
 	 * Function: onBodyMouseMove
 	 * 
 	 * Move the active slider (when mouse click is down).
+	 * 
+	 * MIGRATED
 	 */
 	private.onBodyMouseMove = function( e ) {
 		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
@@ -2870,6 +3392,8 @@
 	 * Function: updateActiveControl
 	 * 
 	 * Move the active control.
+	 * 
+	 * MIGRATED
 	 */
 	private.updateActiveControl = function( e ) {
 		var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper
@@ -2899,8 +3423,8 @@
 			
 			// BUG_RELATIVE_PAGE_ORIGIN workaround
 			if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
-				var relX = (e.pageX - ($control.get(0).getBoundingClientRect().left - g_Origin.left) - ($control.width() / 2)) / ($control.width() / 2);
-				var relY = - (e.pageY - ($control.get(0).getBoundingClientRect().top - g_Origin.top) - ($control.height() / 2)) / ($control.height() / 2);
+				var relX = (e.pageX - ($control.get(0).getBoundingClientRect().left - WCP.ORIGIN.left) - ($control.width() / 2)) / ($control.width() / 2);
+				var relY = - (e.pageY - ($control.get(0).getBoundingClientRect().top - WCP.ORIGIN.top) - ($control.height() / 2)) / ($control.height() / 2);
 			}
 			
 			//console.log(relX + ' ' + relY);
@@ -2939,7 +3463,7 @@
 			
 			// BUG_RELATIVE_PAGE_ORIGIN workaround
 			if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
-				var relY = (e.pageY - ($control.get(0).getBoundingClientRect().top - g_Origin.top)) / $control.height();
+				var relY = (e.pageY - ($control.get(0).getBoundingClientRect().top - WCP.ORIGIN.top)) / $control.height();
 			}
 			
 			var value = relY < 0 ? 0 : relY > 1 ? 1 : relY;
@@ -3006,6 +3530,8 @@
 	 * Function: onInputChange
 	 * 
 	 * Update the color picker when input is changed.
+	 * 
+	 * MIGRATED
 	 */
 	private.onInputChange = function( e ) {
 		var $this = $(this); // Refers to input elm
@@ -3019,6 +3545,8 @@
 	 * Function: onInputKeyup
 	 * 
 	 * Update the color picker when input is changed.
+	 * 
+	 * MIGRATED
 	 */
 	private.onInputKeyup = function( e ) {
 		private.onInputChange.call( this, e );
@@ -3028,6 +3556,8 @@
 	 * Function: onInputBlur
 	 * 
 	 * Try to trigger onChange event if value has been changed.
+	 * 
+	 * MIGRATED
 	 */
 	private.onInputBlur = function( e ) {
 		var $this = $(this); // Refers to input elm
@@ -3056,6 +3586,8 @@
 	 * Function: onWidgetFocus
 	 * 
 	 * Prepare runtime widget data
+	 * 
+	 * MIGRATED
 	 */
 	private.onWidgetFocus = function( e ) {
 		var $input = $( $(this).data('jQWCP.inputElm') );
@@ -3073,6 +3605,8 @@
 	 * Function: onWidgetBlur
 	 * 
 	 * Try to trigger onChange event if value has been changed.
+	 * 
+	 * MIGRATED
 	 */
 	private.onWidgetBlur = function( e ) {
 		var $input = $( $(this).data('jQWCP.inputElm') );
@@ -3090,6 +3624,8 @@
 	 * 
 	 * Hide colorpicker popup dialog if overlay is clicked.
 	 * This has the same effect as blurring input element if hideKeyboard = false.
+	 * 
+	 * MIGRATED
 	 */
 	private.onOverlayClick = function( e ) {		
 		var $widget = g_Popup; // Refers to slider wrapper or wheel
@@ -3154,10 +3690,13 @@
 			$('body').append(
 				'<div id="jQWCP-PageOrigin" style="position: absolute; top: 0; left: 0; height: 0; width: 0;"></div>'
 			);
+			
+			var origin = document.getElementById('jQWCP-PageOrigin').getBoundingClientRect();
+			WCP.ORIGIN = origin;
 		
 			$(window).on('scroll.jQWCP_RelativePageOriginBugFix', function() {
 				var origin = document.getElementById('jQWCP-PageOrigin').getBoundingClientRect();
-				g_Origin = origin;
+				WCP.ORIGIN = origin;
 				if(origin.left != 0 || origin.top != 0) {
                     WCP.BUG_RELATIVE_PAGE_ORIGIN = true;
 				}
