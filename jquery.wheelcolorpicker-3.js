@@ -185,12 +185,12 @@
     
     
     /******************************************************************/
-    
-    /////////////////////////////////////////
-    // Shorthand for $.fn.wheelColorPicker //
-    /////////////////////////////////////////
-    var WCP = $.fn.wheelColorPicker;
-    /////////////////////////////////////////
+
+	/////////////////////////////////////////
+	// Shorthand for $.fn.wheelColorPicker //
+	/////////////////////////////////////////
+	var WCP = $.fn.wheelColorPicker;
+	/////////////////////////////////////////
     
 	/**
 	 * Object: defaults
@@ -281,15 +281,15 @@
     
     
     
-    /******************************************************************/
-    
-    //////////////////////////////
-    // STATIC OBJECTS AND FLAGS //
-    //////////////////////////////
-    
-    
-	
-    /******************************************************************/
+	/******************************************************************/
+
+	//////////////////////////////
+	// STATIC OBJECTS AND FLAGS //
+	//////////////////////////////
+
+
+
+	/******************************************************************/
     
     //////////////////////
     // HELPER FUNCTIONS //
@@ -1428,7 +1428,7 @@
 	/**
 	 * Function: getColor
 	 * 
-	 * Introduced in 2.0
+	 * Since 2.0
 	 * 
 	 * Return color components as an object. The object consists of:
 	 * { 
@@ -1603,6 +1603,104 @@
 	};
 	
     
+	/**
+	 * Function: destroy
+	 * 
+	 * Destroy the color picker and return it to normal element.
+	 */
+	WCP.ColorPicker.prototype.destroy = function() {
+		var $widget = $(this.widget);
+		var $input = $(this.input);
+		
+		// Reset layout
+		// No need to delete global popup
+		if(this.options.layout == 'block') {
+			$widget.before(this.input);
+			$widget.remove();
+			$input.show();
+		}
+		
+		// Unbind events
+		//$this.off('focus.wheelColorPicker');
+		//$this.off('blur.wheelColorPicker');
+		//$this.off('keyup.wheelColorPicker');
+		//$this.off('change.wheelColorPicker');
+		
+		// Remove data
+		$input.data('jQWCP.instance', null);
+		
+		// remove self
+		delete this;
+	};
+	
+	
+	
+	/**
+	 * Function: show
+	 * 
+	 * Show the color picker dialog. This function is only applicable to 
+	 * popup mode color picker layout.
+	 * 
+	 * Parameter:
+	 *   e - Event object
+	 */
+	WCP.ColorPicker.prototype.show = function( e ) {
+		var $input = $(this.input); // Refers to input elm
+		var $widget = $(this.widget);
+		
+		// Don't do anything if not using popup layout
+		if( this.options.layout == "block" )
+			return;
+			
+		// Don't do anything if the popup is already shown and attached 
+		// to the correct input elm
+		if( this == $widget.data('jQWCP.instance') )
+			return;
+			
+		// Terminate ongoing transitions
+		$widget.stop( true, true );
+		
+		// Reposition the popup window
+		$widget.css({
+			top: ($input.offset().top + $input.outerHeight()) + 'px',
+			left: $input.offset().left + 'px'
+		});
+		
+		// BUG_RELATIVE_PAGE_ORIGIN workaround
+		if(BUG_RELATIVE_PAGE_ORIGIN) {
+			$widget.css({
+				top: ($this.get(0).getBoundingClientRect().top - g_Origin.top + $this.outerHeight()) + 'px',
+				left: ($this.get(0).getBoundingClientRect().left - g_Origin.left) + 'px'
+			});
+		}
+		
+		// Set the input element the popup is attached to
+		$widget.data('jQWCP.inputElm', this);
+		
+		// Assign custom css class
+		$widget.attr( 'class', 'jQWCP-wWidget' );
+		$widget.addClass( settings.cssClass );
+		
+		// Adjust layout
+		private.adjustWidget( $widget.get(0), settings );
+		
+		// Redraw sliders
+		methods.redrawSliders.call( $this, null, true );
+		methods.updateSliders.call( $this );
+		
+		// Store last textfield value
+		settings.lastValue = $this.val();
+		
+		$widget.fadeIn( settings.animDuration );
+		
+		// If hideKeyboard is true, force to hide soft keyboard
+		if(settings.hideKeyboard) {
+			$this.blur();
+			g_Overlay.show();
+		}
+	};
+	
+	
 	
     /******************************************************************/
 	
