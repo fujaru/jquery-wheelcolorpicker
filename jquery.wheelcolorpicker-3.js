@@ -30,7 +30,7 @@
 	var g_Origin = { left: 0, top: 0 };
 	
 	// Various workaround flags
-	var BUG_RELATIVE_PAGE_ORIGIN = false; // top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
+	//var BUG_RELATIVE_PAGE_ORIGIN = false; // top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
 	
 	/**
 	 * Function: wheelColorPicker
@@ -287,6 +287,8 @@
     // STATIC OBJECTS AND FLAGS //
     //////////////////////////////
     
+    /// top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
+    WCP.BUG_RELATIVE_PAGE_ORIGIN = false;
     
 	
     /******************************************************************/
@@ -776,7 +778,7 @@
 	 * Function: init
 	 * 
 	 * Since 3.0
-     * 2.0 was staticInit
+     * 2.0 was methods.staticInit
 	 * 
 	 * Initialize wheel color picker globally.
 	 */
@@ -1604,6 +1606,13 @@
 	
     
 	
+    ////////////////////
+    // Event Handlers //
+    ////////////////////
+    
+    
+    
+    
     /******************************************************************/
 	
 	/*
@@ -1855,7 +1864,7 @@
 		});
 		
 		// BUG_RELATIVE_PAGE_ORIGIN workaround
-		if(BUG_RELATIVE_PAGE_ORIGIN) {
+		if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
 			$widget.css({
 				top: ($this.get(0).getBoundingClientRect().top - g_Origin.top + $this.outerHeight()) + 'px',
 				left: ($this.get(0).getBoundingClientRect().left - g_Origin.left) + 'px'
@@ -1960,6 +1969,18 @@
 			previewBoxCtx.fillStyle = "rgba(" + R + "," + G + "," + B + "," + A + ")";
 			previewBoxCtx.clearRect(0, 0, 1, 1);
 			previewBoxCtx.fillRect(0, 0, 1, 1);
+                
+            /// PREVIEW INPUT ///
+            $this.val( methods.getValue.call( $this ) );
+            if( settings.preview ) {
+                $this.css('background', $.fn.wheelColorPicker.colorToStr( color, 'rgba' ));
+                if( color.v > .5 ) {
+                    $this.css('color', 'black');
+                }
+                else {
+                    $this.css('color', 'white');
+                }
+            }
 			
 			/// SLIDERS ///
 			if(!settings.live && !force)
@@ -2779,7 +2800,7 @@
 			var relY = - (e.pageY - $control.offset().top - ($control.height() / 2)) / ($control.height() / 2);
 			
 			// BUG_RELATIVE_PAGE_ORIGIN workaround
-			if(BUG_RELATIVE_PAGE_ORIGIN) {
+			if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
 				var relX = (e.pageX - ($control.get(0).getBoundingClientRect().left - g_Origin.left) - ($control.width() / 2)) / ($control.width() / 2);
 				var relY = - (e.pageY - ($control.get(0).getBoundingClientRect().top - g_Origin.top) - ($control.height() / 2)) / ($control.height() / 2);
 			}
@@ -2819,7 +2840,7 @@
 			var relY = (e.pageY - $control.offset().top) / $control.height();
 			
 			// BUG_RELATIVE_PAGE_ORIGIN workaround
-			if(BUG_RELATIVE_PAGE_ORIGIN) {
+			if(WCP.BUG_RELATIVE_PAGE_ORIGIN) {
 				var relY = (e.pageY - ($control.get(0).getBoundingClientRect().top - g_Origin.top)) / $control.height();
 			}
 			
@@ -2993,23 +3014,29 @@
 		}
 		$(this).hide();
 	};
+    
+    
+    
+    /******************************************************************/
 	
-	////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * Automatically initialize color picker on page load
-	 * for elements with data-wheelcolorpicker attribute.
-	 */
+	////////////////////////////////////////////////////////
+	// Automatically initialize color picker on page load //
+	// for elements with data-wheelcolorpicker attribute. //
+	////////////////////////////////////////////////////////
+    
 	$(document).ready(function() {
 		$('[data-wheelcolorpicker]').wheelColorPicker({ htmlOptions: true });
 		$('[data-wheelcolorpicker3]').wheelColorPicker3({ htmlOptions: true });
 	});
 	
-	////////////////////////////////////////////////////////////////////
+    
+    
+    /******************************************************************/
 	
-	/**
-	 * Browser specific workarounds
-	 */
+	//////////////////////////////////
+    // Browser specific workarounds //
+    //////////////////////////////////
+    
 	(function() {
 		// MOZILLA //
 		
@@ -3034,7 +3061,7 @@
 				var origin = document.getElementById('jQWCP-PageOrigin').getBoundingClientRect();
 				g_Origin = origin;
 				if(origin.left != 0 || origin.top != 0) {
-					BUG_RELATIVE_PAGE_ORIGIN = true;
+                    WCP.BUG_RELATIVE_PAGE_ORIGIN = true;
 				}
 			});
 		});

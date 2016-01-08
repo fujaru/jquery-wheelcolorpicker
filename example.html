@@ -72,12 +72,25 @@
 			border-top: dotted 2px #888;
 		}
 		
-		input[type=text] {
+		select,
+		input[type=text],
+        input[type=button] {
 			border: solid 1px #aaa;
 			border-radius: 4px;
 			box-shadow: inset 1px 1px 1px rgba(0,0,0,.3);
 			padding: 5px;
+            box-sizing: border-box;
+            height: 26px;
 		}
+        
+        input[type=button] {
+            background: #fff;
+			box-shadow: inset -1px -1px 1px rgba(0,0,0,.3);
+        }
+        
+        input[type=button]:active {
+            box-shadow: inset 1px 1px 1px rgba(0,0,0,.3);
+        }
 		
 		input[type=text][readonly] {
 			background: #ddd;
@@ -100,6 +113,7 @@
 			box-sizing: border-box;
 		}
 		
+		.col-4 select,
 		.col-4 input {
 			width: 100%;
 			box-sizing: border-box;
@@ -210,7 +224,7 @@
 			<!-- Initialization using JavaScript -->
 			<div class="col-4">
 				in HSV format: <br />
-				<div style="position: relative;"><input type="text" id="color-hsv" /></div>
+				<input type="text" id="color-hsv" />
 			</div>
 			
 			<script type="text/javascript">
@@ -281,6 +295,63 @@
 	</div>
 	
 	<div class="snippet-output" data-id="snippet-block"></div>
+	
+	<h2>Color Manipulations</h2>
+	
+	<p>
+		By accessing color components in RGB or HSV, it is possible to manipulate colors.
+	</p>
+	
+	<div id="snippet-events" class="snippet">
+		<div class="row">
+			<div class="col-4">
+				Pick a color:
+				<input type="text" data-wheelcolorpicker data-wcp-preview="true" id="color" />
+			</div>
+			<div class="col-4">
+				Predefined colors:
+				<select id="color-palette">
+					<option value="#fce94f" style="background: #fce94f;">Butter</option>
+					<option value="#fcaf3e" style="background: #fcaf3e;">Orange</option>
+					<option value="#e9b96e" style="background: #e9b96e;">Chocolate</option>
+					<option value="#8ae234" style="background: #8ae234;">Chameleon</option>
+					<option value="#729fcf" style="background: #729fcf;">Sky blue</option>
+					<option value="#ad7fa8" style="background: #ad7fa8;">Plum</option>
+					<option value="#ef2929" style="background: #ef2929;">Scarlet red</option>
+				</select>
+			</div>
+			<div class="col-4">
+				&nbsp;
+				<input type="button" id="color-invert" value="Inverse" />
+			</div>
+			<div class="col-4">
+				&nbsp;
+				<input type="button" id="color-complement" value="Complement" />
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			$(function() {
+				$('#color-palette').on('change', function() {
+					$('#color').wheelColorPicker('setValue', $(this).val());
+				});
+				$('#color-invert').on('click', function() {
+					var color = $('#color').wheelColorPicker('getColor');
+					color.r = 1 - color.r;
+					color.g = 1 - color.g;
+					color.b = 1 - color.b;
+					$('#color').wheelColorPicker('setRgb', color.r, color.g, color.b);
+				});
+				$('#color-complement').on('click', function() {
+					var color = $('#color').wheelColorPicker('getColor');
+					color.h = (0.5 + color.h) % 1;
+					$('#color').wheelColorPicker('setHsv', color.h, color.s, color.v);
+				});
+			});
+		</script>
+	</div>
+	
+	<div class="snippet-output" data-id="snippet-events"></div>
 	
 	<h2>Events</h2>
 	
