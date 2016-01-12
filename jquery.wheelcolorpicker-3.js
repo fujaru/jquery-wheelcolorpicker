@@ -1188,8 +1188,11 @@
 		if(this != $widget.data('jQWCP.instance'))
 			return this;
 			
+		var options = this.options;
+		var color = this.color;
+			
 		var w = 1;
-		var h = this.options.quality * 50;
+		var h = options.quality * 50;
 		
 		var A = 1;
 		var R = 0;
@@ -1200,14 +1203,14 @@
 		var V = 1;
 		
 		// Dynamic colors
-		if(this.options.live) {
-			A = this.color.a;
-			R = Math.round(this.color.r * 255);
-			G = Math.round(this.color.g * 255);
-			B = Math.round(this.color.b * 255);
-			H = this.color.h;
-			S = this.color.s;
-			V = this.color.v;
+		if(options.live) {
+			A = color.a;
+			R = Math.round(color.r * 255);
+			G = Math.round(color.g * 255);
+			B = Math.round(color.b * 255);
+			H = color.h;
+			S = color.s;
+			V = color.v;
 		}
 		
 		/// PREVIEW ///
@@ -1620,13 +1623,15 @@
 	 * Get the color value as string.
 	 */
 	WCP.ColorPicker.prototype.getValue = function( format ) {
+		var options = this.options;
+		
 		if( format == null ) {
-			format = this.options.format;
+			format = options.format;
 		}
 			
 		// If settings.rounding is TRUE, round alpha value to N decimal digits
-		if(this.options.rounding >= 0) {
-			this.color.a = Math.round(this.color.a * Math.pow(10, this.options.rounding)) / Math.pow(10, this.options.rounding);
+		if(options.rounding >= 0) {
+			this.color.a = Math.round(this.color.a * Math.pow(10, options.rounding)) / Math.pow(10, options.rounding);
 		}
 		return WCP.colorToStr( this.color, format );
 	};
@@ -1683,18 +1688,19 @@
 	 * Set color using RGBA combination.
 	 */
 	WCP.ColorPicker.prototype.setRgba = function( r, g, b, a ) {
-		this.color.r = r;
-		this.color.g = g;
-		this.color.b = b;
+		var color = this.color;
+		color.r = r;
+		color.g = g;
+		color.b = b;
 		
 		if(a != null) {
-			this.color.a = a;
+			color.a = a;
 		}
 		
 		var hsv = WCP.rgbToHsv(r, g, b);
-		this.color.h = hsv.h;
-		this.color.s = hsv.s;
-		this.color.v = hsv.v;
+		color.h = hsv.h;
+		color.s = hsv.s;
+		color.v = hsv.v;
 		//~ console.log(color);
 
 		this.updateSliders();
@@ -1724,18 +1730,19 @@
 	 * Set color using HSVA combination.
 	 */
 	WCP.ColorPicker.prototype.setHsva = function( h, s, v, a ) {
-		this.color.h = h;
-		this.color.s = s;
-		this.color.v = v;
+		var color = this.color;
+		color.h = h;
+		color.s = s;
+		color.v = v;
 		
 		if(a != null) {
-			this.color.a = a;
+			color.a = a;
 		}
 		
 		var rgb = WCP.hsvToRgb(h, s, v);
-		this.color.r = rgb.r;
-		this.color.g = rgb.g;
-		this.color.b = rgb.b;
+		color.r = rgb.r;
+		color.g = rgb.g;
+		color.b = rgb.b;
 		//~ console.log(color);
 		
 		this.updateSliders();
@@ -1781,11 +1788,13 @@
 	 * popup mode color picker layout.
 	 */
 	WCP.ColorPicker.prototype.show = function() {
-		var $input = $(this.input); // Refers to input elm
+		var input = this.input;
+		var $input = $(input); // Refers to input elm
 		var $widget = $(this.widget);
+		var options = this.options;
 		
 		// Don't do anything if not using popup layout
-		if( this.options.layout != "popup" )
+		if( options.layout != "popup" )
 			return;
 			
 		// Don't do anything if the popup is already shown and attached 
@@ -1801,8 +1810,8 @@
 		
 		// Reposition the popup window
 		$widget.css({
-			top: (this.input.getBoundingClientRect().top - WCP.ORIGIN.top + $input.outerHeight()) + 'px',
-			left: (this.input.getBoundingClientRect().left - WCP.ORIGIN.left) + 'px'
+			top: (input.getBoundingClientRect().top - WCP.ORIGIN.top + $input.outerHeight()) + 'px',
+			left: (input.getBoundingClientRect().left - WCP.ORIGIN.left) + 'px'
 		});
 		
 		// Refresh widget with this instance's options
@@ -1813,12 +1822,12 @@
 		this.updateSliders();
 		
 		// Store last textfield value (to determine whether to trigger onchange event later)
-		this.lastValue = this.input.value;
+		this.lastValue = input.value;
 		
-		$widget.fadeIn( this.options.animDuration );
+		$widget.fadeIn( options.animDuration );
 		
 		// If hideKeyboard is true, force to hide soft keyboard
-		if(this.options.hideKeyboard) {
+		if(options.hideKeyboard) {
 			$input.blur();
 			$(WCP.ColorPicker.overlay).show();
 		}
