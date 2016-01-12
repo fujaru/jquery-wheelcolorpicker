@@ -32,122 +32,122 @@
 	 *    to set/get an option with that name. If a setter/getter method 
 	 *    available (i.e. setSomething), it will set/get that option via that method.
 	 */
-    $.fn.wheelColorPicker = function() {
-        var returnValue = this; // Allows method chaining
-        
-        // Separate first argument and the rest..
-        // First argument is used to determine function/option name
-        // e.g. wheelColorPicker('setColor', { r: 0, g: 0, b: 1 })
-        if(arguments.length > 0) {
-            var shift = [].shift;
-            var firstArg = shift.apply(arguments);
-            var firstArgUc = (typeof firstArg === "string") ? firstArg.charAt(0).toUpperCase() + firstArg.slice(1) : firstArg;
-        }
-        else {
-            var firstArg = undefined;
-            var firstArgUc = undefined;
-        }
-        var args = arguments;
-        
-        
-        this.each(function() {
-            
-            // Grab ColorPicker object instance
-            var instance = $(this).data('jQWCP.instance');
-            
-            // Initialize if not yet created
-            if(instance == undefined || instance == null) {
-                // Get init options
-                var options = {};
-                if(typeof firstArg === "object") {
-                    options = firstArg;
-                }
-                
-                instance = new WCP.ColorPicker(this, options);
-                $(this).data('jQWCP.instance', instance);
-            }
-            
-            /// What to do? ///
-            
-            // No arguments provided, do nothing
-            // wheelColorPicker()
-            if(firstArg === undefined || typeof firstArg === "object") {
-            }
-            
-            // Call a method
-            // wheelColorPicker('show')
-            else if(typeof instance[firstArg] === "function") {
-                //console.log('method');
-                var ret = instance[firstArg].apply(instance, args);
-                
-                // If instance is not returned, no method chaining
-                if(ret !== instance) {
-                    returnValue = ret;
-                    return false;
-                }
-            }
-            
-            // Try option setter
-            // wheelColorPicker('color', '#ff00aa')
-            else if(typeof instance['set'+firstArgUc] === "function" && args.length > 0) {
-                //console.log('setter');
-                var ret = instance['set'+firstArgUc].apply(instance, args);
-                
-                // If instance is not returned, no method chaining
-                if(ret !== instance) {
-                    returnValue = ret;
-                    return false;
-                }
-            }
-            
-            // Try option getter
-            // wheelColorPicker('color')
-            else if(typeof instance['get'+firstArgUc] === "function") {
-                //console.log('getter');
-                var ret = instance['get'+firstArgUc].apply(instance, args);
-                
-                // If instance is not returned, no method chaining
-                if(ret !== instance) {
-                    returnValue = ret;
-                    return false;
-                }
-            }
-            
-            // Set option value
-            // wheelColorPicker('format', 'hex')
-            else if(instance.options[firstArg] !== undefined && args.length > 0) {
-                //console.log('set option');
-                instance.options[firstArg] = args[0];
-            }
-            
-            // Get option value
-            // wheelColorPicker('format')
-            else if(instance.options[firstArg] !== undefined) {
-                //console.log('get option');
-                returnValue = instance.options[firstArg];
-                return false;
-            }
-            
-            // Nothing matches, throw error
-            else {
-                $.error( 'Method/option named ' +  firstArg + ' does not exist on jQuery.wheelColorPicker' );
-            }
-            
-        });
-        
-        return returnValue;
-    };
-    
-    
-    
-    /******************************************************************/
+	$.fn.wheelColorPicker = function() {
+		var returnValue = this; // Allows method chaining
+		
+		// Separate first argument and the rest..
+		// First argument is used to determine function/option name
+		// e.g. wheelColorPicker('setColor', { r: 0, g: 0, b: 1 })
+		if(arguments.length > 0) {
+			var shift = [].shift;
+			var firstArg = shift.apply(arguments);
+			var firstArgUc = (typeof firstArg === "string") ? firstArg.charAt(0).toUpperCase() + firstArg.slice(1) : firstArg;
+		}
+		else {
+			var firstArg = undefined;
+			var firstArgUc = undefined;
+		}
+		var args = arguments;
+		
+		
+		this.each(function() {
+			
+			// Grab ColorPicker object instance
+			var instance = $(this).data('jQWCP.instance');
+			
+			// Initialize if not yet created
+			if(instance == undefined || instance == null) {
+				// Get init options
+				var options = {};
+				if(typeof firstArg === "object") {
+					options = firstArg;
+				}
+				
+				instance = new WCP.ColorPicker(this, options);
+				$(this).data('jQWCP.instance', instance);
+			}
+			
+			/// What to do? ///
+			
+			// No arguments provided, do nothing
+			// wheelColorPicker()
+			if(firstArg === undefined || typeof firstArg === "object") {
+			}
+			
+			// Call a method
+			// wheelColorPicker('show')
+			else if(typeof instance[firstArg] === "function") {
+				//console.log('method');
+				var ret = instance[firstArg].apply(instance, args);
+				
+				// If instance is not returned, no method chaining
+				if(ret !== instance) {
+					returnValue = ret;
+					return false;
+				}
+			}
+			
+			// Try option setter
+			// wheelColorPicker('color', '#ff00aa')
+			else if(typeof instance['set'+firstArgUc] === "function" && args.length > 0) {
+				//console.log('setter');
+				var ret = instance['set'+firstArgUc].apply(instance, args);
+				
+				// If instance is not returned, no method chaining
+				if(ret !== instance) {
+					returnValue = ret;
+					return false;
+				}
+			}
+			
+			// Try option getter
+			// wheelColorPicker('color')
+			else if(typeof instance['get'+firstArgUc] === "function") {
+				//console.log('getter');
+				var ret = instance['get'+firstArgUc].apply(instance, args);
+				
+				// If instance is not returned, no method chaining
+				if(ret !== instance) {
+					returnValue = ret;
+					return false;
+				}
+			}
+			
+			// Set option value
+			// wheelColorPicker('format', 'hex')
+			else if(instance.options[firstArg] !== undefined && args.length > 0) {
+				//console.log('set option');
+				instance.options[firstArg] = args[0];
+			}
+			
+			// Get option value
+			// wheelColorPicker('format')
+			else if(instance.options[firstArg] !== undefined) {
+				//console.log('get option');
+				returnValue = instance.options[firstArg];
+				return false;
+			}
+			
+			// Nothing matches, throw error
+			else {
+				$.error( 'Method/option named ' +  firstArg + ' does not exist on jQuery.wheelColorPicker' );
+			}
+			
+		});
+		
+		return returnValue;
+	};
+
+
+
+	/******************************************************************/
 
 	/////////////////////////////////////////
 	// Shorthand for $.fn.wheelColorPicker //
 	/////////////////////////////////////////
 	var WCP = $.fn.wheelColorPicker;
 	/////////////////////////////////////////
-    
+
 	/**
 	 * Object: defaults
 	 * 
@@ -232,38 +232,38 @@
 		hideKeyboard: false, /* 2.4 */
 		htmlOptions: true, /* 2.3 */
         snap: false, /* 2.5 */
-        snapTolerance: 0.05 /* 2.5 */
+		snapTolerance: 0.05 /* 2.5 */
 	};
-    
-    
-	
-    /******************************************************************/
-    
-    //////////////////////////////
-    // STATIC OBJECTS AND FLAGS //
-    //////////////////////////////
-    
-    /* 
-     * Note: To determine input position (top and left), use the following:
-     * WCP.ORIGIN.top + this.input.getBoundingClientRect().top
-     * instead of using $(this.input).offset().top because on mobile browsers 
-     * (chrome) jQuery's offset() function returns wrong value.
-     */
-    
-    /// Top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
-    /// See WCP.ORIGIN
-    WCP.BUG_RELATIVE_PAGE_ORIGIN = false;
-    
+
+
+
+	/******************************************************************/
+
+	//////////////////////////////
+	// STATIC OBJECTS AND FLAGS //
+	//////////////////////////////
+
+	/* 
+	 * Note: To determine input position (top and left), use the following:
+	 * WCP.ORIGIN.top + this.input.getBoundingClientRect().top
+	 * instead of using $(this.input).offset().top because on mobile browsers 
+	 * (chrome) jQuery's offset() function returns wrong value.
+	 */
+
+	/// Top left of the page is not on (0,0), making window.scrollX/Y and offset() useless
+	/// See WCP.ORIGIN
+	WCP.BUG_RELATIVE_PAGE_ORIGIN = false;
+
 	/// Coordinate of the top left page (mobile chrome workaround)
-    WCP.ORIGIN = { left: 0, top: 0 };
-    
-	
-    /******************************************************************/
-    
-    //////////////////////
-    // HELPER FUNCTIONS //
-    //////////////////////
-    
+	WCP.ORIGIN = { left: 0, top: 0 };
+
+
+	/******************************************************************/
+
+	//////////////////////
+	// HELPER FUNCTIONS //
+	//////////////////////
+
 	/**
 	 * Function: colorToStr
 	 * 
@@ -402,8 +402,8 @@
 		}
 		return result;
 	};
-	
-    
+
+
 	/**
 	 * Function: strToColor
 	 * 
@@ -600,8 +600,8 @@
 		
 		return color;
 	};
-	
-    
+
+
 	/**
 	 * Function: hsvToRgb
 	 * 
@@ -636,8 +636,8 @@
 		
 		return { r: r, g: g, b: b };
 	};
-	
-    
+
+
 	/**
 	 * Function: rgbToHsv
 	 * 
@@ -650,7 +650,7 @@
 		var h;
 		var s;
 		var v;
-	
+
 		var maxColor = Math.max(r, g, b);
 		var minColor = Math.min(r, g, b);
 		var delta = maxColor - minColor;
@@ -690,75 +690,75 @@
 		
 		return { h: h, s: s, v: v };
 	};
-	
-    
-    
-    /******************************************************************/
-    
-    ////////////////////////
-    // COLOR PICKER CLASS //
-    ////////////////////////
-    
-    /**
-     * Class: ColorPicker
-     * 
-     * Since 3.0
-     */
-    WCP.ColorPicker = function ( elm, options ) {
-        
-        // Assign reference to input DOM element
-        this.input = elm;
-        
-        // Setup selected color in the following priority:
-        // 1. options.color
-        // 2. input.value
-        // 3. default
-        this.color = { h: 0, s: 0, v: 1, r: 1, g: 1, b: 1, a: 1 };
-        this.setValue(this.input.value);
-        
-        // Set options
-        this.options = $.extend(true, {}, WCP.defaults);
-        this.setOptions(options);
-        
-        // Check sliders option, if not defined, set default sliders
-        if(this.options.sliders == null)
-            this.options.sliders = 'wvp' + (this.options.format.indexOf('a') >= 0 ? 'a' : '');
-        
-        this.init();
-    };
-    
-    
-    ////////////////////
-    // Static members //
-    ////////////////////
-    
-    
-    /**
-     * Static Property: ColorPicker.widget
-     * 
-     * Reference to global color picker widget (popup)
-     */
-    WCP.ColorPicker.widget = null;
-    
-    
-    /**
-     * Property: ColorPicker.overlay
-     * 
-     * Reference to overlay DOM element (overlay for global popup)
-     */
+
+
+
+	/******************************************************************/
+
+	////////////////////////
+	// COLOR PICKER CLASS //
+	////////////////////////
+
+	/**
+	 * Class: ColorPicker
+	 * 
+	 * Since 3.0
+	 */
+	WCP.ColorPicker = function ( elm, options ) {
+		
+		// Assign reference to input DOM element
+		this.input = elm;
+		
+		// Setup selected color in the following priority:
+		// 1. options.color
+		// 2. input.value
+		// 3. default
+		this.color = { h: 0, s: 0, v: 1, r: 1, g: 1, b: 1, a: 1 };
+		this.setValue(this.input.value);
+		
+		// Set options
+		this.options = $.extend(true, {}, WCP.defaults);
+		this.setOptions(options);
+		
+		// Check sliders option, if not defined, set default sliders
+		if(this.options.sliders == null)
+			this.options.sliders = 'wvp' + (this.options.format.indexOf('a') >= 0 ? 'a' : '');
+		
+		this.init();
+	};
+
+
+	////////////////////
+	// Static members //
+	////////////////////
+
+
+	/**
+	 * Static Property: ColorPicker.widget
+	 * 
+	 * Reference to global color picker widget (popup)
+	 */
+	WCP.ColorPicker.widget = null;
+
+
+	/**
+	 * Property: ColorPicker.overlay
+	 * 
+	 * Reference to overlay DOM element (overlay for global popup)
+	 */
 	WCP.ColorPicker.overlay = null;
-    
-    
+
+
 	/**
 	 * Function: init
 	 * 
 	 * Since 3.0
-     * 2.0 was methods.staticInit
+	 * 2.0 was methods.staticInit
 	 * 
 	 * Initialize wheel color picker globally.
 	 */
 	WCP.ColorPicker.init = function() {
-        // Only perform initialization once
+		// Only perform initialization once
 		if(WCP.ColorPicker.init.hasInit == true)
 			return;
 		WCP.ColorPicker.init.hasInit = true;
@@ -776,13 +776,13 @@
 		$('html').on('mousemove.wheelColorPicker', WCP.Handler.html_mousemove);
 		$('html').on('touchmove.wheelColorPicker', WCP.Handler.html_mousemove);
 	};
-    
-    
+
+
 	/**
 	 * Function: createWidget
-     * 
-     * Since 3.0
-     * 2.5 was private.initWidget
+	 * 
+	 * Since 3.0
+	 * 2.5 was private.initWidget
 	 * 
 	 * Create color picker widget.
 	 */
@@ -792,34 +792,34 @@
 		// it may takes time and cause performance issue.
 		var $widget = $(
 			"<div class='jQWCP-wWidget'>" + 
-                "<div class='jQWCP-wWheel'>" + 
-                    "<div class='jQWCP-wWheelOverlay'></div>" +
-                    "<span class='jQWCP-wWheelCursor'></span>" +
-                "</div>" +
-                "<div class='jQWCP-wHue jQWCP-slider-wrapper'>" +
-                    "<canvas class='jQWCP-wHueSlider jQWCP-slider' width='1' height='50' title='Hue'></canvas>" +
-                    "<span class='jQWCP-wHueCursor jQWCP-scursor'></span>" +
-                "</div>" +
-                "<div class='jQWCP-wSat jQWCP-slider-wrapper'>" +
-                    "<canvas class='jQWCP-wSatSlider jQWCP-slider' width='1' height='50' title='Saturation'></canvas>" +
-                    "<span class='jQWCP-wSatCursor jQWCP-scursor'></span>" +
-                "</div>" +
-                "<div class='jQWCP-wVal jQWCP-slider-wrapper'>" +
-                    "<canvas class='jQWCP-wValSlider jQWCP-slider' width='1' height='50' title='Value'></canvas>" +
-                    "<span class='jQWCP-wValCursor jQWCP-scursor'></span>" +
-                "</div>" +
-                "<div class='jQWCP-wRed jQWCP-slider-wrapper'>" +
-                    "<canvas class='jQWCP-wRedSlider jQWCP-slider' width='1' height='50' title='Red'></canvas>" +
-                    "<span class='jQWCP-wRedCursor jQWCP-scursor'></span>" +
-                "</div>" +
-                "<div class='jQWCP-wGreen jQWCP-slider-wrapper'>" +
-                    "<canvas class='jQWCP-wGreenSlider jQWCP-slider' width='1' height='50' title='Green'></canvas>" +
-                    "<span class='jQWCP-wGreenCursor jQWCP-scursor'></span>" +
-                "</div>" +
-                "<div class='jQWCP-wBlue jQWCP-slider-wrapper'>" +
-                    "<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='1' height='50' title='Blue'></canvas>" +
-                    "<span class='jQWCP-wBlueCursor jQWCP-scursor'></span>" +
-                "</div>" +
+				"<div class='jQWCP-wWheel'>" + 
+					"<div class='jQWCP-wWheelOverlay'></div>" +
+					"<span class='jQWCP-wWheelCursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wHue jQWCP-slider-wrapper'>" +
+					"<canvas class='jQWCP-wHueSlider jQWCP-slider' width='1' height='50' title='Hue'></canvas>" +
+					"<span class='jQWCP-wHueCursor jQWCP-scursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wSat jQWCP-slider-wrapper'>" +
+					"<canvas class='jQWCP-wSatSlider jQWCP-slider' width='1' height='50' title='Saturation'></canvas>" +
+					"<span class='jQWCP-wSatCursor jQWCP-scursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wVal jQWCP-slider-wrapper'>" +
+					"<canvas class='jQWCP-wValSlider jQWCP-slider' width='1' height='50' title='Value'></canvas>" +
+					"<span class='jQWCP-wValCursor jQWCP-scursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wRed jQWCP-slider-wrapper'>" +
+					"<canvas class='jQWCP-wRedSlider jQWCP-slider' width='1' height='50' title='Red'></canvas>" +
+					"<span class='jQWCP-wRedCursor jQWCP-scursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wGreen jQWCP-slider-wrapper'>" +
+					"<canvas class='jQWCP-wGreenSlider jQWCP-slider' width='1' height='50' title='Green'></canvas>" +
+					"<span class='jQWCP-wGreenCursor jQWCP-scursor'></span>" +
+				"</div>" +
+				"<div class='jQWCP-wBlue jQWCP-slider-wrapper'>" +
+					"<canvas class='jQWCP-wBlueSlider jQWCP-slider' width='1' height='50' title='Blue'></canvas>" +
+					"<span class='jQWCP-wBlueCursor jQWCP-scursor'></span>" +
+				"</div>" +
 				"<div class='jQWCP-wAlpha jQWCP-slider-wrapper'>" +
 					"<canvas class='jQWCP-wAlphaSlider jQWCP-slider' width='1' height='50' title='Alpha'></canvas>" +
 					"<span class='jQWCP-wAlphaCursor jQWCP-scursor'></span>" +
@@ -852,104 +852,104 @@
 		$widget.on('touchstart.wheelColorPicker', '.jQWCP-slider', WCP.Handler.slider_mousedown);
 		$widget.on('mousedown.wheelColorPicker', '.jQWCP-scursor', WCP.Handler.sliderCursor_mousedown);
 		$widget.on('touchstart.wheelColorPicker', '.jQWCP-scursor', WCP.Handler.sliderCursor_mousedown);
-        
+		
 		return $widget.get(0);
 	};
-    
-    
-    /////////////
-    // Members //
-    /////////////
-    
-    
-    /**
-     * Property: ColorPicker.options
-     * 
-     * Plugin options for the color picker instance, extended from WCP.defaults.
-     */
-    WCP.ColorPicker.prototype.options = null;
-    
-    
-    /**
-     * Property: ColorPicker.input
-     * 
-     * Reference to input DOM element
-     */
-    WCP.ColorPicker.prototype.input = null;
-    
-    
-    /** 
-     * Property: ColorPicker.widget
-     * 
-     * Reference to widget DOM element (global popup or private inline widget)
-     */
-    WCP.ColorPicker.prototype.widget = null;
-    
-    
-    /**
-     * Property: ColorPicker.color
-     * 
-     * Selected color object.
-     */
-    WCP.ColorPicker.prototype.color = null;
-    
-    
-    /**
-     * Property: ColorPicker.lastValue
-     * 
-     * Store last input value
-     */
-    WCP.ColorPicker.prototype.lastValue = null;
-    
-    
+
+
+	/////////////
+	// Members //
+	/////////////
+
+
+	/**
+	 * Property: ColorPicker.options
+	 * 
+	 * Plugin options for the color picker instance, extended from WCP.defaults.
+	 */
+	WCP.ColorPicker.prototype.options = null;
+
+
+	/**
+	 * Property: ColorPicker.input
+	 * 
+	 * Reference to input DOM element
+	 */
+	WCP.ColorPicker.prototype.input = null;
+
+
+	/** 
+	 * Property: ColorPicker.widget
+	 * 
+	 * Reference to widget DOM element (global popup or private inline widget)
+	 */
+	WCP.ColorPicker.prototype.widget = null;
+
+
+	/**
+	 * Property: ColorPicker.color
+	 * 
+	 * Selected color object.
+	 */
+	WCP.ColorPicker.prototype.color = null;
+
+
+	/**
+	 * Property: ColorPicker.lastValue
+	 * 
+	 * Store last input value
+	 */
+	WCP.ColorPicker.prototype.lastValue = null;
+
+
 	/**
 	 * Function: ColorPicker.setOptions
 	 * 
 	 * Since 3.0
 	 * 
 	 * Set options to the color picker. If htmlOptions is set to true, 
-     * options set via html attributes are also reloaded. If both html 
-     * attribute and argument exists, option set via options argument 
-     * gets priority.
+	 * options set via html attributes are also reloaded. If both html 
+	 * attribute and argument exists, option set via options argument 
+	 * gets priority.
 	 */
 	WCP.ColorPicker.prototype.setOptions = function( options ) {
-        
-        // options should be a separate object (passed by value)
-        // Make a copy of options
-        options = $.extend(true, {}, options);
-        
-        // Load options from HTML attributes
-        if(this.options.htmlOptions) {
-            for(var key in WCP.defaults) {
-                // Only if option key is valid and not set via function argument
-                if(this.input.hasAttribute('data-wcp-'+key) && options[key] === undefined) {
-                    options[key] = this.input.getAttribute('data-wcp-'+key);
-                }
-            }
-        }
-        
-        // Set options
-        for(var key in options) {
-            // Skip undefined option key
-            if(this.options[key] === undefined)
-                continue;
-            
-            var keyUc = key.charAt(0).toUpperCase() + key.slice(1);
-            
-            // If setter is available, try setting it via setter
-            if(typeof this['set'+keyUc] === "function") {
-                this['set'+keyUc](options[key]);
-            }
-            // Otherwise directly update options
-            else {
-                this.options[key] = options[key];
-            }
-        }
-        
-        return this; // Allow chaining
+		
+		// options should be a separate object (passed by value)
+		// Make a copy of options
+		options = $.extend(true, {}, options);
+		
+		// Load options from HTML attributes
+		if(this.options.htmlOptions) {
+			for(var key in WCP.defaults) {
+				// Only if option key is valid and not set via function argument
+				if(this.input.hasAttribute('data-wcp-'+key) && options[key] === undefined) {
+					options[key] = this.input.getAttribute('data-wcp-'+key);
+				}
+			}
+		}
+		
+		// Set options
+		for(var key in options) {
+			// Skip undefined option key
+			if(this.options[key] === undefined)
+				continue;
+			
+			var keyUc = key.charAt(0).toUpperCase() + key.slice(1);
+			
+			// If setter is available, try setting it via setter
+			if(typeof this['set'+keyUc] === "function") {
+				this['set'+keyUc](options[key]);
+			}
+			// Otherwise directly update options
+			else {
+				this.options[key] = options[key];
+			}
+		}
+		
+		return this; // Allow chaining
 	};
-    
-    
+
+
 	/**
 	 * Function: ColorPicker.init
 	 * 
@@ -957,108 +957,108 @@
 	 */
 	WCP.ColorPicker.prototype.init = function() {
 		WCP.ColorPicker.init();
-    
-        // Initialization must only occur once
-        if(this.hasInit == true)
-            return;
-        this.hasInit = true;
-        
-        var instance = this;
-        var $input = $(this.input);
-        var $widget = null;
-        
-        /// LAYOUT & BINDINGS ///
-        // Setup block mode layout
-        if( this.options.layout == 'block' ) {
-            // Create widget
-            this.widget = WCP.ColorPicker.createWidget();
-            $widget = $(this.widget);
-            
-            // Store object instance reference
-            $widget.data('jQWCP.instance', this);
-            
-            // Wrap widget around the input elm and put the input 
-            // elm inside widget
-            $widget.insertAfter(this.input);
-            // Retain display CSS property
-            if($input.css('display') == "inline") {
-                $widget.css('display', "inline-block");
-            }
-            else {
-                $widget.css('display', $input.css('display'));
-            }
-            $widget.append(this.input);
-            $input.hide();
-            
-            // Add tabindex attribute to make the widget focusable
-            if($input.attr('tabindex') != undefined) {
-                $widget.attr('tabindex', $input.attr('tabindex'));
-            }
-            else {
-                $widget.attr('tabindex', 0);
-            }
-            
-            // Further widget adjustments based on options
-            this.refreshWidget();
-            
-            // Draw shading
-            this.redrawSliders(true);
-            this.updateSliders();
-            
-            // Bind widget element events
-            $widget.on('focus.wheelColorPicker', WCP.Handler.widget_focus_block);
-            $widget.on('blur.wheelColorPicker', WCP.Handler.widget_blur_block);
-        }
-        
-        // Setup popup mode layout
-        else {
-            // Only need to create one widget, used globally
-            if(WCP.ColorPicker.widget == null) {
-                WCP.ColorPicker.widget = WCP.ColorPicker.createWidget();
-                $widget = $(WCP.ColorPicker.widget);
-                
-                // Assign widget to global
-                $widget.hide();
-                $('body').append($widget);
-                
-                // Bind popup events
-                $widget.on('mousedown.wheelColorPicker', WCP.Handler.widget_mousedown_popup);
-                //$widget.on('mouseup.wheelColorPicker', WCP.Handler.widget_mouseup_popup);
-                
-            }
-            this.widget = WCP.ColorPicker.widget;
-            
-            // Bind input element events
-            $input.on('focus.wheelColorPicker', WCP.Handler.input_focus_popup);
-            $input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
-        }
-        
-        // Bind input events
-        $input.on('keyup.wheelColorPicker', WCP.Handler.input_change);
-        //$input.on('change.wheelColorPicker', WCP.Handler.input_change);
-        
-        // Set color value
-        // DEPRECATED by 3.0
-        if(typeof this.options.color == "object") {
-            this.setColor(this.options.color);
-            this.options.color = undefined;
-        }
-        else if(typeof this.options.color == "string") {
-            this.setValue(this.options.color);
-            this.options.color = undefined;
-        }
-        
-        // Set readonly mode
-        /* DEPRECATED */
-        if(this.options.userinput) {
-            $input.removeAttr('readonly');
-        }
-        else {
-            $input.attr('readonly', true);
-        }
+
+		// Initialization must only occur once
+		if(this.hasInit == true)
+			return;
+		this.hasInit = true;
+		
+		var instance = this;
+		var $input = $(this.input);
+		var $widget = null;
+		
+		/// LAYOUT & BINDINGS ///
+		// Setup block mode layout
+		if( this.options.layout == 'block' ) {
+			// Create widget
+			this.widget = WCP.ColorPicker.createWidget();
+			$widget = $(this.widget);
+			
+			// Store object instance reference
+			$widget.data('jQWCP.instance', this);
+			
+			// Wrap widget around the input elm and put the input 
+			// elm inside widget
+			$widget.insertAfter(this.input);
+			// Retain display CSS property
+			if($input.css('display') == "inline") {
+				$widget.css('display', "inline-block");
+			}
+			else {
+				$widget.css('display', $input.css('display'));
+			}
+			$widget.append(this.input);
+			$input.hide();
+			
+			// Add tabindex attribute to make the widget focusable
+			if($input.attr('tabindex') != undefined) {
+				$widget.attr('tabindex', $input.attr('tabindex'));
+			}
+			else {
+				$widget.attr('tabindex', 0);
+			}
+			
+			// Further widget adjustments based on options
+			this.refreshWidget();
+			
+			// Draw shading
+			this.redrawSliders(true);
+			this.updateSliders();
+			
+			// Bind widget element events
+			$widget.on('focus.wheelColorPicker', WCP.Handler.widget_focus_block);
+			$widget.on('blur.wheelColorPicker', WCP.Handler.widget_blur_block);
+		}
+		
+		// Setup popup mode layout
+		else {
+			// Only need to create one widget, used globally
+			if(WCP.ColorPicker.widget == null) {
+				WCP.ColorPicker.widget = WCP.ColorPicker.createWidget();
+				$widget = $(WCP.ColorPicker.widget);
+				
+				// Assign widget to global
+				$widget.hide();
+				$('body').append($widget);
+				
+				// Bind popup events
+				$widget.on('mousedown.wheelColorPicker', WCP.Handler.widget_mousedown_popup);
+				//$widget.on('mouseup.wheelColorPicker', WCP.Handler.widget_mouseup_popup);
+				
+			}
+			this.widget = WCP.ColorPicker.widget;
+			
+			// Bind input element events
+			$input.on('focus.wheelColorPicker', WCP.Handler.input_focus_popup);
+			$input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
+		}
+		
+		// Bind input events
+		$input.on('keyup.wheelColorPicker', WCP.Handler.input_change);
+		//$input.on('change.wheelColorPicker', WCP.Handler.input_change);
+		
+		// Set color value
+		// DEPRECATED by 3.0
+		if(typeof this.options.color == "object") {
+			this.setColor(this.options.color);
+			this.options.color = undefined;
+		}
+		else if(typeof this.options.color == "string") {
+			this.setValue(this.options.color);
+			this.options.color = undefined;
+		}
+		
+		// Set readonly mode
+		/* DEPRECATED */
+		if(this.options.userinput) {
+			$input.removeAttr('readonly');
+		}
+		else {
+			$input.attr('readonly', true);
+		}
 	};
-    
-    
+
+
 	/**
 	 * Function: destroy
 	 * 
@@ -1088,64 +1088,64 @@
 		// remove self
 		delete this;
 	};
-	
-    
+
+
 	/**
 	 * Function: refreshWidget
-     * 
-     * Since 3.0
-     * 2.5 was private.adjustWidget
+	 * 
+	 * Since 3.0
+	 * 2.5 was private.adjustWidget
 	 * 
 	 * Update widget to match current option values.
 	 */
 	WCP.ColorPicker.prototype.refreshWidget = function() {
 		var $widget = $(this.widget);
-        
-        // Set CSS classes
-        $widget.attr('class', 'jQWCP-wWidget');
-        if(this.options.layout == 'block') {
-            $widget.addClass('jQWCP-block');
-        }
-        $widget.addClass(this.options.cssClass);
 		
-        // Rearrange sliders
-        $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview')
-            .hide()
-            .addClass('hidden');
-            
-        for(var i in this.options.sliders) {
-            var $slider = null;
-            switch(this.options.sliders[i]) {
-                case 'w':
-                    $slider = $widget.find('.jQWCP-wWheel'); break;
-                case 'h':
-                    $slider = $widget.find('.jQWCP-wHue'); break;
-                case 's':
-                    $slider = $widget.find('.jQWCP-wSat'); break;
-                case 'v':
-                    $slider = $widget.find('.jQWCP-wVal'); break;
-                case 'r':
-                    $slider = $widget.find('.jQWCP-wRed'); break;
-                case 'g':
-                    $slider = $widget.find('.jQWCP-wGreen'); break;
-                case 'b':
-                    $slider = $widget.find('.jQWCP-wBlue'); break;
-                case 'a':
-                    $slider = $widget.find('.jQWCP-wAlpha'); break;
-                case 'p':
-                    $slider = $widget.find('.jQWCP-wPreview'); break;
-            }
-            
-            if($slider != null) {
-                $slider.appendTo(this.widget);
-                $slider.show().removeClass('hidden');
-            }
-        }
-        
-        // Adjust sliders height based on quality
+		// Set CSS classes
+		$widget.attr('class', 'jQWCP-wWidget');
+		if(this.options.layout == 'block') {
+			$widget.addClass('jQWCP-block');
+		}
+		$widget.addClass(this.options.cssClass);
+		
+		// Rearrange sliders
+		$widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview')
+			.hide()
+			.addClass('hidden');
+			
+		for(var i in this.options.sliders) {
+			var $slider = null;
+			switch(this.options.sliders[i]) {
+				case 'w':
+					$slider = $widget.find('.jQWCP-wWheel'); break;
+				case 'h':
+					$slider = $widget.find('.jQWCP-wHue'); break;
+				case 's':
+					$slider = $widget.find('.jQWCP-wSat'); break;
+				case 'v':
+					$slider = $widget.find('.jQWCP-wVal'); break;
+				case 'r':
+					$slider = $widget.find('.jQWCP-wRed'); break;
+				case 'g':
+					$slider = $widget.find('.jQWCP-wGreen'); break;
+				case 'b':
+					$slider = $widget.find('.jQWCP-wBlue'); break;
+				case 'a':
+					$slider = $widget.find('.jQWCP-wAlpha'); break;
+				case 'p':
+					$slider = $widget.find('.jQWCP-wPreview'); break;
+			}
+			
+			if($slider != null) {
+				$slider.appendTo(this.widget);
+				$slider.show().removeClass('hidden');
+			}
+		}
+		
+		// Adjust sliders height based on quality
 		var sliderHeight = this.options.quality * 50;
-        $widget.find('.jQWCP-slider').attr('height', sliderHeight);
-        
+		$widget.find('.jQWCP-slider').attr('height', sliderHeight);
+		
 		// Adjust container width
 		var $visElms = $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
 		var width = 0
@@ -1153,280 +1153,280 @@
 			width += parseFloat($(item).css('margin-right').replace('px', '')) + $(item).outerWidth();
 		});
 		$widget.css({ width: width + 'px' });
-        
-        return this; // Allows method chaining
+		
+		return this; // Allows method chaining
 	};
-    
-	
+
+
 	/**
 	 * Function: redrawSliders
 	 * 
 	 * Introduced in 2.0
 	 * 
 	 * Redraw slider gradients. Hidden sliders are not redrawn as to 
-     * improve performance. If options.live is FALSE, sliders are not redrawn.
+	 * improve performance. If options.live is FALSE, sliders are not redrawn.
 	 * 
 	 * Parameter:
 	 *   force   - Boolean force redraw all sliders.
 	 */
 	WCP.ColorPicker.prototype.redrawSliders = function( force ) {
-        
-        // Skip if widget not yet initialized
-        if(this.widget == null) 
-            return this;
-        
-        var $widget = $(this.widget);
-        
-        // DEPRECATED 3.0
-        // In 2.0, parameters are ( sliders, force )
-        if(typeof arguments[0] === "string") {
-            force = arguments[1];
-        }
-        
-        // No need to redraw sliders on global popup widget if not 
-        // attached to the input elm in current iteration
-        if(this != $widget.data('jQWCP.instance'))
-            return this;
-            
-        var w = 1;
-        var h = this.options.quality * 50;
-        
-        var A = 1;
-        var R = 0;
-        var G = 0;
-        var B = 0;
-        var H = 0;
-        var S = 0;
-        var V = 1;
-        
-        // Dynamic colors
-        if(this.options.live) {
-            A = this.color.a;
-            R = Math.round(this.color.r * 255);
-            G = Math.round(this.color.g * 255);
-            B = Math.round(this.color.b * 255);
-            H = this.color.h;
-            S = this.color.s;
-            V = this.color.v;
-        }
-        
-        /// PREVIEW ///
-        // Preview box must always be redrawn, if not hidden
-        var $previewBox = $widget.find('.jQWCP-wPreviewBox');
-        if(!$previewBox.hasClass('hidden')) {
-            var previewBoxCtx = $previewBox.get(0).getContext('2d');
-            previewBoxCtx.fillStyle = "rgba(" + R + "," + G + "," + B + "," + A + ")";
-            previewBoxCtx.clearRect(0, 0, 1, 1);
-            previewBoxCtx.fillRect(0, 0, 1, 1);
-        }
-        
-        /// SLIDERS ///
-        if(!this.options.live && !force)
-            return this;
-        
-        /// ALPHA ///
-        // The top color is (R, G, B, 1)
-        // The bottom color is (R, G, B, 0)
-        var $alphaSlider = $widget.find('.jQWCP-wAlphaSlider');
-        if(!$alphaSlider.hasClass('hidden') || force) {
-            var alphaSliderCtx = $alphaSlider.get(0).getContext('2d');
-            var alphaGradient = alphaSliderCtx.createLinearGradient(0, 0, 0, h);
-            alphaGradient.addColorStop(0, "rgba("+R+","+G+","+B+",1)");
-            alphaGradient.addColorStop(1, "rgba("+R+","+G+","+B+",0)");
-            alphaSliderCtx.fillStyle = alphaGradient;
-            alphaSliderCtx.clearRect(0, 0, w, h);
-            alphaSliderCtx.fillRect(0, 0, w, h);
-        }
-        
-        /// RED ///
-        // The top color is (255, G, B)
-        // The bottom color is (0, G, B)
-        var $redSlider = $widget.find('.jQWCP-wRedSlider');
-        if(!$redSlider.hasClass('hidden') || force) {
-            var redSliderCtx = $redSlider.get(0).getContext('2d');
-            var redGradient = redSliderCtx.createLinearGradient(0, 0, 0, h);
-            redGradient.addColorStop(0, "rgb(255,"+G+","+B+")");
-            redGradient.addColorStop(1, "rgb(0,"+G+","+B+")");
-            redSliderCtx.fillStyle = redGradient;
-            redSliderCtx.fillRect(0, 0, w, h);
-        }
-        
-        /// GREEN ///
-        // The top color is (R, 255, B)
-        // The bottom color is (R, 0, B)
-        var $greenSlider = $widget.find('.jQWCP-wGreenSlider');
-        if(!$greenSlider.hasClass('hidden') || force) {
-            var greenSliderCtx = $greenSlider.get(0).getContext('2d');
-            var greenGradient = greenSliderCtx.createLinearGradient(0, 0, 0, h);
-            greenGradient.addColorStop(0, "rgb("+R+",255,"+B+")");
-            greenGradient.addColorStop(1, "rgb("+R+",0,"+B+")");
-            greenSliderCtx.fillStyle = greenGradient;
-            greenSliderCtx.fillRect(0, 0, w, h);
-        }
-        
-        /// BLUE ///
-        // The top color is (R, G, 255)
-        // The bottom color is (R, G, 0)
-        var $blueSlider = $widget.find('.jQWCP-wBlueSlider');
-        if(!$blueSlider.hasClass('hidden') || force) {
-            var blueSliderCtx = $blueSlider.get(0).getContext('2d');
-            var blueGradient = blueSliderCtx.createLinearGradient(0, 0, 0, h);
-            blueGradient.addColorStop(0, "rgb("+R+","+G+",255)");
-            blueGradient.addColorStop(1, "rgb("+R+","+G+",0)");
-            blueSliderCtx.fillStyle = blueGradient;
-            blueSliderCtx.fillRect(0, 0, w, h);
-        }
-        
-        /// HUE ///
-        // The hue slider is static.
-        var $hueSlider = $widget.find('.jQWCP-wHueSlider');
-        if(!$hueSlider.hasClass('hidden') || force) {
-            var hueSliderCtx = $hueSlider.get(0).getContext('2d');
-            var hueGradient = hueSliderCtx.createLinearGradient(0, 0, 0, h);
-            hueGradient.addColorStop(0, "#f00");
-            hueGradient.addColorStop(0.166666667, "#ff0");
-            hueGradient.addColorStop(0.333333333, "#0f0");
-            hueGradient.addColorStop(0.5, "#0ff");
-            hueGradient.addColorStop(0.666666667, "#00f");
-            hueGradient.addColorStop(0.833333333, "#f0f");
-            hueGradient.addColorStop(1, "#f00");
-            hueSliderCtx.fillStyle = hueGradient;
-            hueSliderCtx.fillRect(0, 0, w, h);
-        }
-        
-        /// SAT ///
-        // The top color is hsv(h, 1, v)
-        // The bottom color is hsv(0, 0, v)
-        var $satSlider = $widget.find('.jQWCP-wSatSlider');
-        if(!$satSlider.hasClass('hidden') || force) {
-            var satTopRgb = $.fn.wheelColorPicker.hsvToRgb(H, 1, V);
-            satTopRgb.r = Math.round(satTopRgb.r * 255);
-            satTopRgb.g = Math.round(satTopRgb.g * 255);
-            satTopRgb.b = Math.round(satTopRgb.b * 255);
-            var satSliderCtx = $satSlider.get(0).getContext('2d');
-            var satGradient = satSliderCtx.createLinearGradient(0, 0, 0, h);
-            satGradient.addColorStop(0, "rgb("+satTopRgb.r+","+satTopRgb.g+","+satTopRgb.b+")");
-            satGradient.addColorStop(1, "rgb("+Math.round(V*255)+","+Math.round(V*255)+","+Math.round(V*255)+")");
-            satSliderCtx.fillStyle = satGradient;
-            satSliderCtx.fillRect(0, 0, w, h);
-        }
-        
-        /// VAL ///
-        // The top color is hsv(h, s, 1)
-        // The bottom color is always black.
-        var $valSlider = $widget.find('.jQWCP-wValSlider');
-        if(!$valSlider.hasClass('hidden') || force) {
-            var valTopRgb = $.fn.wheelColorPicker.hsvToRgb(H, S, 1);
-            valTopRgb.r = Math.round(valTopRgb.r * 255);
-            valTopRgb.g = Math.round(valTopRgb.g * 255);
-            valTopRgb.b = Math.round(valTopRgb.b * 255);
-            var valSliderCtx = $valSlider.get(0).getContext('2d');
-            var valGradient = valSliderCtx.createLinearGradient(0, 0, 0, h);
-            valGradient.addColorStop(0, "rgb("+valTopRgb.r+","+valTopRgb.g+","+valTopRgb.b+")");
-            valGradient.addColorStop(1, "#000");
-            valSliderCtx.fillStyle = valGradient;
-            valSliderCtx.fillRect(0, 0, w, h);
-        }
+		
+		// Skip if widget not yet initialized
+		if(this.widget == null) 
+			return this;
+		
+		var $widget = $(this.widget);
+		
+		// DEPRECATED 3.0
+		// In 2.0, parameters are ( sliders, force )
+		if(typeof arguments[0] === "string") {
+			force = arguments[1];
+		}
+		
+		// No need to redraw sliders on global popup widget if not 
+		// attached to the input elm in current iteration
+		if(this != $widget.data('jQWCP.instance'))
+			return this;
+			
+		var w = 1;
+		var h = this.options.quality * 50;
+		
+		var A = 1;
+		var R = 0;
+		var G = 0;
+		var B = 0;
+		var H = 0;
+		var S = 0;
+		var V = 1;
+		
+		// Dynamic colors
+		if(this.options.live) {
+			A = this.color.a;
+			R = Math.round(this.color.r * 255);
+			G = Math.round(this.color.g * 255);
+			B = Math.round(this.color.b * 255);
+			H = this.color.h;
+			S = this.color.s;
+			V = this.color.v;
+		}
+		
+		/// PREVIEW ///
+		// Preview box must always be redrawn, if not hidden
+		var $previewBox = $widget.find('.jQWCP-wPreviewBox');
+		if(!$previewBox.hasClass('hidden')) {
+			var previewBoxCtx = $previewBox.get(0).getContext('2d');
+			previewBoxCtx.fillStyle = "rgba(" + R + "," + G + "," + B + "," + A + ")";
+			previewBoxCtx.clearRect(0, 0, 1, 1);
+			previewBoxCtx.fillRect(0, 0, 1, 1);
+		}
+		
+		/// SLIDERS ///
+		if(!this.options.live && !force)
+			return this;
+		
+		/// ALPHA ///
+		// The top color is (R, G, B, 1)
+		// The bottom color is (R, G, B, 0)
+		var $alphaSlider = $widget.find('.jQWCP-wAlphaSlider');
+		if(!$alphaSlider.hasClass('hidden') || force) {
+			var alphaSliderCtx = $alphaSlider.get(0).getContext('2d');
+			var alphaGradient = alphaSliderCtx.createLinearGradient(0, 0, 0, h);
+			alphaGradient.addColorStop(0, "rgba("+R+","+G+","+B+",1)");
+			alphaGradient.addColorStop(1, "rgba("+R+","+G+","+B+",0)");
+			alphaSliderCtx.fillStyle = alphaGradient;
+			alphaSliderCtx.clearRect(0, 0, w, h);
+			alphaSliderCtx.fillRect(0, 0, w, h);
+		}
+		
+		/// RED ///
+		// The top color is (255, G, B)
+		// The bottom color is (0, G, B)
+		var $redSlider = $widget.find('.jQWCP-wRedSlider');
+		if(!$redSlider.hasClass('hidden') || force) {
+			var redSliderCtx = $redSlider.get(0).getContext('2d');
+			var redGradient = redSliderCtx.createLinearGradient(0, 0, 0, h);
+			redGradient.addColorStop(0, "rgb(255,"+G+","+B+")");
+			redGradient.addColorStop(1, "rgb(0,"+G+","+B+")");
+			redSliderCtx.fillStyle = redGradient;
+			redSliderCtx.fillRect(0, 0, w, h);
+		}
+		
+		/// GREEN ///
+		// The top color is (R, 255, B)
+		// The bottom color is (R, 0, B)
+		var $greenSlider = $widget.find('.jQWCP-wGreenSlider');
+		if(!$greenSlider.hasClass('hidden') || force) {
+			var greenSliderCtx = $greenSlider.get(0).getContext('2d');
+			var greenGradient = greenSliderCtx.createLinearGradient(0, 0, 0, h);
+			greenGradient.addColorStop(0, "rgb("+R+",255,"+B+")");
+			greenGradient.addColorStop(1, "rgb("+R+",0,"+B+")");
+			greenSliderCtx.fillStyle = greenGradient;
+			greenSliderCtx.fillRect(0, 0, w, h);
+		}
+		
+		/// BLUE ///
+		// The top color is (R, G, 255)
+		// The bottom color is (R, G, 0)
+		var $blueSlider = $widget.find('.jQWCP-wBlueSlider');
+		if(!$blueSlider.hasClass('hidden') || force) {
+			var blueSliderCtx = $blueSlider.get(0).getContext('2d');
+			var blueGradient = blueSliderCtx.createLinearGradient(0, 0, 0, h);
+			blueGradient.addColorStop(0, "rgb("+R+","+G+",255)");
+			blueGradient.addColorStop(1, "rgb("+R+","+G+",0)");
+			blueSliderCtx.fillStyle = blueGradient;
+			blueSliderCtx.fillRect(0, 0, w, h);
+		}
+		
+		/// HUE ///
+		// The hue slider is static.
+		var $hueSlider = $widget.find('.jQWCP-wHueSlider');
+		if(!$hueSlider.hasClass('hidden') || force) {
+			var hueSliderCtx = $hueSlider.get(0).getContext('2d');
+			var hueGradient = hueSliderCtx.createLinearGradient(0, 0, 0, h);
+			hueGradient.addColorStop(0, "#f00");
+			hueGradient.addColorStop(0.166666667, "#ff0");
+			hueGradient.addColorStop(0.333333333, "#0f0");
+			hueGradient.addColorStop(0.5, "#0ff");
+			hueGradient.addColorStop(0.666666667, "#00f");
+			hueGradient.addColorStop(0.833333333, "#f0f");
+			hueGradient.addColorStop(1, "#f00");
+			hueSliderCtx.fillStyle = hueGradient;
+			hueSliderCtx.fillRect(0, 0, w, h);
+		}
+		
+		/// SAT ///
+		// The top color is hsv(h, 1, v)
+		// The bottom color is hsv(0, 0, v)
+		var $satSlider = $widget.find('.jQWCP-wSatSlider');
+		if(!$satSlider.hasClass('hidden') || force) {
+			var satTopRgb = $.fn.wheelColorPicker.hsvToRgb(H, 1, V);
+			satTopRgb.r = Math.round(satTopRgb.r * 255);
+			satTopRgb.g = Math.round(satTopRgb.g * 255);
+			satTopRgb.b = Math.round(satTopRgb.b * 255);
+			var satSliderCtx = $satSlider.get(0).getContext('2d');
+			var satGradient = satSliderCtx.createLinearGradient(0, 0, 0, h);
+			satGradient.addColorStop(0, "rgb("+satTopRgb.r+","+satTopRgb.g+","+satTopRgb.b+")");
+			satGradient.addColorStop(1, "rgb("+Math.round(V*255)+","+Math.round(V*255)+","+Math.round(V*255)+")");
+			satSliderCtx.fillStyle = satGradient;
+			satSliderCtx.fillRect(0, 0, w, h);
+		}
+		
+		/// VAL ///
+		// The top color is hsv(h, s, 1)
+		// The bottom color is always black.
+		var $valSlider = $widget.find('.jQWCP-wValSlider');
+		if(!$valSlider.hasClass('hidden') || force) {
+			var valTopRgb = $.fn.wheelColorPicker.hsvToRgb(H, S, 1);
+			valTopRgb.r = Math.round(valTopRgb.r * 255);
+			valTopRgb.g = Math.round(valTopRgb.g * 255);
+			valTopRgb.b = Math.round(valTopRgb.b * 255);
+			var valSliderCtx = $valSlider.get(0).getContext('2d');
+			var valGradient = valSliderCtx.createLinearGradient(0, 0, 0, h);
+			valGradient.addColorStop(0, "rgb("+valTopRgb.r+","+valTopRgb.g+","+valTopRgb.b+")");
+			valGradient.addColorStop(1, "#000");
+			valSliderCtx.fillStyle = valGradient;
+			valSliderCtx.fillRect(0, 0, w, h);
+		}
 			
 		return this; // Allows method chaining
 	};
-    
-	
+
+
 	/**
 	 * Function: updateSliders
 	 * 
 	 * Introduced in 2.0
 	 * 
 	 * Update slider cursor positions based on this.color value. 
-     * Only displayed sliders are updated.
+	 * Only displayed sliders are updated.
 	 */
 	WCP.ColorPicker.prototype.updateSliders = function() {
-        
-        // Skip if not yet initialized
-        if(this.widget == null)
-            return this;
-            
-        var $widget = $(this.widget);
-        var color = this.color;
-        
-        // No need to redraw sliders on global popup widget if not 
-        // attached to the input elm in current iteration
-        if(this != $widget.data('jQWCP.instance'))
-            return this;
-            
-        // Wheel
-        var $wheel = $widget.find('.jQWCP-wWheel');
-        if(!$wheel.hasClass('hidden')) {
-            var $wheelCursor = $widget.find('.jQWCP-wWheelCursor');
-            var $wheelOverlay = $widget.find('.jQWCP-wWheelOverlay');
-            var wheelX = Math.cos(2 * Math.PI * color.h) * color.s;
-            var wheelY = Math.sin(2 * Math.PI * color.h) * color.s;
-            var wheelOffsetX = $wheel.width() / 2;
-            var wheelOffsetY = $wheel.height() / 2;
-            $wheelCursor.css('left', (wheelOffsetX + (wheelX * $wheel.width() / 2)) + 'px');
-            $wheelCursor.css('top', (wheelOffsetY - (wheelY * $wheel.height() / 2)) + 'px');
-            // Keep shading to 1 if preserveWheel is true (DEPRECATED) or live is true
-            if(this.options.preserveWheel == true || (this.options.preserveWheel == null && this.options.live == false)) {
-                $wheelOverlay.css('opacity', 0);
-            }
-            else {
-                $wheelOverlay.css('opacity', 1 - (color.v < 0.2 ? 0.2 : color.v));
-            }
-        }
-        
-        // Hue
-        var $hueSlider = $widget.find('.jQWCP-wHueSlider');
-        if(!$hueSlider.hasClass('hidden')) {
-            var $hueCursor = $widget.find('.jQWCP-wHueCursor');
-            $hueCursor.css('top', (color.h * $hueSlider.height()) + 'px');
-        }
-        
-        // Saturation
-        var $satSlider = $widget.find('.jQWCP-wSatSlider');
-        if(!$satSlider.hasClass('hidden')) {
-            var $satCursor = $widget.find('.jQWCP-wSatCursor');
-            $satCursor.css('top', ((1 - color.s) * $satSlider.height()) + 'px');
-        }
-        
-        // Value
-        var $valSlider = $widget.find('.jQWCP-wValSlider');
-        if(!$valSlider.hasClass('hidden')) {
-            var $valCursor = $widget.find('.jQWCP-wValCursor');
-            $valCursor.css('top', ((1 - color.v) * $valSlider.height()) + 'px');
-        }
-        
-        // Red
-        var $redSlider = $widget.find('.jQWCP-wRedSlider');
-        if(!$redSlider.hasClass('hidden')) {
-            var $redCursor = $widget.find('.jQWCP-wRedCursor');
-            $redCursor.css('top', ((1 - color.r) * $redSlider.height()) + 'px');
-        }
-        
-        // Green
-        var $greenSlider = $widget.find('.jQWCP-wGreenSlider');
-        if(!$greenSlider.hasClass('hidden')) {
-            var $greenCursor = $widget.find('.jQWCP-wGreenCursor');
-            $greenCursor.css('top', ((1 - color.g) * $greenSlider.height()) + 'px');
-        }
-        
-        // Blue
-        var $blueSlider = $widget.find('.jQWCP-wBlueSlider');
-        if(!$blueSlider.hasClass('hidden')) {
-            var $blueCursor = $widget.find('.jQWCP-wBlueCursor');
-            $blueCursor.css('top', ((1 - color.b) * $blueSlider.height()) + 'px');
-        }
-        
-        // Alpha
-        var $alphaSlider = $widget.find('.jQWCP-wAlphaSlider');
-        if(!$alphaSlider.hasClass('hidden')) {
-            var $alphaCursor = $widget.find('.jQWCP-wAlphaCursor');
-            $alphaCursor.css('top', ((1 - color.a) * $alphaSlider.height()) + 'px');
-        }
-            
-        return this; // Allows method chaining
+		
+		// Skip if not yet initialized
+		if(this.widget == null)
+			return this;
+			
+		var $widget = $(this.widget);
+		var color = this.color;
+		
+		// No need to redraw sliders on global popup widget if not 
+		// attached to the input elm in current iteration
+		if(this != $widget.data('jQWCP.instance'))
+			return this;
+			
+		// Wheel
+		var $wheel = $widget.find('.jQWCP-wWheel');
+		if(!$wheel.hasClass('hidden')) {
+			var $wheelCursor = $widget.find('.jQWCP-wWheelCursor');
+			var $wheelOverlay = $widget.find('.jQWCP-wWheelOverlay');
+			var wheelX = Math.cos(2 * Math.PI * color.h) * color.s;
+			var wheelY = Math.sin(2 * Math.PI * color.h) * color.s;
+			var wheelOffsetX = $wheel.width() / 2;
+			var wheelOffsetY = $wheel.height() / 2;
+			$wheelCursor.css('left', (wheelOffsetX + (wheelX * $wheel.width() / 2)) + 'px');
+			$wheelCursor.css('top', (wheelOffsetY - (wheelY * $wheel.height() / 2)) + 'px');
+			// Keep shading to 1 if preserveWheel is true (DEPRECATED) or live is true
+			if(this.options.preserveWheel == true || (this.options.preserveWheel == null && this.options.live == false)) {
+				$wheelOverlay.css('opacity', 0);
+			}
+			else {
+				$wheelOverlay.css('opacity', 1 - (color.v < 0.2 ? 0.2 : color.v));
+			}
+		}
+		
+		// Hue
+		var $hueSlider = $widget.find('.jQWCP-wHueSlider');
+		if(!$hueSlider.hasClass('hidden')) {
+			var $hueCursor = $widget.find('.jQWCP-wHueCursor');
+			$hueCursor.css('top', (color.h * $hueSlider.height()) + 'px');
+		}
+		
+		// Saturation
+		var $satSlider = $widget.find('.jQWCP-wSatSlider');
+		if(!$satSlider.hasClass('hidden')) {
+			var $satCursor = $widget.find('.jQWCP-wSatCursor');
+			$satCursor.css('top', ((1 - color.s) * $satSlider.height()) + 'px');
+		}
+		
+		// Value
+		var $valSlider = $widget.find('.jQWCP-wValSlider');
+		if(!$valSlider.hasClass('hidden')) {
+			var $valCursor = $widget.find('.jQWCP-wValCursor');
+			$valCursor.css('top', ((1 - color.v) * $valSlider.height()) + 'px');
+		}
+		
+		// Red
+		var $redSlider = $widget.find('.jQWCP-wRedSlider');
+		if(!$redSlider.hasClass('hidden')) {
+			var $redCursor = $widget.find('.jQWCP-wRedCursor');
+			$redCursor.css('top', ((1 - color.r) * $redSlider.height()) + 'px');
+		}
+		
+		// Green
+		var $greenSlider = $widget.find('.jQWCP-wGreenSlider');
+		if(!$greenSlider.hasClass('hidden')) {
+			var $greenCursor = $widget.find('.jQWCP-wGreenCursor');
+			$greenCursor.css('top', ((1 - color.g) * $greenSlider.height()) + 'px');
+		}
+		
+		// Blue
+		var $blueSlider = $widget.find('.jQWCP-wBlueSlider');
+		if(!$blueSlider.hasClass('hidden')) {
+			var $blueCursor = $widget.find('.jQWCP-wBlueCursor');
+			$blueCursor.css('top', ((1 - color.b) * $blueSlider.height()) + 'px');
+		}
+		
+		// Alpha
+		var $alphaSlider = $widget.find('.jQWCP-wAlphaSlider');
+		if(!$alphaSlider.hasClass('hidden')) {
+			var $alphaCursor = $widget.find('.jQWCP-wAlphaCursor');
+			$alphaCursor.css('top', ((1 - color.a) * $alphaSlider.height()) + 'px');
+		}
+			
+		return this; // Allows method chaining
 	};
-	
-    
+
+
 	/**
 	 * Function: updateSelection
 	 * 
@@ -1437,10 +1437,10 @@
 	WCP.ColorPicker.prototype.updateSelection = function() {
 		this.redrawSliders();
 		this.updateSliders();
-        return this;
+		return this;
 	};
-	
-	
+
+
 	/**
 	 * Function: updateInput
 	 * 
@@ -1449,10 +1449,10 @@
 	 * Update input value and background color (if preview is on)
 	 */
 	WCP.ColorPicker.prototype.updateInput = function() {
-        // Skip if not yet initialized
-        if(this.widget == null)
-            return this;
-            
+		// Skip if not yet initialized
+		if(this.widget == null)
+			return this;
+			
 		var $input = $(this.input);
 		
 		this.input.value = this.getValue();
@@ -1467,8 +1467,8 @@
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Function: updateActiveControl
 	 * 
@@ -1481,6 +1481,8 @@
 			return;
 		
 		var $input = $(this.input);
+		var options = this.options;
+		var color = this.color;
 		
 		// pageX and pageY wrapper for touches
 		if(e.pageX == undefined && e.originalEvent.touches.length > 0) {
@@ -1511,14 +1513,14 @@
 			if(sat > 1) {
 				sat = 1;
 			}
-            
-            // Snap to 0,0
-            if(this.options.snap && sat < this.options.snapTolerance) {
-                sat = 0;
-            }
+			
+			// Snap to 0,0
+			if(options.snap && sat < options.snapTolerance) {
+				sat = 0;
+			}
 			
 			// Hue is calculated from the angle of the cursor. 0deg is set to the right, and increase counter-clockwise.
-            var hue = (relX == 0 && relY == 0) ? 0 : Math.atan( relY / relX ) / ( 2 * Math.PI );
+			var hue = (relX == 0 && relY == 0) ? 0 : Math.atan( relY / relX ) / ( 2 * Math.PI );
 			// If hue is negative, then fix the angle value (meaning angle is in either Q2 or Q4)
 			if( hue < 0 ) {
 				hue += 0.5;
@@ -1528,7 +1530,7 @@
 				hue += 0.5;
 			}
 			
-			this.setHsv(hue, sat, this.color.v);
+			this.setHsv(hue, sat, color.v);
 		}
 		
 		/// SLIDER CONTROL ///
@@ -1543,45 +1545,45 @@
 			}
 			
 			var value = relY < 0 ? 0 : relY > 1 ? 1 : relY;
-            
-            // Snap to 0.0, 0.5, and 1.0
-            //console.log(value);
-            if(this.options.snap && value < this.options.snapTolerance) {
-                value = 0;
-            }
-            else if(this.options.snap && value > 1-this.options.snapTolerance) {
-                value = 1;
-            }
-            if(this.options.snap && value > 0.5-this.options.snapTolerance && value < 0.5+this.options.snapTolerance) {
-                value = 0.5;
-            }
+			
+			// Snap to 0.0, 0.5, and 1.0
+			//console.log(value);
+			if(options.snap && value < options.snapTolerance) {
+				value = 0;
+			}
+			else if(options.snap && value > 1-options.snapTolerance) {
+				value = 1;
+			}
+			if(options.snap && value > 0.5-options.snapTolerance && value < 0.5+options.snapTolerance) {
+				value = 0.5;
+			}
 			
 			$cursor.css('top', (value * $control.height()) + 'px');
 			
 			/// Update color value ///
 			// Red
 			if($control.hasClass('jQWCP-wRed')) {
-				this.setRgb(1-value, this.color.g, this.color.b);
+				this.setRgb(1-value, color.g, color.b);
 			}
 			// Green
 			if($control.hasClass('jQWCP-wGreen')) {
-				this.setRgb(this.color.r, 1-value, this.color.b);
+				this.setRgb(color.r, 1-value, color.b);
 			}
 			// Blue
 			if($control.hasClass('jQWCP-wBlue')) {
-				this.setRgb(this.color.r, this.color.g, 1-value);
+				this.setRgb(color.r, color.g, 1-value);
 			}
 			// Hue
 			if($control.hasClass('jQWCP-wHue')) {
-				this.setHsv(value, this.color.s, this.color.v);
+				this.setHsv(value, color.s, color.v);
 			}
 			// Saturation
 			if($control.hasClass('jQWCP-wSat')) {
-				this.setHsv(this.color.h, 1-value, this.color.v);
+				this.setHsv(color.h, 1-value, color.v);
 			}
 			// Value
 			if($control.hasClass('jQWCP-wVal')) {
-				this.setHsv(this.color.h, this.color.s, 1-value);
+				this.setHsv(color.h, color.s, 1-value);
 			}
 			// Alpha
 			if($control.hasClass('jQWCP-wAlpha')) {
@@ -1589,8 +1591,8 @@
 			}
 		}
 	};
-	
-    
+
+
 	/**
 	 * Function: getColor
 	 * 
@@ -1610,8 +1612,8 @@
 	WCP.ColorPicker.prototype.getColor = function() {
 		return this.color;
 	};
-	
-    
+
+
 	/**
 	 * Function: getValue
 	 * 
@@ -1628,8 +1630,8 @@
 		}
 		return WCP.colorToStr( this.color, format );
 	};
-	
-    
+
+
 	/**
 	 * Function: setValue
 	 * 
@@ -1642,8 +1644,8 @@
 			
 		return this.setColor(color);
 	}
-	
-    
+
+
 	/**
 	 * Function: setColor
 	 * 
@@ -1652,14 +1654,14 @@
 	 * Set color by passing an object consisting of:
 	 * { r, g, b, a } or
 	 * { h, s, v, a }
-     * 
-     * For consistency with options.color value, this function also 
-     * accepts string value.
+	 * 
+	 * For consistency with options.color value, this function also 
+	 * accepts string value.
 	 */
 	WCP.ColorPicker.prototype.setColor = function( color ) {
-        if(typeof color === "string") {
-            return this.setValue(color);
-        }
+		if(typeof color === "string") {
+			return this.setValue(color);
+		}
 		else if(color.r != null) {
 			return this.setRgba(color.r, color.g, color.b, color.a);
 		}
@@ -1671,8 +1673,8 @@
 		}
 		return this;
 	};
-	
-    
+
+
 	/**
 	 * Function: setRgba
 	 * 
@@ -1681,27 +1683,27 @@
 	 * Set color using RGBA combination.
 	 */
 	WCP.ColorPicker.prototype.setRgba = function( r, g, b, a ) {
-        this.color.r = r;
-        this.color.g = g;
-        this.color.b = b;
-        
-        if(a != null) {
-            this.color.a = a;
-        }
-        
-        var hsv = WCP.rgbToHsv(r, g, b);
-        this.color.h = hsv.h;
-        this.color.s = hsv.s;
-        this.color.v = hsv.v;
-        //~ console.log(color);
+		this.color.r = r;
+		this.color.g = g;
+		this.color.b = b;
+		
+		if(a != null) {
+			this.color.a = a;
+		}
+		
+		var hsv = WCP.rgbToHsv(r, g, b);
+		this.color.h = hsv.h;
+		this.color.s = hsv.s;
+		this.color.v = hsv.v;
+		//~ console.log(color);
 
 		this.updateSliders();
 		this.redrawSliders();
 		this.updateInput();
-        return this;
+		return this;
 	};
-	
-    
+
+
 	/**
 	 * Function: setRgb
 	 * 
@@ -1712,8 +1714,8 @@
 	WCP.ColorPicker.prototype.setRgb = function( r, g, b ) {
 		return this.setRgba(r, g, b, null);
 	};
-	
-	
+
+
 	/**
 	 * Function: setHsva
 	 * 
@@ -1722,27 +1724,27 @@
 	 * Set color using HSVA combination.
 	 */
 	WCP.ColorPicker.prototype.setHsva = function( h, s, v, a ) {
-        this.color.h = h;
-        this.color.s = s;
-        this.color.v = v;
-        
-        if(a != null) {
-            this.color.a = a;
-        }
-        
-        var rgb = WCP.hsvToRgb(h, s, v);
-        this.color.r = rgb.r;
-        this.color.g = rgb.g;
-        this.color.b = rgb.b;
-        //~ console.log(color);
+		this.color.h = h;
+		this.color.s = s;
+		this.color.v = v;
+		
+		if(a != null) {
+			this.color.a = a;
+		}
+		
+		var rgb = WCP.hsvToRgb(h, s, v);
+		this.color.r = rgb.r;
+		this.color.g = rgb.g;
+		this.color.b = rgb.b;
+		//~ console.log(color);
 		
 		this.updateSliders();
 		this.redrawSliders();
 		this.updateInput();
-        return this;
+		return this;
 	};
-	
-    
+
+
 	/**
 	 * Function: setHsv
 	 * 
@@ -1753,8 +1755,8 @@
 	WCP.ColorPicker.prototype.setHsv = function( h, s, v ) {
 		return this.setHsva(h, s, v, null);
 	};
-	
-    
+
+
 	/**
 	 * Function: setAlpha
 	 * 
@@ -1763,15 +1765,15 @@
 	 * Set alpha value.
 	 */
 	WCP.ColorPicker.prototype.setAlpha = function( value ) {
-        this.color.a = value;
-        
+		this.color.a = value;
+		
 		this.updateSliders();
 		this.redrawSliders();
 		this.updateInput();
-        return this;
+		return this;
 	};
-	
-	
+
+
 	/**
 	 * Function: show
 	 * 
@@ -1821,9 +1823,9 @@
 			$(WCP.ColorPicker.overlay).show();
 		}
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Function: hide
 	 * 
@@ -1840,24 +1842,24 @@
 		$widget.fadeOut( this.options.animDuration );
 		$(WCP.ColorPicker.overlay).hide();
 	};
-	
-	
-	
-    ////////////////////
-    // Event Handlers //
-    ////////////////////
-    
-    WCP.Handler = {};
-    
-    /**
-     * input.onFocus.popup
-     */
-    WCP.Handler.input_focus_popup = function( e ) {
+
+
+
+	////////////////////
+	// Event Handlers //
+	////////////////////
+
+	WCP.Handler = {};
+
+	/**
+	 * input.onFocus.popup
+	 */
+	WCP.Handler.input_focus_popup = function( e ) {
 		var instance = $(this).data('jQWCP.instance');
 		instance.show();
 	};
-	
-	
+
+
 	/**
 	 * input.onBlur.popup
 	 * 
@@ -1880,8 +1882,8 @@
 			$(this).trigger('change');
 		}
 	};
-	
-	
+
+
 	/**
 	 * input.onChange
 	 * 
@@ -1894,8 +1896,8 @@
 			instance.setColor(color);
 		}
 	};
-	
-	
+
+
 	/**
 	 * widget.onFocus.block
 	 * 
@@ -1911,8 +1913,8 @@
 		// Trigger focus event
 		$input.triggerHandler('focus');
 	};
-	
-	
+
+
 	/**
 	 * widget.onMouseDown.popup
 	 * 
@@ -1928,13 +1930,13 @@
 		$input.off('blur.wheelColorPicker');
 		
 		// Temporarily unbind all blur events until mouse is released
-        // data('events') is deprecated since jquery 1.8
-        if($input.data('events') != undefined) {
-            var blurEvents = $input.data('events').blur;
-        }
-        else {
-            var blurEvents = undefined;
-        }
+		// data('events') is deprecated since jquery 1.8
+		if($input.data('events') != undefined) {
+			var blurEvents = $input.data('events').blur;
+		}
+		else {
+			var blurEvents = undefined;
+		}
 		var suspendedEvents = { blur: [] };
 		//suspendedEvents.blur = blurEvents;
 		//$input.off('blur');
@@ -1948,7 +1950,7 @@
 		//console.log(blurEvents);
 		//console.log($input.data('jQWCP.suspendedEvents'));
 	};
-	
+
 	/**
 	 * widget.onMouseUp
 	 * 
@@ -1968,9 +1970,9 @@
 		$input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
 		
 	};*/
-	
-	
-	
+
+
+
 	/**
 	 * widget.onBlur
 	 * 
@@ -1990,8 +1992,8 @@
 		// Trigger blur event
 		$input.triggerHandler('blur');
 	};
-	
-	
+
+
 	/**
 	 * wheelCursor.onMouseDown
 	 * 
@@ -2009,8 +2011,8 @@
 		// Trigger sliderdown event
 		$input.trigger('sliderdown');
 	};
-	
-	
+
+
 	/**
 	 * wheel.onMouseDown
 	 * 
@@ -2030,8 +2032,8 @@
 		// Trigger sliderdown event
 		$input.trigger('sliderdown');
 	};
-	
-	
+
+
 	/**
 	 * slider.onMouseDown
 	 * 
@@ -2049,7 +2051,7 @@
 		// Trigger sliderdown event
 		$input.trigger('sliderdown');
 	};
-	
+
 	/**
 	 * sliderCursor.onMouseDown
 	 * 
@@ -2067,9 +2069,9 @@
 		// Trigger sliderdown event
 		$input.trigger('sliderdown');
 	};
-	
-	
-	
+
+
+
 	/**
 	 * html.onMouseUp
 	 * 
@@ -2128,8 +2130,8 @@
 			$input.trigger('sliderup');
 		}
 	};
-	
-	
+
+
 	/**
 	 * html.onMouseMove
 	 * 
@@ -2158,9 +2160,9 @@
 		
 		return false;
 	};
-	
-    
-    
+
+
+
 	/**
 	 * overlay.onClick
 	 * 
@@ -2188,26 +2190,26 @@
 			instance.hide();
 		}
 	};
-    
-    /******************************************************************/
-	
+
+	/******************************************************************/
+
 	////////////////////////////////////////////////////////
 	// Automatically initialize color picker on page load //
 	// for elements with data-wheelcolorpicker attribute. //
 	////////////////////////////////////////////////////////
-    
+
 	$(document).ready(function() {
 		$('[data-wheelcolorpicker]').wheelColorPicker({ htmlOptions: true });
 	});
-	
-    
-    
-    /******************************************************************/
-	
+
+
+
+	/******************************************************************/
+
 	//////////////////////////////////
-    // Browser specific workarounds //
-    //////////////////////////////////
-    
+	// Browser specific workarounds //
+	//////////////////////////////////
+
 	(function() {
 		// MOZILLA //
 		
@@ -2235,11 +2237,11 @@
 				var origin = document.getElementById('jQWCP-PageOrigin').getBoundingClientRect();
 				WCP.ORIGIN = origin;
 				if(origin.left != 0 || origin.top != 0) {
-                    WCP.BUG_RELATIVE_PAGE_ORIGIN = true;
+					WCP.BUG_RELATIVE_PAGE_ORIGIN = true;
 				}
 			});
 		});
 		
 	})();
-	
+
 }) (jQuery);
