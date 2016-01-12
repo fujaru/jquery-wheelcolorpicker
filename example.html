@@ -283,6 +283,54 @@
 	
 	<div class="snippet-output" data-id="snippet-slider"></div>
 	
+	<h2>Color Picker Sizes</h2>
+	
+	<p>
+		By default the color picker widget is automatically resizes to fit 
+		the sliders. However, you may also set a custom size to it by 
+		specifying width and height via CSS. 
+		This feature only applies to desktop website. For mobile browser, 
+		color picker will automatically adjusted to fit browser screen.
+	</p>
+	
+	<div id="snippet-size" class="snippet">
+		<div class="row">
+			<div class="col-4">
+				Default autoresize: <br />
+				<input type="text" data-wheelcolorpicker />
+			</div>
+			
+			<div class="col-4">
+				Custom size: <br />
+				<input type="text" data-wheelcolorpicker data-wcp-autoResize="false" data-wcp-cssClass="custom-size1" />
+				<style type="text/css">
+					.custom-size1 {
+						width: 400px;
+						height: 250px;
+					}
+				</style>
+			</div>
+			
+			<div class="col-4">
+				Custom size (sliders only): <br />
+				<input type="text" data-wheelcolorpicker id="lala" data-wcp-autoResize="false" data-wcp-sliders="hsvrgbap" data-wcp-cssClass="custom-size2" />
+				<style type="text/css">
+					.custom-size2 {
+						width: 400px;
+						height: 250px;
+					}
+				</style>
+			</div>
+			
+			<div class="col-4">
+				Preview color on textbox: <br />
+				<input type="text" data-wheelcolorpicker data-wcp-sliders="wv" data-wcp-preview="true" />
+			</div>
+		</div>
+	</div>
+	
+	<div class="snippet-output" data-id="snippet-size"></div>
+	
 	<h2>Embedded Color Picker</h2>
 	
 	<p>
@@ -300,7 +348,7 @@
 	<h2>Color Manipulations</h2>
 	
 	<p>
-		By accessing color components in RGB or HSV, it is possible to manipulate colors.
+		By accessing color components in RGB or HSV, it is possible to manipulate colors with ease.
 	</p>
 	
 	<div id="snippet-events" class="snippet">

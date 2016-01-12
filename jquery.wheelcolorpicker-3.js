@@ -216,6 +216,7 @@
 		live: true, /* 2.0 */
 		userinput: true, /* DEPRECATED 1.x */
 		validate: false, /* DEPRECATED 1.x */ /* See autoConvert */
+		autoResize: true, /* 3.0 */
 		autoConvert: true, /* 2.0 */ /* NOT IMPLEMENTED */
 		//color: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* Init-time only */
 		//alpha: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* See methods.alpha */
@@ -924,6 +925,13 @@
 				// Only if option key is valid and not set via function argument
 				if(this.input.hasAttribute('data-wcp-'+key) && options[key] === undefined) {
 					options[key] = this.input.getAttribute('data-wcp-'+key);
+					// Change true/false string to boolean
+					if(options[key] == 'true') {
+						options[key] = true;
+					}
+					else if(options[key] == 'false') {
+						options[key] = false;
+					}
 				}
 			}
 		}
@@ -1100,20 +1108,22 @@
 	 */
 	WCP.ColorPicker.prototype.refreshWidget = function() {
 		var $widget = $(this.widget);
+		var options = this.options;
 		
 		// Set CSS classes
 		$widget.attr('class', 'jQWCP-wWidget');
 		if(this.options.layout == 'block') {
 			$widget.addClass('jQWCP-block');
 		}
-		$widget.addClass(this.options.cssClass);
+		$widget.addClass(options.cssClass);
+		//$widget.addClass(this.input.getAttribute('class'));
 		
 		// Rearrange sliders
 		$widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview')
 			.hide()
 			.addClass('hidden');
 			
-		for(var i in this.options.sliders) {
+		for(var i in options.sliders) {
 			var $slider = null;
 			switch(this.options.sliders[i]) {
 				case 'w':
@@ -1142,17 +1152,58 @@
 			}
 		}
 		
+		// If widget is hidden, show it first so we can calculate dimensions correctly
+		//var widgetIsHidden = false;
+		//if($widget.is(':hidden')) {
+			//widgetIsHidden = true;
+			//$widget.css({ opacity: '0' }).show();
+		//}
+		
 		// Adjust sliders height based on quality
-		var sliderHeight = this.options.quality * 50;
+		var sliderHeight = options.quality * 50;
 		$widget.find('.jQWCP-slider').attr('height', sliderHeight);
 		
-		// Adjust container width
 		var $visElms = $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
-		var width = 0
-		$visElms.each(function(index, item) {
-			width += parseFloat($(item).css('margin-right').replace('px', '')) + $(item).outerWidth();
-		});
-		$widget.css({ width: width + 'px' });
+			
+		// Adjust container and sliders width
+		if(options.autoResize) {
+			// Auto resize
+			var width = 0
+			
+			// Set slider size first, then adjust container
+			$visElms.css({ width: '', height: '' });
+			
+			$visElms.each(function(index, item) {
+				var $item = $(item);
+				width += parseFloat($item.css('margin-left').replace('px', '')) + parseFloat($item.css('margin-right').replace('px', '')) + $item.outerWidth();
+			});
+			$widget.css({ width: width + 'px' });
+		}
+		else {
+			// Fixed size
+			
+			// Set container size first, then adjust sliders
+			$widget.css({ width: '' });
+			
+			var $visWheel = $widget.find('.jQWCP-wWheel').not('.hidden');
+			var $visSliders = $widget.find('.jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
+			$visWheel.css({ height: $widget.height() + 'px', width: $widget.height() });
+			if($visWheel.length > 0) {
+				var horzSpace = $widget.width() - $visWheel.outerWidth() - parseFloat($visWheel.css('margin-left').replace('px', '')) - parseFloat($visWheel.css('margin-right').replace('px', ''));
+			}
+			else {
+				var horzSpace = $widget.width();
+			}
+			if($visSliders.length > 0) {
+				var sliderMargins = parseFloat($visSliders.css('margin-left').replace('px', '')) + parseFloat($visSliders.css('margin-right').replace('px', ''));
+				$visSliders.css({ height: $widget.height() + 'px', width: (horzSpace - ($visSliders.length - 1) * sliderMargins) / $visSliders.length + 'px' });
+			}
+		}
+		
+		// Reset visibility
+		//if(widgetIsHidden) {
+			//$widget.css({ opacity: '' }).hide();
+		//}
 		
 		return this; // Allows method chaining
 	};
