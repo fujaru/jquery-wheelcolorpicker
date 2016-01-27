@@ -38,7 +38,6 @@
 			margin: 20px auto;
 			padding: 0 20px;
 			max-width: 920px;
-			min-width: 920px;
 			color: #000;
 			background: #fff;
 		}
@@ -119,19 +118,19 @@
 			width: 100%;
 			box-sizing: border-box;
 		}
-		/*
-		@media (max-width: 640px) {
+		
+		@media (max-width: 760px) {
 			.col-4 {
 				width: 50%;
 			}
 		}
 		
-		@media (max-width: 320px) {
+		@media (max-width: 380px) {
 			.col-4 {
 				width: 100%;
 			}
 		}
-		*/
+		
 		.snippet-output {
 			margin: 15px 0;
 			border: solid 1px #aaa;
@@ -339,8 +338,15 @@
 	
 	<div id="snippet-block" class="snippet">
 		<p>
-			<input type="text" value="#ff8800" data-wheelcolorpicker data-wcp-layout="block" data-wcp-sliders="wsvap" />	
+			<input type="text" value="#ff8800" data-wheelcolorpicker data-wcp-layout="block" data-wcp-sliders="wsvap" data-wcp-cssClass="color-block" data-wcp-autoResize="false" />	
 		</p>
+        <style type="text/css">
+            .color-block {
+                max-width: 340px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        </style>
 	</div>
 	
 	<div class="snippet-output" data-id="snippet-block"></div>

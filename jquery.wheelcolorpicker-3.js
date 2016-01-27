@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-(function($) {
+(function ($) {
 	
 	/**
 	 * Function: wheelColorPicker
@@ -42,7 +42,7 @@
 			var shift = [].shift;
 			var firstArg = shift.apply(arguments);
 			var firstArgUc = (typeof firstArg === "string") ? firstArg.charAt(0).toUpperCase() + firstArg.slice(1) : firstArg;
-		}
+		} 
 		else {
 			var firstArg = undefined;
 			var firstArgUc = undefined;
@@ -163,6 +163,8 @@
 	 *   validate      - (Deprecated) Boolean When userinput is enabled, always convert 
 	 *                   the input value to a specified format. This option is 
 	 *                   deprecated. use autoConvert instead.
+     *   autoResize    - Boolean Automatically resize container width.
+     *                   If set to false, you could manually adjust size with CSS.
 	 *   autoConvert   - Boolean Automatically convert inputted value to 
 	 *                   specified format.
 	 *   color         - Mixed Initial value in any of supported color 
@@ -201,6 +203,7 @@
 	 *   rounding      - Round the alpha value to N decimal digits. Default is 2.
 	 *                   Set -1 to disable rounding.
 	 *   mobile        - Display mobile-friendly layout when opened in mobile device.
+     *   mobileWidth   - Max screen width to use mobile layout instead of default one.
 	 *   mobileAutoScroll - Automatically scroll the page if focused input element 
 	 *                      gets obstructed by color picker dialog.
 	 *   htmlOptions   - Load options from HTML attributes. 
@@ -229,7 +232,8 @@
 		sliderLabel: true, /* 2.0 */
 		sliderValue: false, /* 2.0 */
 		rounding: 2, /* 2.3 */
-		mobile: true, /* 3.0 */ /* NOT IMPLEMENTED */
+		mobile: true, /* 3.0 */
+        mobileWidth: 480, /* 3.0 */
 		hideKeyboard: false, /* 2.4 */
 		htmlOptions: true, /* 2.3 */
         snap: false, /* 2.5 */
@@ -770,12 +774,23 @@
 		$overlay.on('click', WCP.Handler.overlay_click);
 		WCP.ColorPicker.overlay = $overlay.get(0);
 		$('body').append($overlay);
+        
+        // Insert CSS for color wheel
+        var wheelImage = WCP.ColorPicker.getWheelDataUrl(200);
+        $('head').append(
+            '<style type="text/css">' + 
+                '.jQWCP-wWheel {' + 
+                    'background: url(' + wheelImage + ') no-repeat center center;' +
+                '}' +
+            '</style>'
+        );
 		
 		// Attach events
 		$('html').on('mouseup.wheelColorPicker', WCP.Handler.html_mouseup);
 		$('html').on('touchend.wheelColorPicker', WCP.Handler.html_mouseup);
 		$('html').on('mousemove.wheelColorPicker', WCP.Handler.html_mousemove);
 		$('html').on('touchmove.wheelColorPicker', WCP.Handler.html_mousemove);
+        $(window).on('resize.wheelColorPicker', WCP.Handler.window_resize);
 	};
 
 
@@ -856,6 +871,71 @@
 		
 		return $widget.get(0);
 	};
+    
+    
+    /**
+     * Function: getWheelDataUrl
+     * 
+     * Create color wheel image and return as base64 encoded data url.
+     */
+    WCP.ColorPicker.getWheelDataUrl = function( size ) {
+        var r = size / 2; // radius
+        var center = r;
+        var canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        var context = canvas.getContext('2d');
+        
+        // Fill the wheel with colors
+        for(var y = 0; y < size; y++) {
+            for(var x = 0; x < size; x++) {
+                // Get the offset from central position
+                var offset = Math.sqrt(Math.pow(x - center, 2) + Math.pow(y - center, 2));
+                
+                // Skip pixels outside picture area (plus 2 pixels)
+                if(offset > r + 2) {
+                    continue;
+                }
+                
+                // Get the position in degree (hue)
+                var deg = (
+                    (x - center == 0 
+                        ? (y < center ? 90 : 270)
+                        : (Math.atan((center - y) / (x - center)) / Math.PI * 180)
+                    )
+                    + (x < center ? 180 : 0)
+                    + 360
+                ) % 360;
+                
+                // Relative offset (sat)
+                var sat = offset / r;
+                
+                // Value is always 1
+                var val = 1;
+                
+                // Calculate color
+                var cr = (Math.abs(deg + 360) + 60) % 360 < 120 ? 1
+                    : (deg > 240 ? (120 - Math.abs(deg - 360)) / 60
+                    : (deg < 120 ? (120 - deg) / 60
+                    : 0));
+                var cg = Math.abs(deg - 120) < 60 ? 1
+                    : (Math.abs(deg - 120) < 120 ? (120 - Math.abs(deg - 120)) / 60
+                    : 0);
+                
+                var cb = Math.abs(deg - 240) < 60 ? 1
+                    : (Math.abs(deg - 240) < 120 ? (120 - Math.abs(deg - 240)) / 60
+                    : 0);
+                var pr = Math.round((cr + (1 - cr) * (1 - sat)) * 255);
+                var pg = Math.round((cg + (1 - cg) * (1 - sat)) * 255);
+                var pb = Math.round((cb + (1 - cb) * (1 - sat)) * 255);
+                
+                context.fillStyle = 'rgb(' + pr + ',' + pg + ',' + pb + ')';
+                context.fillRect(x, y, 1, 1);
+            }
+        }
+        
+        return canvas.toDataURL();
+    };
 
 
 	/////////////
@@ -2221,6 +2301,21 @@
 		return false;
 	};
 
+
+	/**
+	 * window.onResize
+	 * 
+	 * Adjust block widgets
+	 */
+	WCP.Handler.window_resize = function( e ) {
+        var $widgets = $('body .jQWCP-wWidget.jQWCP-block');
+        
+        $widgets.each(function() {
+            var instance = $(this).data('jQWCP.instance');
+            instance.refreshWidget();
+            instance.redrawSliders();
+        });
+	};
 
 
 	/**
