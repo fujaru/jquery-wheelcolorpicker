@@ -4,7 +4,7 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2016.01.02
+ * Date   : 2016.01.27
  * 
  * Copyright © 2011-2016 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -1189,14 +1189,21 @@
 	WCP.ColorPicker.prototype.refreshWidget = function() {
 		var $widget = $(this.widget);
 		var options = this.options;
+        var mobileLayout = false;
 		
 		// Set CSS classes
 		$widget.attr('class', 'jQWCP-wWidget');
-		if(this.options.layout == 'block') {
+		if(options.layout == 'block') {
 			$widget.addClass('jQWCP-block');
 		}
 		$widget.addClass(options.cssClass);
 		//$widget.addClass(this.input.getAttribute('class'));
+        
+        // Check whether to use mobile layout
+        if(window.innerWidth <= options.mobileWidth && options.layout != 'block') {
+            mobileLayout = true;
+            $widget.addClass('jQWCP-mobile');
+        }
 		
 		// Rearrange sliders
 		$widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview')
@@ -1246,7 +1253,8 @@
 		var $visElms = $widget.find('.jQWCP-wWheel, .jQWCP-slider-wrapper, .jQWCP-wPreview').not('.hidden');
 			
 		// Adjust container and sliders width
-		if(options.autoResize) {
+        // Only if not on mobile layout (force fixed on mobile)
+		if(options.autoResize && !mobileLayout) {
 			// Auto resize
 			var width = 0
 			
@@ -1962,6 +1970,22 @@
 			$input.blur();
 			$(WCP.ColorPicker.overlay).show();
 		}
+        
+        // On mobile layout, autoscroll page to keep input visible
+        if($widget.hasClass('jQWCP-mobile')) {
+            var scrollTop = $('html').scrollTop();
+            var inputTop = input.getBoundingClientRect().top - WCP.ORIGIN.top;
+            
+            // If input is way too top
+            if(inputTop < scrollTop) {
+                $('html').animate({ scrollTop: inputTop});
+            }
+            
+            // If input is way too bottom
+            else if(inputTop + $input.outerHeight() > scrollTop + window.innerHeight - $widget.outerHeight()) {
+                $('html').animate({ scrollTop: inputTop + $input.outerHeight() - window.innerHeight + $widget.outerHeight()});
+            }
+        }
 	};
 
 
