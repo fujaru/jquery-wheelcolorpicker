@@ -2271,9 +2271,11 @@
 			
 			// Rebind suspended events
 			var suspendedEvents = $input.data('jQWCP.suspendedEvents');
-			var blurEvents = suspendedEvents.blur;
-			for(var i = 0; i < blurEvents.length; i++) {
-				$input.on('blur' + (blurEvents[i].namespace == '' ? '' : '.' + blurEvents[i].namespace), blurEvents[i].handler);
+			if(suspendedEvents != undefined) {
+				var blurEvents = suspendedEvents.blur;
+				for(var i = 0; i < blurEvents.length; i++) {
+					$input.on('blur' + (blurEvents[i].namespace == '' ? '' : '.' + blurEvents[i].namespace), blurEvents[i].handler);
+				}
 			}
 		}
 		
