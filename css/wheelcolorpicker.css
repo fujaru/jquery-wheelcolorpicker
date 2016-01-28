@@ -4,17 +4,17 @@
  * 
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
- * Copyright © 2011 Fajar Chandra. All rights reserved.
+ * Copyright © 2011-2016 Fajar Chandra. All rights reserved.
  * Released under MIT License.
  * http://www.opensource.org/licenses/mit-license.php
  * 
  * Note: Width, height, left, and top properties are handled by the 
- * plugin. Please do not change these values.
+ * plugin. These values might change on the fly.
  */
 
 .jQWCP-wWidget {
 	position: absolute;
-	width: 420px;
+	width: 250px;
 	height: 180px;
 	background: #eee;
 	box-shadow: 1px 1px 4px rgba(0,0,0,.5);
@@ -31,7 +31,6 @@
 }
 
 .jQWCP-wWheel {
-	background: url('images/wheel.180.jpg') no-repeat center center;
 	background-size: contain;
 	position: relative;
 	float: left;
@@ -42,6 +41,7 @@
 	border-radius: 50%;
 	border: solid 1px #aaa;
 	margin: -1px;
+	margin-right: 10px;
 	transition: border .15s;
 	cursor: crosshair;
 }
@@ -64,13 +64,16 @@
 }
 
 .jQWCP-wWheelCursor {
-	background: url('images/crosshair.png') no-repeat center center;
-	width: 19px;
-	height: 19px;
-	margin: -9px 0 0 -9px;
+	width: 8px;
+	height: 8px;
 	position: absolute;
 	top: 50%;
 	left: 50%;
+	margin: -6px -6px;
+	cursor: crosshair;
+	border: solid 2px #fff;
+	box-shadow: 1px 1px 2px #000;
+	border-radius: 50%;
 }
 
 .jQWCP-slider-wrapper,
@@ -79,16 +82,23 @@
 	width: 20px;
 	height: 180px;
 	float: left;
-	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.jQWCP-wWheel:last-child,
+.jQWCP-slider-wrapper:last-child,
+.jQWCP-wPreview:last-child {
+    margin-right: 0;
 }
 
 .jQWCP-slider,
 .jQWCP-wPreviewBox {
 	position: absolute;
-	width: 20px;
-	height: 180px;
+	width: 100%;
+	height: 100%;
 	left: 0;
 	top: 0;
+	box-sizing: border-box;
 	border: solid 1px #aaa;
 	margin: -1px;
 	-moz-border-radius: 4px;
@@ -108,26 +118,41 @@
 	position: absolute;
 	left: 0;
 	top: 0;
-	background: url('images/slider.png') no-repeat center center;
-	width: 26px;
-	height: 19px;
-	margin: -9px 0 0 -3px;
+	right: 0;
+	height: 6px;
+	margin: -5px -1px -5px -3px;
 	cursor: crosshair;
+	border: solid 2px #fff;
+	box-shadow: 1px 1px 2px #000;
+	border-radius: 4px;
 }
 
-.jQWCP-wAlphaSlider {
-	background: url('images/alpha.png');
-}
-
+.jQWCP-wAlphaSlider,
 .jQWCP-wPreviewBox {
-	background: url('images/alpha.png');
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEVAQEB/f39eaJUuAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QYRBDgK9dKdMgAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAARSURBVAjXY/jPwIAVYRf9DwB+vw/x6vMT1wAAAABJRU5ErkJggg==') center center;
 }
 
-#jQWCP-overlay {
+.jQWCP-overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
 	bottom: 0;
 	right: 0;
 	z-index: 1000;
+}
+
+/*********************/
+
+/* Mobile layout */
+
+.jQWCP-mobile.jQWCP-wWidget {
+    position: fixed;
+    bottom: 0;
+    left: 0 !important;
+    top: auto !important;
+    width: 100%;
+    height: 75%;
+    max-height: 240px;
+    box-sizing: border-box;
+    border-radius: 0;
 }

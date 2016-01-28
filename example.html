@@ -6,6 +6,7 @@
 	<title>jQuery Wheel Color Picker Example</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="author" content="Fajar Chandra" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
 	<script type="text/javascript" src="jquery-2.0.3.min.js"></script>
 	<script type="text/javascript">
 		$(function() {
@@ -71,12 +72,26 @@
 			border-top: dotted 2px #888;
 		}
 		
-		input[type=text] {
+		select,
+		input[type=text],
+        input[type=button] {
 			border: solid 1px #aaa;
 			border-radius: 4px;
 			box-shadow: inset 1px 1px 1px rgba(0,0,0,.3);
-			padding: 5px;
+			padding: 0 5px;
+            box-sizing: border-box;
+            height: 26px;
+            line-height: 26px;
 		}
+        
+        input[type=button] {
+            background: #fff;
+			box-shadow: inset -1px -1px 1px rgba(0,0,0,.3);
+        }
+        
+        input[type=button]:active {
+            box-shadow: inset 1px 1px 1px rgba(0,0,0,.3);
+        }
 		
 		input[type=text][readonly] {
 			background: #ddd;
@@ -99,31 +114,13 @@
 			box-sizing: border-box;
 		}
 		
-		.col-4 input,
-		.col-4 textarea {
+		.col-4 select,
+		.col-4 input {
 			width: 100%;
 			box-sizing: border-box;
 		}
 		
-		.col-2 {
-			float: left;
-			width: 50%;
-			padding: 0 10px;
-			box-sizing: border-box;
-		}
-		
-		.col-2 input,
-		.col-2 textarea {
-			width: 100%;
-			box-sizing: border-box;
-		}
-		
-		/* MD */
-		@media (max-width: 960px) {
-		}
-		
-		/* SM */
-		@media (max-width: 640px) {
+		@media (max-width: 760px) {
 			.col-4 {
 				width: 50%;
 			}
@@ -133,9 +130,7 @@
 			}
 		}
 		
-		/* XS */
-		@media (max-width: 320px) {
-			.col-2,
+		@media (max-width: 380px) {
 			.col-4 {
 				width: 100%;
 			}
@@ -195,7 +190,7 @@
 	</p>
 	
 	<div id="snippet-header" class="snippet">
-		<script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
+		<script type="text/javascript" src="jquery.wheelcolorpicker-3.js"></script>
 		<link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
 	</div>
 	
@@ -234,7 +229,7 @@
 			<!-- Initialization using JavaScript -->
 			<div class="col-4">
 				in HSV format: <br />
-				<div style="position: relative;"><input type="text" id="color-hsv" /></div>
+				<input type="text" id="color-hsv" />
 			</div>
 			
 			<script type="text/javascript">
@@ -262,9 +257,8 @@
 	<h2>Slider Customizations</h2>
 	
 	<p>
-		Besides the default sliders, you may also 
-		display other color component sliders. Despite the name, the 
-		color wheel can be completely hidden too.
+		Besides the default sliders, you may also display other 
+        color component sliders and rearrange their positions.
 	</p>
 	
 	<div id="snippet-slider" class="snippet">
@@ -276,7 +270,7 @@
 			
 			<div class="col-4">
 				HSV sliders: <br />
-				<input type="text" data-wheelcolorpicker data-wcp-sliders="whsvp" />
+				<input type="text" data-wheelcolorpicker data-wcp-sliders="hwsvp" />
 			</div>
 			
 			<div class="col-4">
@@ -293,26 +287,131 @@
 	
 	<div class="snippet-output" data-id="snippet-slider"></div>
 	
-	<h2>Color Picker Appearances</h2>
+	<h2>Color Picker Sizes</h2>
 	
 	<p>
-		Color picker can also be attached to a button or embedded inline. 
+		By default the color picker widget is automatically resizes to fit 
+		the sliders. However, you may also set a custom size to it by 
+		specifying width and height via CSS. 
+		This feature only applies to desktop website. For mobile browser, 
+		color picker will automatically adjusted to fit browser screen.
 	</p>
 	
-	<div id="snippet-block" class="snippet">
+	<div id="snippet-size" class="snippet">
 		<div class="row">
-			<div class="col-2 col-sm-1">
-				Embedded inline: <br />
-				<input type="text" data-wheelcolorpicker data-wcp-layout="block" />	
+			<div class="col-4">
+				Default autoresize: <br />
+				<input type="text" data-wheelcolorpicker />
 			</div>
-			<div class="col-4 col-sm-1">
-				Attached to button: <br />
-				<input type="button" data-wheelcolorpicker />	
+			
+			<div class="col-4">
+				Custom size: <br />
+				<input type="text" data-wheelcolorpicker data-wcp-autoResize="false" data-wcp-cssClass="custom-size1" />
+				<style type="text/css">
+					.custom-size1 {
+						width: 400px;
+						height: 250px;
+					}
+				</style>
+			</div>
+			
+			<div class="col-4">
+				Custom size (sliders only): <br />
+				<input type="text" data-wheelcolorpicker id="lala" data-wcp-autoResize="false" data-wcp-sliders="hsvrgbap" data-wcp-cssClass="custom-size2" />
+				<style type="text/css">
+					.custom-size2 {
+						width: 400px;
+						height: 250px;
+					}
+				</style>
+			</div>
+			
+			<div class="col-4">
+				Preview color on textbox: <br />
+				<input type="text" data-wheelcolorpicker data-wcp-sliders="wv" data-wcp-preview="true" />
 			</div>
 		</div>
 	</div>
 	
+	<div class="snippet-output" data-id="snippet-size"></div>
+	
+	<h2>Embedded Color Picker</h2>
+	
+	<p>
+		Color picker can also be embedded inline. 
+	</p>
+	
+	<div id="snippet-block" class="snippet">
+		<p>
+			<input type="text" value="#ff8800" data-wheelcolorpicker data-wcp-layout="block" data-wcp-sliders="wsvap" data-wcp-cssClass="color-block" data-wcp-autoResize="false" />	
+		</p>
+        <style type="text/css">
+            .color-block {
+                max-width: 340px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        </style>
+	</div>
+	
 	<div class="snippet-output" data-id="snippet-block"></div>
+	
+	<h2>Color Manipulations</h2>
+	
+	<p>
+		By accessing color components in RGB or HSV, it is possible to manipulate colors with ease.
+	</p>
+	
+	<div id="snippet-events" class="snippet">
+		<div class="row">
+			<div class="col-4">
+				Pick a color:
+				<input type="text" data-wheelcolorpicker data-wcp-preview="true" id="color" />
+			</div>
+			<div class="col-4">
+				Predefined colors:
+				<select id="color-palette">
+					<option value="#fce94f" style="background: #fce94f;">Butter</option>
+					<option value="#fcaf3e" style="background: #fcaf3e;">Orange</option>
+					<option value="#e9b96e" style="background: #e9b96e;">Chocolate</option>
+					<option value="#8ae234" style="background: #8ae234;">Chameleon</option>
+					<option value="#729fcf" style="background: #729fcf;">Sky blue</option>
+					<option value="#ad7fa8" style="background: #ad7fa8;">Plum</option>
+					<option value="#ef2929" style="background: #ef2929;">Scarlet red</option>
+				</select>
+			</div>
+			<div class="col-4">
+				&nbsp;
+				<input type="button" id="color-invert" value="Inverse" />
+			</div>
+			<div class="col-4">
+				&nbsp;
+				<input type="button" id="color-complement" value="Complement" />
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			$(function() {
+				$('#color-palette').on('change', function() {
+					$('#color').wheelColorPicker('setValue', $(this).val());
+				});
+				$('#color-invert').on('click', function() {
+					var color = $('#color').wheelColorPicker('getColor');
+					color.r = 1 - color.r;
+					color.g = 1 - color.g;
+					color.b = 1 - color.b;
+					$('#color').wheelColorPicker('setRgb', color.r, color.g, color.b);
+				});
+				$('#color-complement').on('click', function() {
+					var color = $('#color').wheelColorPicker('getColor');
+					color.h = (0.5 + color.h) % 1;
+					$('#color').wheelColorPicker('setHsv', color.h, color.s, color.v);
+				});
+			});
+		</script>
+	</div>
+	
+	<div class="snippet-output" data-id="snippet-events"></div>
 	
 	<h2>Events</h2>
 	
