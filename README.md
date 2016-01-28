@@ -35,6 +35,10 @@ The color picker can be set to display slider for each individual color channel.
 
 The color picker appearance can be customized using CSS. This package already contains two CSS variants which can be used as starting point to make your own theme.
 
+**RESPONSIVE MOBILE LAYOUT**
+
+The color picker can automatically adapt when opened on mobile browsers with limited screen width.
+
 See [Features Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Features) for the complete list.
 
 
@@ -52,7 +56,7 @@ First, include these javascript and CSS files on the HTML head section:
 
 **HTML WAY**
 
-Since version 2.3, an easier way to initialize the color picker is by simply adding `data-wheelcolorpicker` attribute to an input element.
+Simply add `data-wheelcolorpicker` attribute to an input element.
 
 ```html
 <input type="text" data-wheelcolorpicker />

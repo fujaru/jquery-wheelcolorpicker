@@ -220,7 +220,7 @@
 		userinput: true, /* DEPRECATED 1.x */
 		validate: false, /* DEPRECATED 1.x */ /* See autoConvert */
 		autoResize: true, /* 3.0 */
-		autoConvert: true, /* 2.0 */ /* NOT IMPLEMENTED */
+		//autoConvert: true, /* 2.0 */ /* NOT IMPLEMENTED */
 		//color: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* Init-time only */
 		//alpha: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* See methods.alpha */
 		preserveWheel: null, /* DEPRECATED 1.x */ /* Use live */
@@ -229,8 +229,8 @@
 		animDuration: 200, /* 2.0 */
 		quality: 1, /* 2.0 */
 		sliders: null, /* 2.0 */
-		sliderLabel: true, /* 2.0 */
-		sliderValue: false, /* 2.0 */
+		//sliderLabel: true, /* 2.0 */ /* NOT IMPLEMENTED */
+		//sliderValue: false, /* 2.0 */ /* NOT IMPLEMENTED */
 		rounding: 2, /* 2.3 */
 		mobile: true, /* 3.0 */
         mobileWidth: 480, /* 3.0 */
