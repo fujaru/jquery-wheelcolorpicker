@@ -110,9 +110,21 @@ Read more about what's new at [Documentation Page](https://github.com/fujaru/jqu
 Backward Compatibility
 ----------------------
 
+**Version 2**
+
+Websites built using version 2 of the wheel color picker plugin can be upgraded 
+to version 3 with no changes necessary.
+
+However, CSS customizations made from version 2 may not be compatible with 
+version 3 due to changes on HTML structure.
+
+Please see [Documentation Page](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/v3:Migration-from-v2) 
+for migrating instructions from version 2 to version 3.
+
 **Version 1.x**
 
-Options and methods marked as *deprecated* in version 2.x are still available which makes this backward compatible to 1.x. However, please refrain on using any deprecated options and methods since they are planned to be removed in future release. CSS is not backward compatible. Switching back to base theme is recommended. For more information, see [Migration](https://github.com/fujaru/jquery-wheelcolorpicker/wiki/Migration) page.
+`alpha` option and `color` method marked as *deprecated* in version 2.x are now obsolete. 
+CSS is not backward compatible. Switching back to base theme is recommended.
 
 - - - - -
 
