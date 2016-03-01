@@ -1843,7 +1843,7 @@
 		var color = $.fn.wheelColorPicker.strToColor( $this.val() );
 		if(color) {
 			methods.setColor.call( $this, color );
-            $this.trigger('sliderchanged');
+			$this.trigger('sliderchanged');
 		}
 	};
 	
