@@ -1842,7 +1842,8 @@
 		var $this = $(this); // Refers to input elm
 		var color = $.fn.wheelColorPicker.strToColor( $this.val() );
 		if(color) {
-			methods.setColor.call( $this, color );$this.trigger('sliderchanged');
+			methods.setColor.call( $this, color );
+            $this.trigger('sliderchanged');
 		}
 	};
 	
