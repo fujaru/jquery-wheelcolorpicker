@@ -1294,7 +1294,7 @@
 		//$widget.addClass(this.input.getAttribute('class'));
         
         // Check whether to use mobile layout
-        if(window.innerWidth <= options.mobileWidth && options.layout != 'block') {
+        if(window.innerWidth <= options.mobileWidth && options.layout != 'block' && options.mobile) {
             mobileLayout = true;
             $widget.addClass('jQWCP-mobile');
         }
