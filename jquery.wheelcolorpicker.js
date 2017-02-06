@@ -1650,6 +1650,9 @@
 		var $input = $( $widget.data('jQWCP.inputElm') );
 		
 		$('body').data('jQWCP.activeControl', $this.parent().get(0));
+		
+		// Trigger sliderdown event
+		$input.trigger('sliderdown');
 	};
 	
 	/**
