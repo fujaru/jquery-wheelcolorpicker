@@ -278,7 +278,9 @@
 	 * 
 	 * Available formats:
 	 * - hex
+	 * - hexa
 	 * - css
+	 * - cssa
 	 * - rgb
 	 * - rgb%
 	 * - rgba
@@ -311,6 +313,28 @@
 					b = "0" + b;
 				}
 				result += r + g + b;
+				break;
+				
+			case 'cssa':
+				result = "#";
+			case 'hexa': 
+				var r = Math.round(color.r * 255).toString(16);
+				if( r.length == 1) {
+					r = "0" + r;
+				}
+				var g = Math.round(color.g * 255).toString(16);
+				if( g.length == 1) {
+					g = "0" + g;
+				}
+				var b = Math.round(color.b * 255).toString(16);
+				if( b.length == 1) {
+					b = "0" + b;
+				}
+				var a = Math.round(color.a * 255).toString(16);
+				if( a.length == 1) {
+					a = "0" + a;
+				}
+				result += r + g + b + a;
 				break;
 				
 			case 'rgb':
@@ -426,7 +450,11 @@
 		var hasAlpha;
 		
 		// #fff
-		if(val.match(/^#[0-9a-f]{3}$/i) != null) {
+		// #ffff
+		if(
+			val.match(/^#[0-9a-f]{3}$/i) != null ||
+			val.match(/^#[0-9a-f]{4}$/i)
+		) {
 			if( isNaN( color.r = parseInt(val.substr(1, 1), 16) * 17 / 255 ) ) {
 				return false;
 			}
@@ -436,10 +464,21 @@
 			if( isNaN( color.b = parseInt(val.substr(3, 1), 16) * 17 / 255 ) ) {
 				return false;
 			}
+			
+			// Alpha
+			if(val.length == 5) {
+				if( isNaN( color.a = parseInt(val.substr(4, 1), 16) * 17 / 255 ) ) {
+					return false;
+				}
+			}
 		}
 		
 		// fff
-		else if(val.match(/^[0-9a-f]{3}$/i) != null) {
+		// ffff
+		else if(
+			val.match(/^[0-9a-f]{3}$/i) != null ||
+			val.match(/^[0-9a-f]{4}$/i) != null
+		) {
 			if( isNaN( color.r = parseInt(val.substr(0, 1), 16) * 17 / 255 ) ) {
 				return false;
 			}
@@ -449,10 +488,21 @@
 			if( isNaN( color.b = parseInt(val.substr(2, 1), 16) * 17 / 255 ) ) {
 				return false;
 			}
+			
+			// Alpha
+			if(val.length == 4) {
+				if( isNaN( color.a = parseInt(val.substr(3, 1), 16) * 17 / 255 ) ) {
+					return false;
+				}
+			}
 		}
 		
 		// #ffffff
-		else if(val.match(/^#[0-9a-f]{6}$/i) != null) {
+		// #ffffffff
+		else if(
+			val.match(/^#[0-9a-f]{6}$/i) != null ||
+			val.match(/^#[0-9a-f]{8}$/i) != null
+		) {
 			if( isNaN( color.r = parseInt(val.substr(1, 2), 16) / 255 ) ) {
 				return false;
 			}
@@ -462,10 +512,21 @@
 			if( isNaN( color.b = parseInt(val.substr(5, 2), 16) / 255 ) ) {
 				return false;
 			}
+			
+			// Alpha
+			if(val.length == 9) {
+				if( isNaN( color.a = parseInt(val.substr(7, 2), 16) / 255 ) ) {
+					return false;
+				}
+			}
 		}
 		
 		// ffffff
-		else if(val.match(/^[0-9a-f]{6}$/i) != null) {
+		// ffffffff
+		else if(
+			val.match(/^[0-9a-f]{6}$/i) != null ||
+			val.match(/^[0-9a-f]{8}$/i) != null
+		) {
 			if( isNaN( color.r = parseInt(val.substr(0, 2), 16) / 255 ) ) {
 				return false;
 			}
@@ -474,6 +535,13 @@
 			}
 			if( isNaN( color.b = parseInt(val.substr(4, 2), 16) / 255 ) ) {
 				return false;
+			}
+			
+			// Alpha
+			if(val.length == 8) {
+				if( isNaN( color.a = parseInt(val.substr(6, 2), 16) / 255 ) ) {
+					return false;
+				}
 			}
 		}
 		
