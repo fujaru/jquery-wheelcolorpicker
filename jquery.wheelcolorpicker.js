@@ -1214,6 +1214,7 @@
 			// Bind input element events
 			$input.on('focus.wheelColorPicker', WCP.Handler.input_focus_popup);
 			$input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
+			$input.on('touchend.wheelColorPicker', WCP.Handler.input_touchend_popup);
 		}
 		
 		// Bind input events
@@ -2170,6 +2171,14 @@
 	WCP.Handler.input_focus_popup = function( e ) {
 		var instance = $(this).data('jQWCP.instance');
 		instance.show();
+		
+		// Workaround to prevent on screen keyboard from appearing
+		if($(this).attr('readonly') == null) {
+			$(this).attr('readonly', true);
+			setTimeout(function() {
+				$(instance.input).removeAttr('readonly');
+			});
+		}
 	};
 
 
@@ -2194,6 +2203,13 @@
 		if(instance.lastValue != this.value) {
 			$(this).trigger('change');
 		}
+	};
+	
+	/**
+	 * input.onTouchEnd.popup
+	 */
+	WCP.Handler.input_touchend_popup = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
 	};
 
 
