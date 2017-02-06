@@ -4,9 +4,9 @@
  * http://www.jar2.net/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2016.01.28
+ * Date   : 2017.02.07
  * 
- * Copyright © 2011-2016 Fajar Chandra. All rights reserved.
+ * Copyright © 2011-2017 Fajar Chandra. All rights reserved.
  * Released under MIT License.
  * http://www.opensource.org/licenses/mit-license.php
  */
@@ -261,8 +261,8 @@
 
 	/// Coordinate of the top left page (mobile chrome workaround)
 	WCP.ORIGIN = { left: 0, top: 0 };
-
-
+	
+	
 	/******************************************************************/
 
 	//////////////////////
@@ -425,8 +425,34 @@
 		var tmp;
 		var hasAlpha;
 		
+		// #fff
+		if(val.match(/^#[0-9a-f]{3}$/i) != null) {
+			if( isNaN( color.r = parseInt(val.substr(1, 1), 16) * 17 / 255 ) ) {
+				return false;
+			}
+			if( isNaN( color.g = parseInt(val.substr(2, 1), 16) * 17 / 255 ) ) {
+				return false;	
+			}
+			if( isNaN( color.b = parseInt(val.substr(3, 1), 16) * 17 / 255 ) ) {
+				return false;
+			}
+		}
+		
+		// fff
+		else if(val.match(/^[0-9a-f]{3}$/i) != null) {
+			if( isNaN( color.r = parseInt(val.substr(0, 1), 16) * 17 / 255 ) ) {
+				return false;
+			}
+			if( isNaN( color.g = parseInt(val.substr(1, 1), 16) * 17 / 255 ) ) {
+				return false;	
+			}
+			if( isNaN( color.b = parseInt(val.substr(2, 1), 16) * 17 / 255 ) ) {
+				return false;
+			}
+		}
+		
 		// #ffffff
-		if(val.match(/^#[0-9a-f]{6}$/i) != null) {
+		else if(val.match(/^#[0-9a-f]{6}$/i) != null) {
 			if( isNaN( color.r = parseInt(val.substr(1, 2), 16) / 255 ) ) {
 				return false;
 			}
