@@ -49,7 +49,7 @@ Usage
 First, include these javascript and CSS files on the HTML head section:
 
 ```html
-<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="jquery-2.0.3.min.js"></script>
 <script type="text/javascript" src="jquery.wheelcolorpicker.js"></script>
 <link type="text/css" rel="stylesheet" href="css/wheelcolorpicker.css" />
 ```
