@@ -155,22 +155,23 @@
 	 * 
 	 * Member properties:
 	 * 
-	 *   format        - String Color naming style. See colorToRgb for all 
+	 *   format        - <string> Color naming style. See colorToRgb for all 
 	 *                   available formats.
-	 *   live          - Boolean Enable dynamic slider gradients.
-	 *   preview       - Boolean Enable live color preview on input field
-	 *   userinput     - (Deprecated) Boolean Enable picking color by typing directly
-	 *   validate      - (Deprecated) Boolean When userinput is enabled, always convert 
-	 *                   the input value to a specified format. This option is 
-	 *                   deprecated. use autoConvert instead.
-     *   autoResize    - Boolean Automatically resize container width.
+	 *   live          - <boolean> Enable dynamic slider gradients.
+	 *   preview       - <boolean> Enable live color preview on input field
+	 *   userinput     - (Deprecated) <boolean> Enable picking color by typing directly
+	 *   validate      - <boolean> When userinput is enabled, force the value to be 
+	 *                   a valid format. If user input an invalid color, the value 
+	 *                   will be reverted to last valid color.
+     *   autoResize    - <boolean> Automatically resize container width.
      *                   If set to false, you could manually adjust size with CSS.
-	 *   autoConvert   - Boolean Automatically convert inputted value to 
-	 *                   specified format.
-	 *   color         - Mixed Initial value in any of supported color 
+	 *   autoFormat    - <boolean> Automatically convert input value to 
+	 *                   specified format. For example, if format is "rgb", 
+	 *                   "#ff0000" will automatically converted into "rgb(255,0,0)".
+	 *   color         - <object|string> Initial value in any of supported color 
 	 *                   value format or as an object. Setting this value will 
 	 *                   override the current input value.
-	 *   alpha         - (Deprecated) Boolean Force the color picker to use alpha value 
+	 *   alpha         - (Deprecated) <boolean> Force the color picker to use alpha value 
 	 *                   despite its selected color format. This option is 
 	 *                   deprecated. Use sliders = "a" instead.
 	 *   inverseLabel  - (deprecated) Boolean use inverse color for 
@@ -218,9 +219,9 @@
 		preview: false, /* 1.x */
 		live: true, /* 2.0 */
 		userinput: true, /* DEPRECATED 1.x */
-		validate: false, /* DEPRECATED 1.x */ /* See autoConvert */
+		validate: true, /* 1.x */
 		autoResize: true, /* 3.0 */
-		//autoConvert: true, /* 2.0 */ /* NOT IMPLEMENTED */
+		autoFormat: true, /* 3.0 */
 		//color: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* Init-time only */
 		//alpha: null, /* DEPRECATED 1.x */ /* OBSOLETE 3.0 */ /* See methods.alpha */
 		preserveWheel: null, /* DEPRECATED 1.x */ /* Use live */
@@ -1216,8 +1217,8 @@
 		}
 		
 		// Bind input events
-		$input.on('keyup.wheelColorPicker', WCP.Handler.input_change);
-		//$input.on('change.wheelColorPicker', WCP.Handler.input_change);
+		$input.on('keyup.wheelColorPicker', WCP.Handler.input_keyup);
+		$input.on('change.wheelColorPicker', WCP.Handler.input_change);
 		
 		// Set color value
 		// DEPRECATED by 3.0
@@ -1691,7 +1692,10 @@
 			
 		var $input = $(this.input);
 		
-		this.input.value = this.getValue();
+		// #13 only update if value is different to avoid cursor repositioned to the end of text on some browsers
+		if(this.input.value != this.getValue()) {
+			this.input.value = this.getValue();
+		}
 		
 		if( this.options.preview ) {
 			$input.css('background', WCP.colorToStr( this.color, 'rgba' ));
@@ -1874,13 +1878,17 @@
 	 * Function: setValue
 	 * 
 	 * Set the color value as string.
+	 * 
+	 * Parameters:
+	 *   value       - <string> String representation of color.
+	 *   updateInput - <boolean> Whether to update input text. Default is true.
 	 */
-	WCP.ColorPicker.prototype.setValue = function( value ) {
+	WCP.ColorPicker.prototype.setValue = function( value, updateInput ) {
 		var color = WCP.strToColor(value);
 		if(!color)
 			return this;
 			
-		return this.setColor(color);
+		return this.setColor(color, updateInput);
 	}
 
 
@@ -1895,19 +1903,23 @@
 	 * 
 	 * For consistency with options.color value, this function also 
 	 * accepts string value.
+	 * 
+	 * Parameters:
+	 *   color       - <object> Color object or string representation of color.
+	 *   updateInput - <boolean> Whether to update input text. Default is true.
 	 */
-	WCP.ColorPicker.prototype.setColor = function( color ) {
+	WCP.ColorPicker.prototype.setColor = function( color, updateInput ) {
 		if(typeof color === "string") {
-			return this.setValue(color);
+			return this.setValue(color, updateInput);
 		}
 		else if(color.r != null) {
-			return this.setRgba(color.r, color.g, color.b, color.a);
+			return this.setRgba(color.r, color.g, color.b, color.a, updateInput);
 		}
 		else if(color.h != null) {
-			return this.setHsva(color.h, color.s, color.v, color.a);
+			return this.setHsva(color.h, color.s, color.v, color.a, updateInput);
 		}
 		else if(color.a != null) {
-			return this.setAlpha(color.a);
+			return this.setAlpha(color.a, updateInput);
 		}
 		return this;
 	};
@@ -1919,8 +1931,18 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using RGBA combination.
+	 * 
+	 * Parameters:
+	 *   r           - <number> Red component [0..1]
+	 *   g           - <number> Green component [0..1]
+	 *   b           - <number> Blue component [0..1]
+	 *   a           - <number> Alpha value [0..1]
+	 *   updateInput - <boolean> Whether to update input text. Default is true.
 	 */
-	WCP.ColorPicker.prototype.setRgba = function( r, g, b, a ) {
+	WCP.ColorPicker.prototype.setRgba = function( r, g, b, a, updateInput ) {
+		// Default value
+		if(updateInput === undefined) updateInput = true;
+		
 		var color = this.color;
 		color.r = r;
 		color.g = g;
@@ -1934,11 +1956,12 @@
 		color.h = hsv.h;
 		color.s = hsv.s;
 		color.v = hsv.v;
-		//~ console.log(color);
 
 		this.updateSliders();
 		this.redrawSliders();
-		this.updateInput();
+		if(updateInput) {
+			this.updateInput();
+		}
 		return this;
 	};
 
@@ -1949,9 +1972,15 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using RGB combination.
+	 * 
+	 * Parameters:
+	 *   r           - <number> Red component [0..1]
+	 *   g           - <number> Green component [0..1]
+	 *   b           - <number> Blue component [0..1]
+	 *   updateInput - <boolean> Whether to update input text.
 	 */
-	WCP.ColorPicker.prototype.setRgb = function( r, g, b ) {
-		return this.setRgba(r, g, b, null);
+	WCP.ColorPicker.prototype.setRgb = function( r, g, b, updateInput ) {
+		return this.setRgba(r, g, b, null, updateInput);
 	};
 
 
@@ -1961,8 +1990,18 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using HSVA combination.
+	 * 
+	 * Parameters:
+	 *   h           - <number> Hue component [0..1]
+	 *   s           - <number> Saturation component [0..1]
+	 *   v           - <number> Value component [0..1]
+	 *   a           - <number> Alpha value [0..1]
+	 *   updateInput - <boolean> Whether to update input text. Default is true.
 	 */
-	WCP.ColorPicker.prototype.setHsva = function( h, s, v, a ) {
+	WCP.ColorPicker.prototype.setHsva = function( h, s, v, a, updateInput ) {
+		// Default value
+		if(updateInput === undefined) updateInput = true;
+		
 		var color = this.color;
 		color.h = h;
 		color.s = s;
@@ -1976,11 +2015,12 @@
 		color.r = rgb.r;
 		color.g = rgb.g;
 		color.b = rgb.b;
-		//~ console.log(color);
 		
 		this.updateSliders();
 		this.redrawSliders();
-		this.updateInput();
+		if(updateInput) {
+			this.updateInput();
+		}
 		return this;
 	};
 
@@ -1991,9 +2031,15 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set color using HSV combination.
+	 * 
+	 * Parameters:
+	 *   h           - <number> Hue component [0..1]
+	 *   s           - <number> Saturation component [0..1]
+	 *   v           - <number> Value component [0..1]
+	 *   updateInput - <boolean> Whether to update input text.
 	 */
-	WCP.ColorPicker.prototype.setHsv = function( h, s, v ) {
-		return this.setHsva(h, s, v, null);
+	WCP.ColorPicker.prototype.setHsv = function( h, s, v, updateInput ) {
+		return this.setHsva(h, s, v, null, updateInput);
 	};
 
 
@@ -2003,13 +2049,22 @@
 	 * Introduced in 2.0
 	 * 
 	 * Set alpha value.
+	 * 
+	 * Parameters:
+	 *   value       - <number> Alpha value [0..1]
+	 *   updateInput - <boolean> Whether to update input text. Default is true.
 	 */
-	WCP.ColorPicker.prototype.setAlpha = function( value ) {
+	WCP.ColorPicker.prototype.setAlpha = function( value, updateInput ) {
+		// Default value
+		if(updateInput === undefined) updateInput = true;
+		
 		this.color.a = value;
 		
 		this.updateSliders();
 		this.redrawSliders();
-		this.updateInput();
+		if(updateInput) {
+			this.updateInput();
+		}
 		return this;
 	};
 
@@ -2143,15 +2198,36 @@
 
 
 	/**
+	 * input.onKeyUp
+	 * 
+	 * Update the color picker while user type in color value.
+	 */
+	WCP.Handler.input_keyup = function( e ) {
+		var instance = $(this).data('jQWCP.instance');
+		var color = WCP.strToColor(this.value);
+		if(color) {
+			instance.setColor(color, false);
+		}
+	};
+
+
+	/**
 	 * input.onChange
 	 * 
-	 * Update the color picker when input is changed.
+	 * Reformat the input value based on selected color and configurations.
 	 */
 	WCP.Handler.input_change = function( e ) {
 		var instance = $(this).data('jQWCP.instance');
 		var color = WCP.strToColor(this.value);
-		if(color) {
-			instance.setColor(color);
+		
+		// If autoFormat option is enabled, try to reformat the value if it is a valid color
+		if(instance.options.autoFormat && color) {
+			instance.setColor(color, true);
+		}
+		
+		// If validate option is enabled, revert the value if it is not a valid color
+		else if(instance.options.validate && !color && this.value != '') {
+			this.value = instance.getValue();
 		}
 	};
 

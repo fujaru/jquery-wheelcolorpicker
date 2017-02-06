@@ -72,9 +72,16 @@
 			border-top: dotted 2px #888;
 		}
 		
+		code {
+			background: #eee;
+			border: dotted 1px #ccc;
+		}
+		
 		select,
 		input[type=text],
         input[type=button] {
+			font-family: "Tahoma", "Arial", sans-serif;
+			font-size: 14px;
 			border: solid 1px #aaa;
 			border-radius: 4px;
 			box-shadow: inset 1px 1px 1px rgba(0,0,0,.3);
@@ -185,8 +192,8 @@
 	<h2>Getting Started</h2>
 	
 	<p>
-		To use jQuery Wheel Color Picker Plugin, first you must include jquery.js (obviously), 
-		jquery.wheelcolorpicker.js, and wheelcolorpicker.css.
+		To use jQuery Wheel Color Picker Plugin, first you must include <code>jquery.js</code> (obviously), 
+		<code>jquery.wheelcolorpicker.js</code>, and <code>wheelcolorpicker.css</code>.
 	</p>
 	
 	<div id="snippet-header" class="snippet">
@@ -198,8 +205,8 @@
 	
 	<p>
 		There are two ways to initialize color picker. One is by adding 
-		"data-wheelcolorpicker" attribute to the input element. The other 
-		way is by invoking $(element).wheelColorPicker() jQuery function.
+		<code>data-wheelcolorpicker</code> attribute to the input element. The other 
+		way is by invoking <code>$(element).wheelColorPicker()</code> jQuery function.
 	</p>
 	
 	<p>
