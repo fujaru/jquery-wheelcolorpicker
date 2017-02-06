@@ -1214,7 +1214,6 @@
 			// Bind input element events
 			$input.on('focus.wheelColorPicker', WCP.Handler.input_focus_popup);
 			$input.on('blur.wheelColorPicker', WCP.Handler.input_blur_popup);
-			$input.on('touchend.wheelColorPicker', WCP.Handler.input_touchend_popup);
 		}
 		
 		// Bind input events
@@ -2178,6 +2177,16 @@
 			setTimeout(function() {
 				$(instance.input).removeAttr('readonly');
 			});
+			
+			// Firefox on Android
+			if(navigator.userAgent.match(/Android .* Firefox/) != null) {
+				setTimeout(function() {
+					$(instance.input).attr('readonly', true);
+					$(instance.input).one('blur', function() {
+						$(instance.input).removeAttr('readonly');
+					});
+				});
+			}
 		}
 	};
 
@@ -2205,14 +2214,7 @@
 		}
 	};
 	
-	/**
-	 * input.onTouchEnd.popup
-	 */
-	WCP.Handler.input_touchend_popup = function( e ) {
-		var instance = $(this).data('jQWCP.instance');
-	};
-
-
+	
 	/**
 	 * input.onKeyUp
 	 * 
