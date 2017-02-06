@@ -104,6 +104,7 @@ What's New in 3.0
 -----------------
 
 * Code refactor
+* Support for responsive/mobile websites
 * Options for sliders arrangement
 * Programmatically resizeable color picker
 * External images no longer required
