@@ -875,7 +875,7 @@
         $('head').append(
             '<style type="text/css">' + 
                 '.jQWCP-wWheel {' + 
-                    'background: url(' + wheelImage + ') no-repeat center center;' +
+                    'background-image: url(' + wheelImage + ');' +
                 '}' +
             '</style>'
         );
