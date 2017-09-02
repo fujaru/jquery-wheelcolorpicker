@@ -15,7 +15,8 @@
 		"form",
 		"input",
 		"color",
-		"colorpicker"
+		"colorpicker",
+		"jquery-plugin"
 	],
 	"dependencies": {
 		"jquery": ">=1.7"
