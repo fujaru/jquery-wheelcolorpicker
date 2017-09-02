@@ -1,9 +1,9 @@
 {
 	"name": "jquery-wheelcolorpicker",
-	"version": "3.0.1",
-	"description": "A jQuery plugin to add color picker functionality to HTML form inputs in round color wheel style.",
-	"author": "Fajar Chandra (http://www.jar2.net)",
-	"homepage": "http://www.jar2.net/projects/jquery-wheelcolorpicker",
+	"version": "3.0.3",
+	"description": "The Wheel Color Picker plugin adds color picker functionality to HTML form inputs in round color wheel style. The Wheel Color Picker can be displayed as a popup dialog as users focus the input, or embedded inline.",
+	"author": "Fajar Chandra (https://www.jar2.net)",
+	"homepage": "https://www.jar2.net/projects/jquery-wheelcolorpicker",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
