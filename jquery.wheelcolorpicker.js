@@ -1254,6 +1254,15 @@
 		// Reset layout
 		// No need to delete global popup
 		if(this.options.layout == 'block') {
+			// Check if active control is the same widget as destroyed widget, remove the reference if it's true
+			var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
+			if ($control.length) {
+				var controlWidget = $control.closest('.jQWCP-wWidget');
+				if ($widget.is(controlWidget)) {
+					$('body').data('jQWCP.activeControl', null);
+				}
+			}
+			
 			$widget.before(this.input);
 			$widget.remove();
 			$input.show();
