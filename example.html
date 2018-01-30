@@ -457,6 +457,9 @@
 				$('#color-input').on('focus', function() {
 					$('#event-input').val('Focused');
 				});
+				$('#color-input').on('keypress', function() {
+					$('#event-input').val('Key Pressed');
+				});
 				$('#color-input').on('blur', function() {
 					$('#event-input').val('Blurred');
 				});
