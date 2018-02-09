@@ -23,7 +23,7 @@ This plugin supports both RGB and HSV modes with additional Alpha channel.
 There are numbers of formats which the color picker can display its value:
 
 *   **hex** format, e.g. ffffff
-*   **CSS-style hex** format, e.g. #ffffff
+*   **css** format, e.g. #ffffff
 *   **rgb** format, e.g. rgb(255, 255, 255)
 *   **hsv** format, e.g. hsv(1.0, 1.0, 1.0)
      
