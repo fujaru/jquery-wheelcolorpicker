@@ -85,7 +85,7 @@ $(element).wheelColorPicker( options );
 
 Demo
 ----
-See example.html for more usage examples or try it online at our [demonstration page](http://www.jar2.net/projects/jquery-wheelcolorpicker/demo).
+See example.html for more usage examples or try it online at our [demonstration page](http://files.jar2.net/jquery/wheelcolorpicker/example-v3/example.html).
 
 
 
