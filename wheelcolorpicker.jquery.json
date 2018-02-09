@@ -1,10 +1,10 @@
 {
 	"name": "wheelcolorpicker",
-	"version": "3.0.3",
+	"version": "3.0.5",
 	"title": "Wheel Color Picker",
 	"author": {
 		"name": "Fajar Chandra",
-		"url": "https://www.jar2.net)"
+		"url": "https://raffer.one/"
 	},
 	"licenses": [
 		{
@@ -23,8 +23,8 @@
 		"color",
 		"colorpicker"
 	],
-	"homepage": "https://www.jar2.net/projects/jquery-wheelcolorpicker",
+	"homepage": "https://raffer.one/projects/jquery-wheelcolorpicker",
 	"docs": "https://github.com/fujaru/jquery-wheelcolorpicker/wiki",
-	"demo": "https://files.jar2.net/jquery/wheelcolorpicker/example-v3/example.html",
+	"demo": "http://files.jar2.net/jquery/wheelcolorpicker/example-v3/example.html",
 	"bugs": "https://github.com/fujaru/jquery-wheelcolorpicker/issues"
 }

@@ -8,7 +8,7 @@ The Wheel Color Picker plugin adds color picker functionality to HTML form input
 
 Note: It should also works on other HTML elements which support jQuery .val() function.
 
-![](http://blog.jar2.net/wp-content/uploads/2015/04/jqwcp.png)
+![](https://raffer.one/static/img/projects/jqwcp-featured.600.jpg)
 
 
 Features
@@ -85,7 +85,7 @@ $(element).wheelColorPicker( options );
 
 Demo
 ----
-See example.html for more usage examples or try it online at our [demonstration page](http://files.jar2.net/jquery/wheelcolorpicker/example-v3/example.html).
+See `demo/index.html` for more usage examples or try it online at our [demonstration page](http://files.jar2.net/jquery/wheelcolorpicker/example-v3/example.html).
 
 
 

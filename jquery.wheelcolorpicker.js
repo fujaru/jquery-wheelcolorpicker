@@ -1,12 +1,12 @@
 /**
  * jQuery Wheel Color Picker
  * 
- * http://www.jar2.net/projects/jquery-wheelcolorpicker
+ * https://raffer.one/projects/jquery-wheelcolorpicker
  * 
  * Author : Fajar Chandra
- * Date   : 2017.09.03
+ * Date   : 2018.02.09
  * 
- * Copyright © 2011-2017 Fajar Chandra. All rights reserved.
+ * Copyright © 2011-2018 Fajar Chandra. All rights reserved.
  * Released under MIT License.
  * http://www.opensource.org/licenses/mit-license.php
  */
