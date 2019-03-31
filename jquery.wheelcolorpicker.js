@@ -1703,7 +1703,9 @@
 		
 		// #13 only update if value is different to avoid cursor repositioned to the end of text on some browsers
 		if(this.input.value != this.getValue()) {
-			this.input.value = this.getValue();
+			/* in layout:block mode , because input is *hidden*,  input.value=  does NOT work, while attr('value') does ! */
+			//this.input.value = this.getValue();
+			$input.attr('value',this.getValue());
 		}
 		
 		if( this.options.preview ) {
