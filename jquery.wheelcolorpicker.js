@@ -1706,6 +1706,7 @@
 			/* in layout:block mode , because input is *hidden*,  input.value=  does NOT work, while attr('value') does ! */
 			//this.input.value = this.getValue();
 			$input.attr('value',this.getValue());
+			$input.trigger('colorchange');
 		}
 		
 		if( this.options.preview ) {
