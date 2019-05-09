@@ -1546,7 +1546,8 @@
    * Introduced in 2.0
    * 
    * Update slider cursor positions based on this.color value. 
-   * Only displayed sliders are updated.
+   * Only displayed sliders are updated. This function shall be called when widget is displayed 
+   * so positions could be determined properly.
    */
   WCP.ColorPicker.prototype.updateSliders = function() {
     // Skip if not yet initialized
@@ -2067,12 +2068,14 @@
 
     // Redraw sliders
     this.redrawSliders();
-    this.updateSliders();
 
     // Store last textfield value (to determine whether to trigger onchange event later)
     this.lastValue = input.value;
 
     $widget.fadeIn( options.animDuration );
+
+    // Update slider positions after widget is displayed (so it could calculate properly)
+    this.updateSliders();
 
     // If hideKeyboard is true, force to hide soft keyboard
     if(options.hideKeyboard) {
