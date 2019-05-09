@@ -1695,7 +1695,7 @@
     var color = this.color;
 
     // pageX and pageY wrapper for touches
-    if(e.pageX == undefined && e.originalEvent.touches.length > 0) {
+    if(e.originalEvent.touches && e.originalEvent.touches.length > 0) {
       e.pageX = e.originalEvent.touches[0].pageX;
       e.pageY = e.originalEvent.touches[0].pageY;
     }
@@ -2421,7 +2421,7 @@
       // Last time update active control before clearing
       // Only call this function if mouse position is known
       // On touch action, touch point is not available
-      if(e.pageX != undefined) {
+      if (e.type != 'touchend') {
         instance.updateActiveControl( e );
       }
 
