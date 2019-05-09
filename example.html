@@ -390,7 +390,7 @@
     <script type="text/javascript">
     $(function() {
       $('#color-block').on('colorchange', function(e) {
-        var color = $(this).wheelColorPicker('value'); // .val() dont work on hidden elements
+        var color = $(this).wheelColorPicker('value');
         var alpha = $(this).wheelColorPicker('color').a;
         $('.color-preview-box').css('background-color', color);
         $('.color-preview-text').text(color);
