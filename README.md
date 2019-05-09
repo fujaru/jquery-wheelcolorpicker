@@ -130,7 +130,3 @@ for migrating instructions from version 2 to version 3.
 
 `alpha` option and `color` method marked as *deprecated* in version 2.x are now obsolete. 
 CSS is not backward compatible. Switching back to base theme is recommended.
-
-- - - - -
-
-<a href="https://pledgie.com/campaigns/30344" target="_blank"><img class="alignnone" style="margin-top: 0;" src="https://pledgie.com/campaigns/30344.png?skin_name=chrome" alt="Click here to lend your support to: jQuery Wheel Color Picker Plugin and make a donation at pledgie.com !" height="37" border="0" width="149"></a>
