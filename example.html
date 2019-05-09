@@ -352,26 +352,52 @@
 
   <div id="snippet-block" class="snippet">
     <p>
-      <input type="text" value="#ff8800" data-wheelcolorpicker data-wcp-layout="block" data-wcp-sliders="wsvap" data-wcp-cssClass="color-block" data-wcp-autoResize="false" />	
+      <input
+        id="color-block"
+        type="text"
+        value="#ff8800"
+        data-wheelcolorpicker
+        data-wcp-format="css"
+        data-wcp-layout="block"
+        data-wcp-sliders="wsvap"
+        data-wcp-cssClass="color-block"
+        data-wcp-autoResize="false"
+      />
     </p>
+    <p>
+      Selected color:
+      <span class="color-preview-box"></span>
+      <span class="color-preview-text"></span>
+      <span class="color-preview-alpha"></span>
+    </p>
+
     <style type="text/css">
       .color-block {
         max-width: 340px;
         width: 100%;
         box-sizing: border-box;
       }
+      .color-preview-box {
+        display: inline-block;
+        width: .75em;
+        height: .75em;
+        vertical-align: middle;
+        padding: 2px;
+        background-clip: content-box;
+        border: solid 1px #888;
+      }
     </style>
-
-    <p class='color-preview'>(Select a Color)</p>
     <script type="text/javascript">
     $(function() {
-      $('.color-block').on('colorchange',function(e){
-        var color=$(this).find('input').attr('value'); /* .val() dont work on hidden elements*/
-        $('.color-preview').css('background-color','#'+color).html(color);
+      $('#color-block').on('colorchange', function(e) {
+        var color = $(this).wheelColorPicker('value'); // .val() dont work on hidden elements
+        var alpha = $(this).wheelColorPicker('color').a;
+        $('.color-preview-box').css('background-color', color);
+        $('.color-preview-text').text(color);
+        $('.color-preview-alpha').text(Math.round(alpha * 100) + '%');
       });
     });
     </script>
-
   </div>
 
   <div class="snippet-output" data-id="snippet-block"></div>
@@ -479,7 +505,7 @@
         $('#color-input').on('change', function() {
           $('#event-input').val('Changed');
         });
-        $('#color-input').on('slidermove', function() {
+        $('#color-input').on('slidermove sliderdown', function() {
           $('#event-color').val($(this).wheelColorPicker('getValue', 'rgb'));
         });
       });
