@@ -505,7 +505,7 @@
         $('#color-input').on('change', function() {
           $('#event-input').val('Changed');
         });
-        $('#color-input').on('slidermove sliderdown', function() {
+        $('#color-input').on('colorchange', function() {
           $('#event-color').val($(this).wheelColorPicker('getValue', 'rgb'));
         });
       });
