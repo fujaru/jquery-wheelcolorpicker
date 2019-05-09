@@ -197,7 +197,7 @@
 	</p>
 	
 	<div id="snippet-header" class="snippet">
-		<script type="text/javascript" src="../jquery.wheelcolorpicker-3.0.5.min.js"></script>
+		<script type="text/javascript" src="../jquery.wheelcolorpicker.js"></script>
 		<link type="text/css" rel="stylesheet" href="../css/wheelcolorpicker.css" />
 	</div>
 	
@@ -359,6 +359,17 @@
                 box-sizing: border-box;
             }
         </style>
+
+		<p class='color-preview'>(Select a Color)</p>
+        <script type="text/javascript">
+        $(function() {
+            $('.color-block').on('colorchange',function(e){
+                var color=$(this).find('input').attr('value'); /* .val() dont work on hidden elements*/
+                $('.color-preview').css('background-color','#'+color).html(color);
+            });
+        });
+        </script>
+
 	</div>
 	
 	<div class="snippet-output" data-id="snippet-block"></div>
