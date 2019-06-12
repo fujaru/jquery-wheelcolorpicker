@@ -1665,8 +1665,8 @@
     if(this.input.value != this.getValue()) {
       $input.attr('value', this.getValue()); // Force attribute to be updated
       this.input.value = this.getValue();
-      $input.trigger('colorchange');
     }
+    $input.trigger('colorchange');
 
     if( this.options.preview ) {
       $input.css('background', WCP.colorToStr( this.color, 'rgba' ));
@@ -2027,7 +2027,7 @@
 
     this.updateSliders();
     this.redrawSliders();
-    if(updateInput) {
+    if (updateInput) {
       this.updateInput();
     }
     return this;
@@ -2231,6 +2231,7 @@
    * because of input blur event.
    */
   WCP.Handler.widget_mousedown_popup = function( e ) {
+    e.preventDefault();
     var instance = $(this).data('jQWCP.instance');
     var $input = $(instance.input);
 
