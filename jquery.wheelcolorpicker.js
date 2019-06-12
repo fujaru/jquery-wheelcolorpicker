@@ -4,7 +4,7 @@
  * https://raffer.one/projects/jquery-wheelcolorpicker
  *
  * Author : Fajar Chandra
- * Date   : 2019.05.09
+ * Date   : 2019.06.12
  *
  * Copyright © 2011-2019 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -2307,6 +2307,7 @@
    * the crosshair although the mouse is outside the wheel.
    */
   WCP.Handler.wheelCursor_mousedown = function( e ) {
+    e.preventDefault();
     var $this = $(this); // Refers to cursor
     var $widget = $this.closest('.jQWCP-wWidget');
     var instance = $widget.data('jQWCP.instance');
@@ -2327,6 +2328,7 @@
    * Basically this is the same as wheelCursor_mousedown handler
    */
   WCP.Handler.wheel_mousedown = function( e ) {
+    e.preventDefault();
     var $this = $(this); // Refers to wheel
     var $widget = $this.closest('.jQWCP-wWidget');
     var instance = $widget.data('jQWCP.instance');
@@ -2336,6 +2338,8 @@
     
     // Trigger sliderdown event
     $input.trigger('sliderdown');
+
+    instance.updateActiveControl( e );
   };
 
   /**
@@ -2345,6 +2349,7 @@
    * the slider although the mouse is outside the slider.
    */
   WCP.Handler.slider_mousedown = function( e ) {
+    e.preventDefault();
     var $this = $(this); // Refers to slider
     var $widget = $this.closest('.jQWCP-wWidget');
     var instance = $widget.data('jQWCP.instance');
@@ -2354,6 +2359,8 @@
     
     // Trigger sliderdown event
     $input.trigger('sliderdown');
+
+    instance.updateActiveControl( e );
   };
 
   /**
@@ -2363,6 +2370,7 @@
    * the slider although the mouse is outside the slider.
    */
   WCP.Handler.sliderCursor_mousedown = function( e ) {
+    e.preventDefault();
     var $this = $(this); // Refers to slider cursor
     var $widget = $this.closest('.jQWCP-wWidget');
     var instance = $widget.data('jQWCP.instance');
