@@ -4,7 +4,7 @@
  * https://raffer.one/projects/jquery-wheelcolorpicker
  *
  * Author : Fajar Chandra
- * Date   : 2019.06.12
+ * Date   : 2019.11.05
  *
  * Copyright © 2011-2019 Fajar Chandra. All rights reserved.
  * Released under MIT License.
@@ -1167,6 +1167,7 @@
       if(WCP.ColorPicker.widget == null) {
         WCP.ColorPicker.widget = WCP.ColorPicker.createWidget();
         $widget = $(WCP.ColorPicker.widget);
+        $widget.attr('id', 'jQWCP-popup');
 
         // Assign widget to global
         $widget.hide();
@@ -2118,6 +2119,9 @@
 
     $widget.fadeOut( this.options.animDuration );
     $(WCP.ColorPicker.overlay).hide();
+
+    // Detach instance from popup widget
+    $widget.data('jQWCP.instance', null);
   };
 
   ////////////////////
@@ -2395,11 +2399,22 @@
     var $control = $( $('body').data('jQWCP.activeControl') ); // Refers to slider wrapper or wheel
 
     // Do stuffs when there's active control
-    if($control.length == 0)
-      return;
+    // if($control.length == 0)
+    //   return;
+    
+    // Get instance based on active control
+    if ($control.length) {
+      var $widget = $control.closest('.jQWCP-wWidget');
+    } else {
+      // If no active control is found, try to get instance from popup widget
+      var $widget = $('#jQWCP-popup');
+    }
 
-    var $widget = $control.closest('.jQWCP-wWidget');
     var instance = $widget.data('jQWCP.instance');
+    if (instance == null) {
+      return;
+    }
+
     var $input = $(instance.input);
 
     // Rebind blur and focus event to input elm which was 
